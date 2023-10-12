@@ -1,0 +1,53 @@
+{
+  "manifest_version": 3,
+  "version": "1.0.0",
+  "name": "数据辅助填写工具",
+  "description": "辅助一键填入备案数据",
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "logo192.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "scripting",
+    "tabs",
+    "storage",
+    "webRequest",
+    "activeTab",
+    "declarativeNetRequest",
+    "declarativeNetRequestWithHostAccess",
+    "declarativeNetRequestFeedback"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*", "<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "devtools_page": "devtools.html",
+  "options_page": "options.html",
+  "icons": {
+    "128": "logo512.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["logo192.png", "logo512.png", "logo.svg"],
+      "matches": []
+    }
+  ],
+  "declarative_net_request":{
+    "rule_resources": [{
+      "id": "1",
+      "enabled": false,
+      "path": "rules_1.json"
+    }]
+  }
+}
