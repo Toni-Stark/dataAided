@@ -53,14 +53,31 @@ export const BASIC_INFO: any = {
   serverType_select: '#modalFormDiv ul:nth-child(3) .formLiWidth3 #serverType',
   websitename_input: '#modalFormDiv ul:nth-child(4) .formLiWidth8 #websitename',
   domainName_input: '#domainDivVisit #domainName',
-  websitefirstpageurl: '#websitefirstpageurlUl #websitefirstpageurl',
-  websitefirstpageurl: '#websitefirstpageurlUl #websitefirstpageurl',
+  websitefirstpageurl_input: '#websitefirstpageurlUl #websitefirstpageurl',
+  websiteservicecontentDiv_checkout: '#websiteservicecontentDiv ul .formLiWidth8 div input',
+  languageDiv_checkout: '#languageDiv ul .formLiWidth8 div input',
 };
 export const BASIC_INFO_ADMIN: any = {
-  serverType_select: '#modalFormDiv ul:nth-child(3) .formLiWidth3 #serverType',
+  websiteprincipalcertificatetypeVO_select: '#websiteprincipalcertificatetypeVO',
+  websiteprincipalcertificatenum_input: '#websiteprincipalcertificatenum',
+  isLongTermUl_radio: '#isLongTermUl li input',
+  certificateValidityStart_input_date:
+    '#unitprincipalcertificatetypeIdUl .formLiWidth3 #beginDateFind',
+  certificateValidityEnd_input_date: '#unitprincipalcertificatetypeIdUl .formLiWidth3 #endDateFind',
+  websiteprincipalname_input: '#websiteprincipalname',
+  websiteprincipalmobilephone_input: '#websiteprincipalmobilephone',
+  websiteprincipaltel_input: '#websiteprincipaltel',
+  websiteprincipalemergencytel_input: '#websiteprincipalemergencytel',
+  websiteprincipalemail_input: '#websiteprincipalemail',
+  webinstantmessageid_select: '#webinstantmessageid',
+  instantmessageaccount_input: '#webinstantmessageaccount',
+  remark_input: '#remarkMode',
 };
 export const BASIC_INFO_ICP: any = {
-  serverType_select: '#modalFormDiv ul:nth-child(3) .formLiWidth3 #serverType',
+  websiteconnenctmodeVODiv_checkout: '#websiteconnenctmodeVODiv ul .formLiWidth8 input',
+  webIpBegin_input: '#ipScopeDiv #ipFirstDiv ul .formLiWidth8 #webIpBegin',
+  webIpEnd_input: '#ipScopeDiv #ipFirstDiv ul .formLiWidth8 #webIpEnd',
+  serveraddressDiv_checkout: '#serveraddressDiv ul .formLiWidth8 input',
 };
 
 export const DispatchEvent = (dom: any, event: string) => {
@@ -100,13 +117,22 @@ const getElementList = (data: any) => {
   return list;
 };
 
+export const thirdStepElementQuery = (str: string): ElementType => {
+  let aIframe: any = document.querySelector('#TB_iframeContent');
+  let bIframe: any = aIframe.contentDocument
+    .querySelector('body')
+    .querySelector('#ThirdStep #recordIframe');
+  let cIframe: any = bIframe.contentDocument.querySelector('.modalFormBody .modalFormBody');
+  return cIframe?.querySelector(str);
+};
+
 export const secondStepElementQuery = (str: string): ElementType => {
   let aIframe: any = document.querySelector('#TB_iframeContent');
   let bIframe: any = aIframe.contentDocument
     .querySelector('body')
     .querySelector('#SecondStep #websideIframe');
   let cIframe: any = bIframe.contentDocument.querySelector('body').querySelector('#websideIframe');
-  let dIframe: any = cIframe.contentDocument.querySelector('body #modalFormBody');
+  let dIframe: any = cIframe.contentDocument.querySelector('body');
   return dIframe?.querySelector(str);
 };
 export const secondStepElementQueryAll = (str: string): ElementType => {
@@ -127,10 +153,71 @@ export const queryFirstIframeEleAll = (dom: any, str: string): ElementType => {
 };
 
 export const setThreeStepData = (data: any) => {
-  let iframe: any = secondStepElementQuery('#modalFormBody');
-  // let dom =
-  // #wsManageContentfileUl1 .preLiHide #annexFile9120915
-  console.log(iframe);
+  let iframe: any = thirdStepElementQuery('#traditionUploadDiv');
+  let inputFile = iframe.querySelector('#unitpic0ul #unitpic0');
+  console.log(inputFile);
+
+  function getFileNameFromUrl(url: string | URL) {
+    const path = new URL(url).pathname;
+    return path.substring(path.lastIndexOf('/') + 1);
+  }
+  function loadImageAsFile(url: string | URL) {
+    return new Promise((resolve, reject) => {
+      // 创建一个 HTTP 请求对象
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', url);
+      xhr.responseType = 'blob';
+
+      // 当请求加载完成后触发事件
+      xhr.onload = function () {
+        if (xhr.status === 200) {
+          // 创建一个 Blob 对象
+          const blob = xhr.response;
+
+          // 获取图片文件名
+          const fileName = getFileNameFromUrl(url);
+
+          try {
+            // 创建一个 File 对象
+            const file = new File([blob], fileName, { type: blob.type });
+
+            // 返回转换后的 File 对象
+            resolve(file);
+          } catch (error) {
+            reject(new Error('无法创建文件对象'));
+          }
+        } else {
+          reject(new Error(`请求失败: ${xhr.statusText}`));
+        }
+      };
+
+      // 发送 HTTP 请求
+      xhr.send();
+    });
+  }
+  const imageUrl =
+    'https://img1.baidu.com/it/u=730099028,263687001&fm=253&fmt=auto&app=138&f=PNG?w=855&h=500';
+
+  loadImageAsFile(imageUrl)
+    .then((file: any) => {
+      // 在这里可以使用转换后的 File 对象
+      console.log(file);
+      const dataTransfer = new DataTransfer();
+
+      // 获取所选择的图片文件
+
+      if (file) {
+        // 将所选择的图片文件添加到 DataTransfer 中
+        dataTransfer.items.add(file);
+      }
+
+      // 将 DataTransfer 对象设置为文件选择控件的 files 属性
+      inputFile.files = dataTransfer.files;
+      DispatchEvent(inputFile, 'change');
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 };
 
 export const setSecondDownInfoStepData = (data: any) => {
@@ -223,6 +310,16 @@ export const recursiveExecution = (params: any, callback: any) => {
       }
     }
   }
+  if (type === 'checkout') {
+    let checkout: any = queryFirstIframeEleAll(iframe, element);
+    let reg_list = data[key].split(',');
+    for (let i of checkout) {
+      console.log('检查', i.value, data[key]);
+      if (reg_list.includes(i.id)) {
+        i.click();
+      }
+    }
+  }
   if (type === 'select') {
     if (custom === 'click') {
       let dom: any = queryFirstIframeEle(iframe, element);
@@ -234,6 +331,8 @@ export const recursiveExecution = (params: any, callback: any) => {
       DispatchEvent(dom, 'change');
     }
   }
+
+  // 延时等待请求填充数据处理
   if (type === 'select' || (type === 'input' && custom === 'date') || type === 'radio') {
     let duration = 800;
     if (type === 'input' && custom === 'date') {

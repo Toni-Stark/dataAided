@@ -6,12 +6,7 @@ import {
   SET_SECOND_STEP_DATA,
 } from '@/common/agreement';
 import { MessageEventType } from '@/pages/types';
-import {
-  setFirstStepData,
-  setSecondDownStepData,
-  setSecondStepData,
-  setThreeStepData,
-} from '@/pages/content/output';
+import { setFirstStepData, setSecondStepData, setThreeStepData } from '@/pages/content/output';
 chrome.runtime.onMessage.addListener(
   (
     request: MessageEventType,
