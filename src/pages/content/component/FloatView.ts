@@ -8,6 +8,7 @@ import {
   SET_FIRST_STEP_DATA,
   SET_SECOND_STEP_DATA,
 } from '@/common/agreement';
+import { MAIN_UNIT } from '@/pages/content/output';
 
 // 设置css;
 export const createContentStyle = (css: string) => {
@@ -68,6 +69,8 @@ export const createContentView = () => {
 
 const CreateDataModal = () => {
   let floatView = queryEle('.floatView');
+  let NewTitle = createDom({ tag: 'div', cla: 'NewTitle', txt: '新版本' });
+  floatView?.appendChild(NewTitle);
 
   let FirstStepModal: any = queryEle('.floatView>.FirstStepModal');
   FirstStepModal?.remove();

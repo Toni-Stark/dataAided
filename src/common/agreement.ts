@@ -55,3 +55,9 @@ export const SET_FIRST_STEP_DATA = 'set_first_step_data';
 export const SET_SECOND_STEP_DATA = 'set_second_step_data';
 // 填入备案第三步数据
 export const SET_FINAL_STEP_DATA = 'set_final_step_data';
+// 资源文件嵌入方式一
+export const SET_FIRST_STEP_UPLOAD = 'set_first_step_upload';
+// 资源文件嵌入方式二
+export const SET_SECOND_STEP_UPLOAD = 'set_second_step_upload';
+// 资源文件嵌入方式三
+export const SET_THIRD_STEP_UPLOAD = 'set_third_step_upload';
