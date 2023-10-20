@@ -178,3 +178,16 @@ export const getTime = (time: string | number | Date, type: 'date' | 'month' | '
   if (type === 'month') return new Date(time).getMonth() + 1;
   if (type === 'year') return new Date(time).getFullYear();
 };
+
+export const getPowerToTwo = (num: any) => {
+  let power = 0;
+  while (num > 1) {
+    if (num % 2 === 0) {
+      num /= 2;
+      power += 1;
+    } else {
+      return -1; // 表示 num 不是 2 的任何次方
+    }
+  }
+  return power;
+};

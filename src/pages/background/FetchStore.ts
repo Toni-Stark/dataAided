@@ -21,7 +21,7 @@ export const FetchApi = ({ url, method, data, type }: FetchType) => {
       method,
       mode: 'cors',
       headers: {
-        'Content-Type': contentType,
+        'Content-Type': 'multipart/form-data',
       },
       body: JSON.stringify(data),
     };
@@ -45,8 +45,6 @@ export const FetchApi = ({ url, method, data, type }: FetchType) => {
 };
 
 export const UploadFiles = async (files: any, blob: any) => {
-  console.log(blob, 'logs');
-  // multipart/form-data
   // application/x-www-form-urlencoded
   // multipart/form-data
   let formData = new FormData();

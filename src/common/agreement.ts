@@ -47,8 +47,10 @@ export const CHANGE_ONE_PASS_SERVICES = 'change_one_pass_services';
 // 修改列表数据ACTIVITY
 export const OPEN_DETAIL_EDIT_ACTIVITY = 'open_detail_edit_activity';
 
+// 新版备案数据
+export const NEW_VERSION_FILING_DATA = 'new_version_filing_data';
 // 备案数据
-export const FILING_DATA = 'filing_data';
+export const OLD_VERSION_FILING_DATA = 'old_version_filing_data';
 // 填入备案第一步数据
 export const SET_FIRST_STEP_DATA = 'set_first_step_data';
 // 填入备案第二步数据
@@ -61,3 +63,11 @@ export const SET_FIRST_STEP_UPLOAD = 'set_first_step_upload';
 export const SET_SECOND_STEP_UPLOAD = 'set_second_step_upload';
 // 资源文件嵌入方式三
 export const SET_THIRD_STEP_UPLOAD = 'set_third_step_upload';
+// 老版本网页内容输入方式三
+export const SET_FINAL_OLD_DATA = 'set_final_old_data';
+// 老版本网页添加网站
+export const SET_FINAL_OLD_DATA_SECOND = 'set_final_old_data_second';
+// 老版本网页添加网站
+export const SET_FINAL_OLD_MAIN_FILE = 'set_final_old_main_file';
+// 老版本网页添加网站
+export const SET_FINAL_OLD_WEB_FILE = 'set_final_old_web_file';

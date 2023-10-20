@@ -24,6 +24,7 @@ export type MessageEventType<T = any> = {
   create?: string;
   list?: any;
   cate?: any;
+  num?: any;
 };
 
 export interface CreateElementType {
