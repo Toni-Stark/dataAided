@@ -11,6 +11,7 @@ import {
   GET_DATA_NEW_JUMP,
   SETTING_LISTENER_SCREEN,
   GET_DATA_OLD_JUMP,
+  GET_FILES_ADDRESS,
 } from '@/common/agreement';
 import { sendMessageQueryCurrent } from '@/pages/background/SettingStore';
 import { GetAPI } from '@/pages/background/FetchStore';
@@ -101,6 +102,11 @@ export const listenerDataInfoMessage = (mobiles: string[]) => {
         });
       }
     }
+    if (response?.type === GET_FILES_ADDRESS) {
+      const { tab } = sender;
+      if (!tab?.id) return true;
+      loadImageFile(response.url, tab.id, response.params);
+    }
     return true;
   });
 };
@@ -132,4 +138,25 @@ const getCurrentData = (id: any, callback: any) => {
   }).then((res: any) => {
     callback(res.data);
   });
+};
+
+const loadImageFile = (url: string, tabId: any, params: any) => {
+  let fileName = getFileNameFromUrl(url);
+  fetch(url)
+    .then((res) => {
+      return res.blob();
+    })
+    .then((blob) => {
+      const file = new File([blob], fileName, { type: blob.type });
+      sendMessageQueryCurrent(tabId, {
+        msg: GET_FILES_ADDRESS,
+        file,
+        params,
+      });
+    });
+};
+
+const getFileNameFromUrl = (url: string) => {
+  const path = new URL(url).pathname;
+  return path.substring(path.lastIndexOf('/') + 1);
 };

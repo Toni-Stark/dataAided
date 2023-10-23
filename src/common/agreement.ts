@@ -78,3 +78,12 @@ export const SETTING_LISTENER_SCREEN = 'setting_listener_screen';
 export const GET_DATA_NEW_JUMP = 'get_data_new_jump';
 // 更新数据进入旧系统
 export const GET_DATA_OLD_JUMP = 'get_data_old_jump';
+
+// 请求图片资源文件
+export const GET_FILES_ADDRESS = 'get_files_address';
+// 资源文件嵌入方式四
+export const SET_FOUR_STEP_UPLOAD = 'set_four_step_upload';
+// 资源文件嵌入方式五
+export const SET_FIVE_STEP_UPLOAD = 'set_five_step_upload';
+// 资源文件嵌入方式六
+export const SET_SIX_STEP_UPLOAD = 'set_six_step_upload';

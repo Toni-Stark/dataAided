@@ -26,6 +26,8 @@ export type MessageEventType<T = any> = {
   cate?: any;
   num?: any;
   change?: any;
+  params: any;
+  file: any;
 };
 
 export interface CreateElementType {

@@ -2,6 +2,7 @@ import {
   ASK_CATE_TO_SERVICES,
   COPY_INFO_TO_SERVICES,
   EDI,
+  GET_FILES_ADDRESS,
   SCREENSHOT_SHORTCUT,
   SETTING_INDEX_EDI_SERVICES,
   SETTING_INDEX_ICP_SERVICES,
@@ -98,6 +99,14 @@ export const updateStepDataIndex = (type: string, step: string, num: number) => 
 // 修改当前数据的地址老版本
 export const createDataForServices = (event: string, position: string, id: number) => {
   chrome.runtime.sendMessage({ type: SETTING_LISTENER_SCREEN, event, position, id }).then((res) => {
+    console.log('info-res------------------>');
+    console.log(res);
+    console.log('info-res------------------>');
+  });
+};
+// 上传图片文件
+export const createRequestFileServices = (url: string, params: any) => {
+  chrome.runtime.sendMessage({ type: GET_FILES_ADDRESS, url, params }).then((res) => {
     console.log('info-res------------------>');
     console.log(res);
     console.log('info-res------------------>');

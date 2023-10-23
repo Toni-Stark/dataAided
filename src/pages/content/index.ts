@@ -7,6 +7,7 @@ import {
 import {
   GET_DATA_NEW_JUMP,
   GET_DATA_OLD_JUMP,
+  GET_FILES_ADDRESS,
   OPEN_MOUSE_LISTENER,
   SET_FINAL_OLD_DATA,
   SET_FINAL_OLD_DATA_SECOND,
@@ -14,13 +15,19 @@ import {
   SET_FINAL_OLD_WEB_FILE,
   SET_FINAL_STEP_DATA,
   SET_FIRST_STEP_DATA,
+  SET_FIRST_STEP_UPLOAD,
   SET_SECOND_STEP_DATA,
+  SET_SECOND_STEP_UPLOAD,
+  SET_THIRD_STEP_UPLOAD,
   SETTING_LISTENER_SCREEN,
 } from '@/common/agreement';
 import { MessageEventType } from '@/pages/types';
 import {
   setFirstStepData,
   setSecondStepData,
+  setThreeResultFirstUpload,
+  setThreeResultSecondUpload,
+  setThreeResultThirdUpload,
   setThreeStepData,
   setWriteOldData,
   setWriteOldDataSecond,
@@ -78,6 +85,30 @@ chrome.runtime.onMessage.addListener(
     if (request?.msg === SETTING_LISTENER_SCREEN) {
       settingListenerScreen();
       return;
+    }
+    if (request?.msg === GET_FILES_ADDRESS) {
+      const { file } = request;
+      const { type, element, key, manager, contentEl, info } = request.params;
+      console.log(request.params, '获取params数据');
+      if (type === SET_FIRST_STEP_UPLOAD) {
+        setThreeResultFirstUpload({
+          file: file,
+          element,
+        });
+      } else if (type === SET_SECOND_STEP_UPLOAD) {
+        setThreeResultSecondUpload({
+          file: file,
+          element,
+          key,
+        });
+      } else if (type === SET_THIRD_STEP_UPLOAD) {
+        setThreeResultThirdUpload({
+          file: file,
+          info,
+          manager,
+          contentEl,
+        });
+      }
     }
 
     sendResponse('received');

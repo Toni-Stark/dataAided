@@ -5,6 +5,7 @@ import {
   SET_SECOND_STEP_UPLOAD,
   SET_THIRD_STEP_UPLOAD,
 } from '@/common/agreement';
+import { createRequestFileServices } from '@/pages/content/messageStore';
 
 export const MAIN_UNIT: any = {
   unitname_textarea: '#FirstStep #formDiv #main_unit ul:first-child .formLiWidth8 .textareaClass',
@@ -319,24 +320,11 @@ export const recursiveExecution = (params: any, callback: any) => {
     dom.value = data[key];
   }
   if (type === 'input') {
-    // if (custom === 'date') {
-    //   let dom: any = queryFirstIframeEle(iframe, element);
-    //   if (!dom?.disabled) {
-    //     dom.click();
-    //     setTimeout(() => {
-    //       let dateIframe: any = document.querySelectorAll('iframe')[1];
-    //       let dateBody: any = dateIframe.contentDocument.querySelector('body');
-    //       dateTimeSetting({ body: dateBody, value: data[key] });
-    //     }, 200);
-    //   }
-    // } else {
     let dom: any = queryFirstIframeEle(iframe, element);
     dom.value = data[key];
     DispatchEvent(dom, 'focus');
-    // }
   }
   if (type === 'upload') {
-    console.log(data[key], '资源输出');
     if (typeof data[key] === 'object') {
       for (let i of data[key]) {
         if (custom === 'have') {
@@ -384,12 +372,10 @@ export const recursiveExecution = (params: any, callback: any) => {
   if (type === 'checkout') {
     if (custom === 'upload') {
       let checkout: any = queryFirstIframeEleAll(iframe, element);
-      console.log(data[key], '数据集合');
-
       let list: any = [];
-      data[key].map((item: any) => {
+      for (let item of data[key]) {
         list.push(item.approval_type);
-      });
+      }
       for (let i of checkout) {
         if (list.includes(i.value)) {
           i.click();
@@ -579,6 +565,7 @@ export const setThreeResultThirdUpload = ({ file, info, manager, contentEl }: an
 };
 
 const currentUploadFile = ({ data, element, type, key, info, manager, contentEl }: any) => {
+  // loadImageFileServices(data, { element, type, key, info, manager, contentEl });
   loadImageFile(data).then((res: any) => {
     if (type === SET_FIRST_STEP_UPLOAD) {
       setThreeResultFirstUpload({
@@ -601,6 +588,10 @@ const currentUploadFile = ({ data, element, type, key, info, manager, contentEl 
     }
   });
 };
+
+// const loadImageFileServices = (url: string, params: any) => {
+//   createRequestFileServices(url, params);
+// };
 const loadImageFile = (url: string) => {
   return new Promise((resolve, reject) => {
     // 创建一个 HTTP 请求对象
@@ -1064,13 +1055,10 @@ const setUploadFile = ({ data, index, elements }: any, callback: any) => {
       let mainElement = '.x-combo-list:last-child';
       let typeViews: any;
       if (elList?.typeId) {
-        console.log('body #' + elList.typeId);
         typeViews = finalElementQueryFilesBody('body #' + elList.typeId);
       } else {
-        console.log(mainElement);
         typeViews = finalElementQueryFilesBody('body ' + mainElement);
       }
-      console.log(typeViews, 'typeViews');
       let typeList: any = queryFirstIframeEleAll(
         typeViews,
         '.x-combo-list-inner .x-combo-list-item'
