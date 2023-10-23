@@ -35,7 +35,7 @@ chrome.runtime.onMessage.addListener(
     sender: chrome.runtime.MessageSender,
     sendResponse: (response: string) => void
   ) => {
-    console.log(request, '页面的变化');
+    console.log(sender,request, '页面的变化');
     if (document.readyState !== 'complete') return;
     if (request?.msg === OPEN_MOUSE_LISTENER) {
       createContentView(request.data);
@@ -219,9 +219,10 @@ const settingListenerScreen = () => {
     let id = getAttributeData(item, 'data-batools_id');
     let type = getAttributeData(item, 'data-batools_type');
     let baseUrl = getAttributeData(item, 'data-url');
-    if (type === '1') {
+    if (type == '1') {
       item?.removeEventListener('click', () => {});
       item.addEventListener('click', (e: any) => {
+        console.log(12312312, baseUrl, id)
         e.preventDefault();
         createDataForServices(GET_DATA_NEW_JUMP, baseUrl, id);
       });
@@ -233,9 +234,10 @@ const settingListenerScreen = () => {
     let id = getAttributeData(item, 'data-batools_id');
     let type = getAttributeData(item, 'data-batools_type');
     let baseUrl = getAttributeData(item, 'data-url');
-    if (type === '2') {
+    if (type == '2') {
       item?.removeEventListener('click', () => {});
       item.addEventListener('click', (e: any) => {
+        console.log(2222222, baseUrl, id)
         e.preventDefault();
         createDataForServices(GET_DATA_OLD_JUMP, baseUrl, id);
       });

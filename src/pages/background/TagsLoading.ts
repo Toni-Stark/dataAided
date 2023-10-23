@@ -12,7 +12,6 @@ export const listenerTagLoadingMessage = () => {
 
       // 验证是否多次运行当前页面；
       let res = regCurrentScreenRefresh(recently, tab);
-      console.log(123123123, recently, res);
       if (res || data.dateTimes !== oldFinalData.dateTimes) {
         data = oldFinalData;
         chrome.tabs.sendMessage(tabId, { msg: OPEN_MOUSE_LISTENER, num: 1, data: oldFinalData });
@@ -25,6 +24,20 @@ export const listenerTagLoadingMessage = () => {
         chrome.tabs.sendMessage(tabId, { msg: SETTING_LISTENER_SCREEN });
       }
     }, 1000);
+  });
+  chrome.tabs.onActivated.addListener(function(activeInfo) {
+    // 获取当前活动标签页的ID
+    const tabId = activeInfo.tabId;
+
+    // 根据ID获取当前标签页的信息
+    chrome.tabs.get(tabId, function(tab) {
+      // 获取该标签页的标题和URL
+      let isSystem = verifyOldVersionPath(tab.url, '/batools/enter/index');
+      console.log('监听页面', isSystem)
+      if(isSystem){
+        recently = {};
+      }
+    });
   });
 };
 

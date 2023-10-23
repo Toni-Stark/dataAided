@@ -77,13 +77,12 @@ export const listenerDataInfoMessage = (mobiles: string[]) => {
     }
     if (response?.type === SETTING_LISTENER_SCREEN) {
       const { position, id } = response;
-      const { tab } = sender;
-      getCurrentData((result: any) => {
-        console.log(result, '获取数据');
+      getCurrentData(id, (result: any) => {
         oldFinalData = { ...result, dateTimes: new Date().getTime() };
       });
       if (response?.event === GET_DATA_NEW_JUMP) {
         queryAllScreen(position, (res: any) => {
+          console.log(response,position, res, '获取数据');
           if (res?.id) {
             chrome.tabs.update(res?.id, { active: true });
             chrome.tabs.reload(res?.id);
@@ -98,7 +97,7 @@ export const listenerDataInfoMessage = (mobiles: string[]) => {
             chrome.tabs.update(res?.id, { active: true });
             chrome.tabs.reload(res?.id);
           } else {
-            chrome.tabs.create({ url: position + 'ispis-login-web/' });
+            chrome.tabs.create({ url: position });
           }
         });
       }
@@ -109,7 +108,7 @@ export const listenerDataInfoMessage = (mobiles: string[]) => {
 
 const queryAllScreen = (position: string, callback: any) => {
   // 新系统链接;
-  let strList = [position];
+    let strList = [position];
   // 旧系统链接
   let result: any = undefined;
   chrome.tabs.query({}, function (tabs) {
@@ -119,7 +118,7 @@ const queryAllScreen = (position: string, callback: any) => {
       let url: any = tab.url;
       for (let i of strList) {
         if (url.indexOf(i) !== -1) {
-          result = tab;
+          result = undefined;
         }
       }
     });
@@ -127,10 +126,10 @@ const queryAllScreen = (position: string, callback: any) => {
   });
 };
 
-const getCurrentData = (callback: any) => {
-  let BaseUrl = appConfig.dev;
+const getCurrentData = (id: any, callback: any) => {
+  let BaseUrl = appConfig.prod;
   GetAPI({
-    url: BaseUrl + '/batools/enter/info?id=2&merchant_sn=7J6zvmx81',
+    url: BaseUrl + '/api/batools/enter/info?id='+id+'&merchant_sn=7J6zvmx81',
   }).then((res: any) => {
     callback(res.data);
   });

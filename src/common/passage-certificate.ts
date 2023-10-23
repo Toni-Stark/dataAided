@@ -1,4 +1,3 @@
-import { data_maps } from '@/assets/js/map';
 
 export const PathUrl = [
   'www.zhipin.com',
@@ -49,87 +48,6 @@ export const createPeopleNameList = () => {
   let nameIndex = Math.floor(Math.random() * 99.9);
   let nickIndex = Math.floor(Math.random() * 1.99);
   return NAMES.substring(nameIndex, nameIndex + 1) + NICK_NAME[nickIndex];
-};
-
-export const getTranslateAddress = (str: string) => {
-  const getData = (obj: any) => {
-    let arr = Object.keys(obj.c);
-    let num = Math.floor(Math.random() * (arr.length - 0.1));
-    return obj.c[arr[num]];
-  };
-  const getCoin = (regStr: any) => {
-    let r = regStr.slice(-1, regStr.length);
-    let po = Math.floor(1 + Math.random() * 200) + '号';
-    if (
-      [
-        '街',
-        '路',
-        '道',
-        '园',
-        '港',
-        '湾',
-        '岗',
-        '口',
-        '桥',
-        '沟',
-        '门',
-        '碑',
-        '村',
-        '店',
-        '坎',
-        '镇',
-      ].includes(r)
-    ) {
-      return po;
-    }
-    if (
-      ['溪', '湖', '江', '坝', '埂', '塘', '寺', '滩', '河', '铺', '驿', '石', '梁'].includes(r)
-    ) {
-      return '街道' + po;
-    }
-    if (['堰', '泉'].includes(r)) {
-      return '古镇' + po;
-    }
-    if (['塔', '山', '峡'].includes(r)) {
-      return '风景区' + po;
-    }
-    return '镇' + po;
-  };
-  let data: any;
-  function getMapsIndex(list: any): any {
-    let arrIndex;
-    arrIndex = list[Math.floor(Math.random() * (list.length - 0.1))];
-    return data_maps[arrIndex];
-  }
-  if (['四川', '成都'].includes(str)) {
-    data = getMapsIndex([5101]);
-  }
-  if (['重庆'].includes(str)) {
-    data = getMapsIndex([5001]);
-  }
-  if (['山东', '济南', '淄博', '青岛'].includes(str)) {
-    data = getMapsIndex([3701, 3702, 3703]);
-  }
-  if (['贵州', '贵阳', '遵义'].includes(str)) {
-    data = getMapsIndex([5201, 5203]);
-  }
-  if (['湖北', '武汉', '襄阳'].includes(str)) {
-    data = getMapsIndex([5201, 5203]);
-  }
-  if (['天津'].includes(str)) {
-    data = getMapsIndex([1201]);
-  }
-  if (['岳阳'].includes(str)) {
-    data = getMapsIndex([4306]);
-  }
-  if (['内蒙古', '包头', '呼和浩特'].includes(str)) {
-    data = getMapsIndex([1501, 1502]);
-  }
-  let distinguish = getData(data);
-  let county = getData(distinguish);
-  let coin = getCoin(county.n);
-
-  return str + '市' + distinguish.n + '区' + county.n + coin;
 };
 
 export function trimSpecial(str: string) {
