@@ -8,9 +8,15 @@ import {
   SET_FINAL_OLD_DATA_SECOND,
   SET_FINAL_OLD_MAIN_FILE,
   SET_FINAL_OLD_WEB_FILE,
+  GET_DATA_NEW_JUMP,
+  SETTING_LISTENER_SCREEN,
+  GET_DATA_OLD_JUMP,
 } from '@/common/agreement';
 import { sendMessageQueryCurrent } from '@/pages/background/SettingStore';
-import { oldFinalData } from '@/common/element';
+import { GetAPI } from '@/pages/background/FetchStore';
+import { appConfig } from '@/common/config';
+
+export let oldFinalData: any = {};
 
 export const listenerDataInfoMessage = (mobiles: string[]) => {
   chrome.runtime.onMessage?.removeListener(() => {});
@@ -67,9 +73,65 @@ export const listenerDataInfoMessage = (mobiles: string[]) => {
           num: response?.num,
         });
       }
-
       return true;
     }
+    if (response?.type === SETTING_LISTENER_SCREEN) {
+      const { position, id } = response;
+      const { tab } = sender;
+      getCurrentData((result: any) => {
+        console.log(result, '获取数据');
+        oldFinalData = { ...result, dateTimes: new Date().getTime() };
+      });
+      if (response?.event === GET_DATA_NEW_JUMP) {
+        queryAllScreen(position, (res: any) => {
+          if (res?.id) {
+            chrome.tabs.update(res?.id, { active: true });
+            chrome.tabs.reload(res?.id);
+          } else {
+            chrome.tabs.create({ url: position + 'user/gotoLoginPage.action' });
+          }
+        });
+      }
+      if (response?.event === GET_DATA_OLD_JUMP) {
+        queryAllScreen(position, (res: any) => {
+          if (res?.id) {
+            chrome.tabs.update(res?.id, { active: true });
+            chrome.tabs.reload(res?.id);
+          } else {
+            chrome.tabs.create({ url: position + 'ispis-login-web/' });
+          }
+        });
+      }
+    }
     return true;
+  });
+};
+
+const queryAllScreen = (position: string, callback: any) => {
+  // 新系统链接;
+  let strList = [position];
+  // 旧系统链接
+  let result: any = undefined;
+  chrome.tabs.query({}, function (tabs) {
+    // 遍历所有标签页
+    tabs.forEach(function (tab) {
+      // 在控制台输出标签页ID和URL
+      let url: any = tab.url;
+      for (let i of strList) {
+        if (url.indexOf(i) !== -1) {
+          result = tab;
+        }
+      }
+    });
+    callback(result);
+  });
+};
+
+const getCurrentData = (callback: any) => {
+  let BaseUrl = appConfig.dev;
+  GetAPI({
+    url: BaseUrl + '/batools/enter/info?id=2&merchant_sn=7J6zvmx81',
+  }).then((res: any) => {
+    callback(res.data);
   });
 };

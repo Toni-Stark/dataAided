@@ -71,3 +71,10 @@ export const SET_FINAL_OLD_DATA_SECOND = 'set_final_old_data_second';
 export const SET_FINAL_OLD_MAIN_FILE = 'set_final_old_main_file';
 // 老版本网页添加网站
 export const SET_FINAL_OLD_WEB_FILE = 'set_final_old_web_file';
+
+// 后台添加页面动作监听
+export const SETTING_LISTENER_SCREEN = 'setting_listener_screen';
+// 更新数据进入新系统
+export const GET_DATA_NEW_JUMP = 'get_data_new_jump';
+// 更新数据进入旧系统
+export const GET_DATA_OLD_JUMP = 'get_data_old_jump';

@@ -5,6 +5,7 @@ import {
   SCREENSHOT_SHORTCUT,
   SETTING_INDEX_EDI_SERVICES,
   SETTING_INDEX_ICP_SERVICES,
+  SETTING_LISTENER_SCREEN,
   UPLOAD_IMG_FILES,
   WAKE_FILE_SELECTION,
 } from '@/common/agreement';
@@ -88,6 +89,15 @@ export const updateStepData = (type: string, step: string) => {
 // 修改当前数据的地址老版本
 export const updateStepDataIndex = (type: string, step: string, num: number) => {
   chrome.runtime.sendMessage({ type, step, num }).then((res) => {
+    console.log('info-res------------------>');
+    console.log(res);
+    console.log('info-res------------------>');
+  });
+};
+
+// 修改当前数据的地址老版本
+export const createDataForServices = (event: string, position: string, id: number) => {
+  chrome.runtime.sendMessage({ type: SETTING_LISTENER_SCREEN, event, position, id }).then((res) => {
     console.log('info-res------------------>');
     console.log(res);
     console.log('info-res------------------>');

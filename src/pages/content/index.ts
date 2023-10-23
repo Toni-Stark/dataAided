@@ -5,6 +5,8 @@ import {
   CreateStepTwoDataStep,
 } from '@/pages/content/component/FloatView';
 import {
+  GET_DATA_NEW_JUMP,
+  GET_DATA_OLD_JUMP,
   OPEN_MOUSE_LISTENER,
   SET_FINAL_OLD_DATA,
   SET_FINAL_OLD_DATA_SECOND,
@@ -13,6 +15,7 @@ import {
   SET_FINAL_STEP_DATA,
   SET_FIRST_STEP_DATA,
   SET_SECOND_STEP_DATA,
+  SETTING_LISTENER_SCREEN,
 } from '@/common/agreement';
 import { MessageEventType } from '@/pages/types';
 import {
@@ -24,13 +27,15 @@ import {
   setWriteOldMainFile,
   setWriteOldWebFile,
 } from '@/pages/content/output';
-import { getPowerToTwo } from '@/pages/content/tools';
+import { getPowerToTwo, queryEleAll } from '@/pages/content/tools';
+import { createDataForServices } from '@/pages/content/messageStore';
 chrome.runtime.onMessage.addListener(
   (
     request: MessageEventType,
     sender: chrome.runtime.MessageSender,
     sendResponse: (response: string) => void
   ) => {
+    console.log(request, '页面的变化');
     if (document.readyState !== 'complete') return;
     if (request?.msg === OPEN_MOUSE_LISTENER) {
       createContentView(request.data);
@@ -68,6 +73,10 @@ chrome.runtime.onMessage.addListener(
     }
     if (request?.msg === SET_FINAL_OLD_WEB_FILE) {
       setWriteOldWebFile(request.data, request.num);
+      return;
+    }
+    if (request?.msg === SETTING_LISTENER_SCREEN) {
+      settingListenerScreen();
       return;
     }
 
@@ -122,7 +131,7 @@ const getStepData = (res: any, num: number) => {
       let language = item.language_type.split(',').map((item: any) => {
         return getPowerToTwo(item);
       });
-
+      console.log(item.approval_list);
       obj['basic_info'] = {
         serverType: item.server_type,
         websitename: item.name,
@@ -197,6 +206,40 @@ const getStepData = (res: any, num: number) => {
       websideidentitycardpic0ul: img_main_cert,
     };
     return data;
+  }
+};
+
+const getAttributeData = (dom: any, key: string) => {
+  return dom.getAttribute(key);
+};
+const settingListenerScreen = () => {
+  const element_site1: any = queryEleAll('.jump_site_1');
+  if (element_site1.length <= 0) return;
+  for (let item of element_site1) {
+    let id = getAttributeData(item, 'data-batools_id');
+    let type = getAttributeData(item, 'data-batools_type');
+    let baseUrl = getAttributeData(item, 'data-url');
+    if (type === '1') {
+      item?.removeEventListener('click', () => {});
+      item.addEventListener('click', (e: any) => {
+        e.preventDefault();
+        createDataForServices(GET_DATA_NEW_JUMP, baseUrl, id);
+      });
+    }
+  }
+  const element_site2: any = queryEleAll('.jump_site_2');
+  if (element_site2.length <= 0) return;
+  for (let item of element_site2) {
+    let id = getAttributeData(item, 'data-batools_id');
+    let type = getAttributeData(item, 'data-batools_type');
+    let baseUrl = getAttributeData(item, 'data-url');
+    if (type === '2') {
+      item?.removeEventListener('click', () => {});
+      item.addEventListener('click', (e: any) => {
+        e.preventDefault();
+        createDataForServices(GET_DATA_OLD_JUMP, baseUrl, id);
+      });
+    }
   }
 };
 

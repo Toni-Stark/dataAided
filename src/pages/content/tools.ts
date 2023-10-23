@@ -180,6 +180,9 @@ export const getTime = (time: string | number | Date, type: 'date' | 'month' | '
 };
 
 export const getPowerToTwo = (num: any) => {
+  if (num == 1) {
+    return '1';
+  }
   let power = 0;
   while (num > 1) {
     if (num % 2 === 0) {

@@ -154,18 +154,28 @@ export const CreateOldFileList = (dom: any) => {
 };
 export const CreateWebDataModal = (data: any) => {
   const { web_site } = data;
-  let oldFileView = queryEle('.oldFileView');
-  let WebModal: any = queryEle('.oldFileView>.WebModal');
-  WebModal?.remove();
-  WebModal = createDom({ tag: 'div', cla: 'WebModal' });
-  oldFileView?.appendChild(WebModal);
-  for (let i = 0; i < web_site.length; i++) {
-    let Modal: any = createDom({ tag: 'div', cla: 'OldViewModal', txt: '网站' + (i + 1) });
-    Modal.addEventListener('click', () => {
-      updateStepDataIndex(OLD_VERSION_FILING_DATA, SET_FINAL_OLD_WEB_FILE, i);
-    });
-    WebModal.appendChild(Modal);
-  }
+  let dom: any = document.querySelector(
+    'body .x-panel-bwrap .x-panel-body .x-tree-node .x-tree-node-ct .x-tree-node-el .x-tree-node-anchor'
+  );
+  dom?.click();
+  setTimeout(() => {
+    let dom1: any = document.querySelector(
+      'body .x-panel-bwrap .x-panel-body .x-tree-node .x-tree-node-ct .x-tree-node-leaf'
+    );
+    dom1?.click();
+    let oldFileView = queryEle('.oldFileView');
+    let WebModal: any = queryEle('.oldFileView>.WebModal');
+    WebModal?.remove();
+    WebModal = createDom({ tag: 'div', cla: 'WebModal' });
+    oldFileView?.appendChild(WebModal);
+    for (let i = 0; i < web_site.length; i++) {
+      let Modal: any = createDom({ tag: 'div', cla: 'OldViewModal', txt: '网站' + (i + 1) });
+      Modal.addEventListener('click', () => {
+        updateStepDataIndex(OLD_VERSION_FILING_DATA, SET_FINAL_OLD_WEB_FILE, i);
+      });
+      WebModal.appendChild(Modal);
+    }
+  }, 300);
 };
 export const CreateDataModal = (dom: any) => {
   let floatView = queryEle('.floatView');

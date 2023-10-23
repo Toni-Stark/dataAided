@@ -5,7 +5,6 @@ import {
   SET_SECOND_STEP_UPLOAD,
   SET_THIRD_STEP_UPLOAD,
 } from '@/common/agreement';
-import { upload } from '@testing-library/user-event/dist/upload';
 
 export const MAIN_UNIT: any = {
   unitname_textarea: '#FirstStep #formDiv #main_unit ul:first-child .formLiWidth8 .textareaClass',
@@ -385,14 +384,16 @@ export const recursiveExecution = (params: any, callback: any) => {
   if (type === 'checkout') {
     if (custom === 'upload') {
       let checkout: any = queryFirstIframeEleAll(iframe, element);
+      console.log(data[key], '数据集合');
+
       let list: any = [];
       data[key].map((item: any) => {
-        list.push(item.id);
+        list.push(item.approval_type);
       });
       for (let i of checkout) {
         if (list.includes(i.value)) {
           i.click();
-          let val = data[key].find((item: any) => item.id === i.value);
+          let val = data[key].find((item: any) => item.approval_type === i.value);
           addStepSecondDataFile(val);
         }
       }
@@ -444,7 +445,7 @@ export const recursiveExecution = (params: any, callback: any) => {
   ) {
     let duration = 800;
     if (type === 'input' && custom === 'date') {
-      duration = 1600;
+      duration = 800;
     }
     if (type === 'checkout' && custom === 'upload') {
       let num = data[key].length;
@@ -464,7 +465,7 @@ export const recursiveExecution = (params: any, callback: any) => {
 };
 
 const addStepSecondDataFile = (info: any) => {
-  let contentEl = '#wsManageContentDiv' + info.id;
+  let contentEl = '#wsManageContentDiv' + info.approval_type;
   let manager = secondStepElementQuery(contentEl);
 
   // 设置input值

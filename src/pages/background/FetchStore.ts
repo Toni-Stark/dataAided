@@ -13,10 +13,10 @@
 
 export const FetchApi = ({ url, method, data, type }: FetchType) => {
   return new Promise((resolve) => {
-    let contentType = 'application/json';
-    if (type === 'form') {
-      contentType = 'application/x-www-form-urlencoded';
-    }
+    // let contentType = 'application/json';
+    // if (type === 'form') {
+    //   contentType = 'application/x-www-form-urlencoded';
+    // }
     const option: any = {
       method,
       mode: 'cors',
