@@ -82,7 +82,6 @@ export const listenerDataInfoMessage = (mobiles: string[]) => {
       });
       if (response?.event === GET_DATA_NEW_JUMP) {
         queryAllScreen(position, (res: any) => {
-          console.log(response,position, res, '获取数据');
           if (res?.id) {
             chrome.tabs.update(res?.id, { active: true });
             chrome.tabs.reload(res?.id);
@@ -118,7 +117,7 @@ const queryAllScreen = (position: string, callback: any) => {
       let url: any = tab.url;
       for (let i of strList) {
         if (url.indexOf(i) !== -1) {
-          result = undefined;
+          result = tab;
         }
       }
     });
