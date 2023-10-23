@@ -107,7 +107,7 @@ export const listenerDataInfoMessage = (mobiles: string[]) => {
 
 const queryAllScreen = (position: string, callback: any) => {
   // 新系统链接;
-    let strList = [position];
+  let strList = [position];
   // 旧系统链接
   let result: any = undefined;
   chrome.tabs.query({}, function (tabs) {
@@ -128,7 +128,7 @@ const queryAllScreen = (position: string, callback: any) => {
 const getCurrentData = (id: any, callback: any) => {
   let BaseUrl = appConfig.prod;
   GetAPI({
-    url: BaseUrl + '/api/batools/enter/info?id='+id+'&merchant_sn=7J6zvmx81',
+    url: BaseUrl + '/api/batools/enter/info?id=' + id + '&merchant_sn=7J6zvmx81',
   }).then((res: any) => {
     callback(res.data);
   });

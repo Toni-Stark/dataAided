@@ -22,16 +22,12 @@
   "host_permissions": [
     "<all_urls>"
   ],
-  "chrome_url_overrides": {
-    "newtab": "newtab.html"
-  },
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*", "<all_urls>"],
       "js": ["content.js"]
     }
   ],
-  "devtools_page": "devtools.html",
   "icons": {
     "128": "logo512.png"
   },

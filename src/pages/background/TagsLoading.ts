@@ -25,16 +25,16 @@ export const listenerTagLoadingMessage = () => {
       }
     }, 1000);
   });
-  chrome.tabs.onActivated.addListener(function(activeInfo) {
+  chrome.tabs.onActivated.addListener(function (activeInfo) {
     // 获取当前活动标签页的ID
     const tabId = activeInfo.tabId;
 
     // 根据ID获取当前标签页的信息
-    chrome.tabs.get(tabId, function(tab) {
+    chrome.tabs.get(tabId, function (tab) {
       // 获取该标签页的标题和URL
       let isSystem = verifyOldVersionPath(tab.url, '/batools/enter/index');
-      console.log('监听页面', isSystem)
-      if(isSystem){
+      console.log('监听页面', isSystem);
+      if (isSystem) {
         recently = {};
       }
     });

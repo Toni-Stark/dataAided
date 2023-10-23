@@ -35,7 +35,7 @@ chrome.runtime.onMessage.addListener(
     sender: chrome.runtime.MessageSender,
     sendResponse: (response: string) => void
   ) => {
-    console.log(sender,request, '页面的变化');
+    console.log(sender, request, '页面的变化');
     if (document.readyState !== 'complete') return;
     if (request?.msg === OPEN_MOUSE_LISTENER) {
       createContentView(request.data);
@@ -159,13 +159,13 @@ const getStepData = (res: any, num: number) => {
       };
       let arr = item.ip_address.split(';');
       let arrRes: any = [];
-      arr.map((ips: any) => {
+      for (let ips of arr) {
         let ipList = ips.split('-');
         arrRes.push({
           webIpBegin: ipList[0],
           webIpEnd: ipList[1],
         });
-      });
+      }
       obj['basic_info_icp'] = {
         websiteconnenctmodeVODiv: item.connect_mode,
         ipScopeDiv: arrRes,
@@ -222,7 +222,7 @@ const settingListenerScreen = () => {
     if (type == '1') {
       item?.removeEventListener('click', () => {});
       item.addEventListener('click', (e: any) => {
-        console.log(12312312, baseUrl, id)
+        console.log(12312312, baseUrl, id);
         e.preventDefault();
         createDataForServices(GET_DATA_NEW_JUMP, baseUrl, id);
       });
@@ -237,7 +237,7 @@ const settingListenerScreen = () => {
     if (type == '2') {
       item?.removeEventListener('click', () => {});
       item.addEventListener('click', (e: any) => {
-        console.log(2222222, baseUrl, id)
+        console.log(2222222, baseUrl, id);
         e.preventDefault();
         createDataForServices(GET_DATA_OLD_JUMP, baseUrl, id);
       });

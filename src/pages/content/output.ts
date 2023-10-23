@@ -1,4 +1,4 @@
-import { getTime, queryEle } from '@/pages/content/tools';
+import { queryEle } from '@/pages/content/tools';
 import { ElementType } from '@/pages/types';
 import {
   SET_FIRST_STEP_UPLOAD,
@@ -482,29 +482,6 @@ const addStepSecondDataFile = (info: any) => {
   });
 };
 
-// 时间选择
-const dateTimeSetting = ({ body, value }: any) => {
-  let yyDate = body.querySelector('#dpTitle>div:nth-child(4)>.yminput');
-  yyDate.value = getTime(value, 'year');
-  DispatchMouseEvent(yyDate, 'blur');
-
-  let mmDate = body.querySelector('#dpTitle>div:nth-child(3)>.yminput');
-  mmDate.value = getTime(value, 'month');
-  DispatchMouseEvent(mmDate, 'blur');
-
-  let dateList = body.querySelectorAll('.WdayTable tbody>tr>td');
-  let list: any[] = [];
-  for (let item of dateList) {
-    if (['Wday', 'Wwday', 'Wselday'].includes(item?.className)) {
-      list.push(item);
-    }
-  }
-  let dateDom = list.find((item) => item.textContent == getTime(value, 'date'));
-  if (dateDom) {
-    DispatchMouseEvent(dateDom, 'click');
-  }
-};
-
 const getFileNameFromUrl = (url: string) => {
   const path = new URL(url).pathname;
   return path.substring(path.lastIndexOf('/') + 1);
@@ -845,7 +822,7 @@ const getFileIndex = (img: any) => {
   if (val == 9) return 4;
 };
 export const setWriteOldMainFile = (res: any) => {
-  const { basic, principal_data, web_site } = res;
+  const { basic, principal_data } = res;
   let list = [];
   list.push({ ind: getFileIndex(basic.img_cert), val: basic.img_cert });
   list.push({ ind: getFileIndex(principal_data.img_cert), val: principal_data.img_cert });
