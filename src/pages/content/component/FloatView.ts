@@ -27,48 +27,33 @@ export const createContentStyle = (css: string) => {
   head.appendChild(style);
 };
 
+// 筛选域名
 export const RegUrlConfig = (local: any) => {
-  let reg = '^/[a-zA-Z0-9_-]*/';
-  let regVal = local.pathname.match(reg);
-  let path = local.host + (regVal ? regVal[0] : '');
-  let list = [
-    '58',
-    '5i5j',
-    'zu.anjuke',
-    'anjuke',
-    'baixing',
-    'zhipin',
-    'che168',
-    'ichong123',
-    'ziroom',
-    'taobao',
-    'tmall',
-    '116.177.253',
-  ];
-  let res: number = 0;
-  list.find((item) => {
-    res = path.indexOf(item);
-    if (res >= 0) {
-      return item;
-    } else {
-      return null;
+  let list = ['116.177.253.34:8088', '61.136.101.51:8443'];
+  let res = -1;
+  list.find((item, index) => {
+    if (local.host?.indexOf(item) !== -1) {
+      res = index;
     }
   });
-  return path.slice(res);
+  return res;
 };
 
 export const createContentView = (data: any) => {
-  createContentStyle(stylesContextTwo);
+  let idx = RegUrlConfig(document.location);
   let dom: any = queryEle('body');
-
-  CreateDataModal(dom);
-
-  CreateOldModal(dom);
-  CreateOldFileList(dom);
-  CreateWebDataModal(data);
-
-  if (DomDataSheet.hasOwnProperty(RegUrlConfig(document.location))) {
-    DomDataSheet[RegUrlConfig(document.location)]();
+  console.log(data, idx);
+  createContentStyle(stylesContextTwo);
+  if (idx === 0) {
+    CreateDataModal(dom);
+    CreateStepTwoDataStep(data.web_site);
+    CreateStepThreeDataStep();
+  }
+  if (idx === 1) {
+    CreateOldModal(dom);
+    CreateOldFileList(dom);
+    CreateWebDataModal(data);
+    CreateOldDataList(data);
   }
 };
 
@@ -92,8 +77,6 @@ const CreateOldModal = (dom: any) => {
 // 创建第二步按钮
 export const CreateStepTwoDataStep = (data: any) => {
   let stepTwoView = queryEle('.floatView');
-  let FinalModal: any = queryEle('.floatView>.FinalModal');
-  FinalModal?.remove();
   let AddModal: any = queryEle('.floatView>.AddModal');
   AddModal?.remove();
   AddModal = createDom({ tag: 'div', cla: 'AddModal' });
@@ -109,9 +92,9 @@ export const CreateStepTwoDataStep = (data: any) => {
 
 // 创建第三步按钮
 export const CreateStepThreeDataStep = () => {
-  let floatView = queryEle('.floatView');
   let FinalModal: any = queryEle('.floatView>.FinalModal');
   FinalModal?.remove();
+  let floatView = queryEle('.floatView');
   FinalModal = createDom({ tag: 'div', cla: 'FinalModal', txt: '第三步' });
   floatView?.appendChild(FinalModal);
   FinalModal.addEventListener('click', () => {
@@ -154,21 +137,21 @@ export const CreateOldFileList = (dom: any) => {
 };
 export const CreateWebDataModal = (data: any) => {
   const { web_site } = data;
-  let dom: any = document.querySelector(
-    'body .x-panel-bwrap .x-panel-body .x-tree-node .x-tree-node-ct .x-tree-node-el .x-tree-node-anchor'
-  );
-  dom?.click();
+  // let dom: any = document.querySelector(
+  //   'body .x-panel-bwrap .x-panel-body .x-tree-node .x-tree-node-ct .x-tree-node-el .x-tree-node-anchor'
+  // );
+  // dom?.click();
   setTimeout(() => {
-    let dom1: any = document.querySelector(
-      'body .x-panel-bwrap .x-panel-body .x-tree-node .x-tree-node-ct .x-tree-node-leaf'
-    );
-    dom1?.click();
+    // let dom1: any = document.querySelector(
+    //   'body .x-panel-bwrap .x-panel-body .x-tree-node .x-tree-node-ct .x-tree-node-leaf'
+    // );
+    // dom1?.click();
     let oldFileView = queryEle('.oldFileView');
     let WebModal: any = queryEle('.oldFileView>.WebModal');
     WebModal?.remove();
     WebModal = createDom({ tag: 'div', cla: 'WebModal' });
     oldFileView?.appendChild(WebModal);
-    for (let i = 0; i < web_site.length; i++) {
+    for (let i = 0; i < web_site?.length; i++) {
       let Modal: any = createDom({ tag: 'div', cla: 'OldViewModal', txt: '网站' + (i + 1) });
       Modal.addEventListener('click', () => {
         updateStepDataIndex(OLD_VERSION_FILING_DATA, SET_FINAL_OLD_WEB_FILE, i);

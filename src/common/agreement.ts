@@ -1,7 +1,8 @@
 // 打开内容页面监听；
 export const EDI = 'edi';
-export const ICP = 'icp';
 
+// 打开内容页面监听；
+export const EXECUTE_SCRIPT = 'execute_script';
 // 打开内容页面监听；
 export const OPEN_MOUSE_LISTENER = 'open_mouse_listener';
 

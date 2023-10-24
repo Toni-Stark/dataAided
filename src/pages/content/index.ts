@@ -1,13 +1,8 @@
+import { createContentView, CreateOldDataList } from '@/pages/content/component/FloatView';
 import {
-  createContentView,
-  CreateOldDataList,
-  CreateStepThreeDataStep,
-  CreateStepTwoDataStep,
-} from '@/pages/content/component/FloatView';
-import {
+  EXECUTE_SCRIPT,
   GET_DATA_NEW_JUMP,
   GET_DATA_OLD_JUMP,
-  GET_FILES_ADDRESS,
   OPEN_MOUSE_LISTENER,
   SET_FINAL_OLD_DATA,
   SET_FINAL_OLD_DATA_SECOND,
@@ -15,19 +10,13 @@ import {
   SET_FINAL_OLD_WEB_FILE,
   SET_FINAL_STEP_DATA,
   SET_FIRST_STEP_DATA,
-  SET_FIRST_STEP_UPLOAD,
   SET_SECOND_STEP_DATA,
-  SET_SECOND_STEP_UPLOAD,
-  SET_THIRD_STEP_UPLOAD,
   SETTING_LISTENER_SCREEN,
 } from '@/common/agreement';
 import { MessageEventType } from '@/pages/types';
 import {
   setFirstStepData,
   setSecondStepData,
-  setThreeResultFirstUpload,
-  setThreeResultSecondUpload,
-  setThreeResultThirdUpload,
   setThreeStepData,
   setWriteOldData,
   setWriteOldDataSecond,
@@ -35,14 +24,13 @@ import {
   setWriteOldWebFile,
 } from '@/pages/content/output';
 import { getPowerToTwo, queryEleAll } from '@/pages/content/tools';
-import { createDataForServices } from '@/pages/content/messageStore';
+import { createDataForServices, updateStepDataIndex } from '@/pages/content/messageStore';
 chrome.runtime.onMessage.addListener(
   (
     request: MessageEventType,
     sender: chrome.runtime.MessageSender,
     sendResponse: (response: string) => void
   ) => {
-    console.log(sender, request, '页面的变化');
     if (document.readyState !== 'complete') return;
     if (request?.msg === OPEN_MOUSE_LISTENER) {
       createContentView(request.data);
@@ -50,14 +38,13 @@ chrome.runtime.onMessage.addListener(
     }
     if (request?.msg === SET_FIRST_STEP_DATA) {
       let data = getStepData(request.data, 1);
-      CreateStepTwoDataStep(request.data.web_site);
       setFirstStepData(data);
       return;
     }
     if (request?.msg === SET_SECOND_STEP_DATA) {
       let data = getStepData(request.data, 2);
-      CreateStepThreeDataStep();
       setSecondStepData(data, request.num);
+
       return;
     }
     if (request?.msg === SET_FINAL_STEP_DATA) {
@@ -66,7 +53,6 @@ chrome.runtime.onMessage.addListener(
       return;
     }
     if (request?.msg === SET_FINAL_OLD_DATA) {
-      CreateOldDataList(request.data);
       setWriteOldData(request.data);
       return;
     }
@@ -86,31 +72,6 @@ chrome.runtime.onMessage.addListener(
       settingListenerScreen();
       return;
     }
-    if (request?.msg === GET_FILES_ADDRESS) {
-      const { file } = request;
-      const { type, element, key, manager, contentEl, info } = request.params;
-      console.log(request.params, '获取params数据');
-      if (type === SET_FIRST_STEP_UPLOAD) {
-        setThreeResultFirstUpload({
-          file: file,
-          element,
-        });
-      } else if (type === SET_SECOND_STEP_UPLOAD) {
-        setThreeResultSecondUpload({
-          file: file,
-          element,
-          key,
-        });
-      } else if (type === SET_THIRD_STEP_UPLOAD) {
-        setThreeResultThirdUpload({
-          file: file,
-          info,
-          manager,
-          contentEl,
-        });
-      }
-    }
-
     sendResponse('received');
     if (process.env.NODE_ENV === 'development') {
       if (request.type === 'window.location.reload') {
@@ -123,6 +84,7 @@ chrome.runtime.onMessage.addListener(
 const getStepData = (res: any, num: number) => {
   const { basic, principal_data, web_site } = res;
   // 第一步表单数据
+  console.log(res, '初始值');
   if (num === 1) {
     let data: any = {};
     data['main_unit'] = {
@@ -152,6 +114,7 @@ const getStepData = (res: any, num: number) => {
       instantmessageaccount: principal_data.instant_msg_account,
       remark: principal_data.remark,
     };
+    console.log(data, '最终数据1');
     return data;
   }
   // 第二步表单数据
@@ -204,6 +167,7 @@ const getStepData = (res: any, num: number) => {
       };
       data.push(obj);
     }
+    console.log(data, '最终数据2');
     return data;
   }
   // 第三步表单数据
@@ -215,27 +179,28 @@ const getStepData = (res: any, num: number) => {
     let img_main_photo: any = [];
     web_site.map((file: any) => {
       if (file.img_cert?.show_src) {
-        img_cert.push(file.img_cert?.show_src);
+        img_cert.push(file.img_cert);
       }
       if (file.img_supp?.show_src) {
-        img_supp.push(file.img_supp?.show_src);
+        img_supp.push(file.img_supp);
       }
       if (file.principal_data?.img_cert?.show_src) {
-        img_main_cert.push(file.principal_data?.img_cert?.show_src);
+        img_main_cert.push(file.principal_data?.img_cert);
       }
-      if (file.principal_data?.img_cert?.show_src) {
-        img_main_photo.push(file.principal_data?.img_photo?.show_src);
+      if (file.principal_data?.img_photo?.show_src) {
+        img_main_photo.push(file.principal_data?.img_photo);
       }
     });
     data['web_side_id_card_p1'] = {
-      mainOtherPicUl: [basic.img_cert.show_src],
+      mainOtherPicUl: [basic.img_supp],
       webOtherPicUl: img_supp,
-      unitpic0ul: [basic.img_cert.show_src],
-      identitypic0ul: [principal_data.img_cert.show_src],
+      unitpic0ul: [basic.img_cert],
+      identitypic0ul: [principal_data.img_cert],
       verificationpic0ul: img_cert,
       websidechiefpic0ul: img_main_photo,
       websideidentitycardpic0ul: img_main_cert,
     };
+    console.log(data, '最终数据3');
     return data;
   }
 };
@@ -247,14 +212,15 @@ const settingListenerScreen = () => {
   const element_site1: any = queryEleAll('.jump_site_1');
   if (element_site1.length <= 0) return;
   for (let item of element_site1) {
+    item.removeEventListener('click', (e: any) => {
+      console.log(item, e, 'input');
+    });
+
     let id = getAttributeData(item, 'data-batools_id');
     let type = getAttributeData(item, 'data-batools_type');
     let baseUrl = getAttributeData(item, 'data-url');
     if (type == '1') {
-      item?.removeEventListener('click', () => {});
       item.addEventListener('click', (e: any) => {
-        console.log(12312312, baseUrl, id);
-        e.preventDefault();
         createDataForServices(GET_DATA_NEW_JUMP, baseUrl, id);
       });
     }
@@ -262,18 +228,23 @@ const settingListenerScreen = () => {
   const element_site2: any = queryEleAll('.jump_site_2');
   if (element_site2.length <= 0) return;
   for (let item of element_site2) {
+    item.removeEventListener('click', () => {});
+    console.log(item, 'input');
     let id = getAttributeData(item, 'data-batools_id');
     let type = getAttributeData(item, 'data-batools_type');
     let baseUrl = getAttributeData(item, 'data-url');
     if (type == '2') {
       item?.removeEventListener('click', () => {});
       item.addEventListener('click', (e: any) => {
-        console.log(2222222, baseUrl, id);
-        e.preventDefault();
         createDataForServices(GET_DATA_OLD_JUMP, baseUrl, id);
       });
     }
   }
 };
+chrome.runtime.sendMessage({ type: EXECUTE_SCRIPT }).then((res) => {
+  console.log('info-res------------------>');
+  console.log(res);
+  console.log('info-res------------------>');
+});
 
 export {};

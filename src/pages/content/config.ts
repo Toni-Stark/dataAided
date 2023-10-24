@@ -1,5 +1,4 @@
 import { noStr, queryEle } from '@/pages/content/tools';
-import { RegUrlConfig } from '@/pages/content/component/FloatView';
 
 export const Boss = {
   title: '.job-banner>.inner>.job-primary>.info-primary>.name>h1',
@@ -418,10 +417,6 @@ export const DomDataSheet: any = {
 
 export const GetResultSheet: any = {
   '116.177.253': () => SetBossData(),
-};
-
-export const getHostDataParams = (local: any) => {
-  return GetResultSheet[RegUrlConfig(local)]();
 };
 
 type DomDataType = Record<string, Record<string, string>>;

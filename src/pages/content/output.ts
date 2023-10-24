@@ -1,11 +1,10 @@
-import { queryEle } from '@/pages/content/tools';
+import { base64ToFile, queryEle } from '@/pages/content/tools';
 import { ElementType } from '@/pages/types';
 import {
   SET_FIRST_STEP_UPLOAD,
   SET_SECOND_STEP_UPLOAD,
   SET_THIRD_STEP_UPLOAD,
 } from '@/common/agreement';
-import { createRequestFileServices } from '@/pages/content/messageStore';
 
 export const MAIN_UNIT: any = {
   unitname_textarea: '#FirstStep #formDiv #main_unit ul:first-child .formLiWidth8 .textareaClass',
@@ -131,7 +130,7 @@ export const OLD_THIRD_STEP: any = {
   name: '#ext-comp-1096 .x-form-element input',
   domain: '#ext-comp-1097 .x-form-element textarea',
   first_page_url: '#ext-comp-1098 .x-form-element input',
-  cert_validity_end: '#ext-comp-1269 .x-form-element .x-form-field-wrap input',
+  // cert_validity_end: '#ext-comp-1269 .x-form-element .x-form-field-wrap input',
   ip_address: '#ext-comp-1271 .x-form-element textarea',
 };
 
@@ -239,8 +238,6 @@ export const setThreeStepData = (data: any) => {
   console.log('res-------------------');
   console.log(data);
   console.log('res-------------------');
-  let FinalModal: any = queryEle('.floatView>.FinalModal');
-  FinalModal?.remove();
   let iframe: any = thirdStepElementQuery('#modalFormBody');
   let web_side_id_card_p1 = getElementList(WEB_SIDE_ID_CARD_P1);
   recursiveExecution(
@@ -460,14 +457,13 @@ const addStepSecondDataFile = (info: any) => {
   DispatchEvent(input, 'focus');
   // 设置资源文件
   currentUploadFile({
-    data: info.img_data.show_src,
+    data: info.img_data,
     type: SET_THIRD_STEP_UPLOAD,
     info,
     manager,
     contentEl,
   });
 };
-
 const getFileNameFromUrl = (url: string) => {
   const path = new URL(url).pathname;
   return path.substring(path.lastIndexOf('/') + 1);
@@ -480,7 +476,6 @@ export const setThreeResultFirstUpload = ({ file, element }: any) => {
   let imgInput: any = queryFirstIframeEle(iframe, element + ' input:nth-child(3)');
   let preElement: any = queryFirstIframeEle(iframe, element + ' img');
   const dataTransfer = new DataTransfer();
-
   if (file) {
     dataTransfer.items.add(file);
   }
@@ -528,7 +523,7 @@ export const setThreeResultSecondUpload = ({ file, element, key }: any) => {
 
 // 图片预览
 export const setThreeResultThirdUpload = ({ file, info, manager, contentEl }: any) => {
-  let elementId = '#wsManageContentfileUl' + info.id;
+  let elementId = '#wsManageContentfileUl' + info.approval_type;
   let ul: any = queryFirstIframeEle(manager, elementId);
   let num = Math.floor(Math.random() * 10000000 + 1);
   let htmlStr = '<li class="input preLi" style="background: white;">';
@@ -560,12 +555,12 @@ export const setThreeResultThirdUpload = ({ file, info, manager, contentEl }: an
   if (file) {
     dataTransfer.items.add(file);
   }
+  console.log(dataTransfer.files, file, '当前渲染ID ');
   inputFile.files = dataTransfer.files;
   checkImage(inputFile, imgFile);
 };
 
 const currentUploadFile = ({ data, element, type, key, info, manager, contentEl }: any) => {
-  // loadImageFileServices(data, { element, type, key, info, manager, contentEl });
   loadImageFile(data).then((res: any) => {
     if (type === SET_FIRST_STEP_UPLOAD) {
       setThreeResultFirstUpload({
@@ -589,40 +584,11 @@ const currentUploadFile = ({ data, element, type, key, info, manager, contentEl 
   });
 };
 
-// const loadImageFileServices = (url: string, params: any) => {
-//   createRequestFileServices(url, params);
-// };
-const loadImageFile = (url: string) => {
-  return new Promise((resolve, reject) => {
-    // 创建一个 HTTP 请求对象
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', url);
-    xhr.responseType = 'blob';
-    // 当请求加载完成后触发事件
-    xhr.onload = function () {
-      if (xhr.status === 200) {
-        // 创建一个 Blob 对象
-        const blob = xhr.response;
-
-        // 获取图片文件名
-        const fileName = getFileNameFromUrl(url);
-
-        try {
-          // 创建一个 File 对象
-          const file = new File([blob], fileName, { type: blob.type });
-
-          // 返回转换后的 File 对象
-          resolve(file);
-        } catch (error) {
-          reject(new Error('无法创建文件对象'));
-        }
-      } else {
-        reject(new Error(`请求失败: ${xhr.statusText}`));
-      }
-    };
-
-    // 发送 HTTP 请求
-    xhr.send();
+const loadImageFile = (data: any) => {
+  return new Promise((resolve) => {
+    const fileName = getFileNameFromUrl(data.show_min_src);
+    const file = base64ToFile(data.show_src, fileName);
+    resolve(file);
   });
 };
 const checkImage = (input: any, preview: any, element?: string, callback?: (e: string) => void) => {
@@ -660,7 +626,7 @@ let site_input_list = [
   { key: 'name' },
   { key: 'domain' },
   { key: 'first_page_url' },
-  { key: 'cert_validity_end' },
+  // { key: 'cert_validity_end' },
   { key: 'ip_address' },
 ];
 let checkout_list = [
@@ -815,9 +781,15 @@ const getFileIndex = (img: any) => {
 export const setWriteOldMainFile = (res: any) => {
   const { basic, principal_data } = res;
   let list = [];
-  list.push({ ind: getFileIndex(basic.img_cert), val: basic.img_cert });
-  list.push({ ind: getFileIndex(principal_data.img_cert), val: principal_data.img_cert });
-  list.push({ ind: getFileIndex(basic.img_supp), val: basic.img_supp });
+  if (basic?.img_cert) {
+    list.push({ ind: getFileIndex(basic.img_cert), val: basic.img_cert });
+  }
+  if (principal_data?.img_cert) {
+    list.push({ ind: getFileIndex(principal_data.img_cert), val: principal_data.img_cert });
+  }
+  if (basic?.img_supp) {
+    list.push({ ind: getFileIndex(basic.img_supp), val: basic.img_supp });
+  }
   setUploadFile({ data: list, index: 0 }, () => {});
 };
 let elList: any = {};
@@ -886,6 +858,9 @@ const setInputVal = ({ iframeId, list, data, json, index }: any, callback: any) 
   let iframe: any = finalElementQueryFromBody(iframeId);
   let key = json[index].key;
   let fInput: any = queryFirstIframeEle(iframe, list[key]);
+  console.log('iframeId, fInput, list, key, data, json--------------------');
+  console.log(iframeId, fInput, list, key, data, json);
+  console.log('iframeId, fInput, list, key, data, json--------------------');
   fInput.value = data[key];
   DispatchEvent(fInput, 'focus');
   setTimeout(() => {
@@ -982,7 +957,7 @@ const setOldUpload = ({ list, data, num }: any, callback: any) => {
         chooseImage({ el: '#importDataWin', data: data[num] }, () => {
           setOldUpload({ list, data, num: num + 1 }, callback);
         });
-      }, 300);
+      }, 400);
     }
   }
   if (!bool) {
@@ -999,13 +974,15 @@ const chooseImage = ({ el, data }: any, callback: any) => {
     callback();
     return;
   }
-  loadImageFile(fileData.show_src).then((res: any) => {
+  loadImageFile(fileData).then((res: any) => {
     const dataTransfer = new DataTransfer();
 
     if (res) {
       dataTransfer.items.add(res);
     }
     upload.files = dataTransfer.files;
+    console.log(upload.files[0], upload.files[0].type, '文件类型1');
+
     DispatchEvent(upload, 'change');
     setTimeout(() => {
       let confirmBtn: any = queryFirstIframeEle(
@@ -1014,7 +991,7 @@ const chooseImage = ({ el, data }: any, callback: any) => {
       );
       confirmBtn.click();
       callback();
-    }, 300);
+    }, 400);
   });
 };
 
@@ -1040,7 +1017,6 @@ const setUploadFile = ({ data, index, elements }: any, callback: any) => {
       console.log('body ' + mainElement);
       mainViews = finalElementQueryFilesBody('body ' + mainElement);
     }
-    console.log(mainViews, 'mainViews');
     elList.mainId = mainViews.id;
     let mainList: any = queryFirstIframeEleAll(mainViews, '.x-combo-list-inner .x-combo-list-item');
     if (mainList) {
@@ -1073,7 +1049,7 @@ const setUploadFile = ({ data, index, elements }: any, callback: any) => {
         '.x-form>.x-form-item:nth-child(5) .x-form-element input'
       );
       console.log(elList, 'elList', dataItem);
-      chooseFileImage({ upload: fileView, data: dataItem.val.show_src }, () => {
+      chooseFileImage({ upload: fileView, data: dataItem.val }, () => {
         setUploadFile({ data: data, index: index + 1, elements: elList }, callback);
       });
     }, 1000);
@@ -1090,6 +1066,8 @@ const chooseFileImage = ({ upload, data }: any, callback: any) => {
       dataTransfer.items.add(res);
     }
     upload.files = dataTransfer.files;
+
+    console.log(upload.files[0], upload.files[0].type, '文件类型2');
     DispatchEvent(upload, 'change');
     let uploadConfirm =
       '#ICP-Upload-picture-window .x-window-bwrap .x-window-bl .x-panel-btns table tr table';

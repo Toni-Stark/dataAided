@@ -194,3 +194,17 @@ export const getPowerToTwo = (num: any) => {
   }
   return power;
 };
+
+export const base64ToFile = (base64Data: any, fileName: any) => {
+  let data = base64Data.split(',');
+  const bstr = window.atob(data[1]);
+  let type = fileName.split('.')[1];
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new File([u8arr], `${fileName}`, {
+    type: type,
+  });
+};
