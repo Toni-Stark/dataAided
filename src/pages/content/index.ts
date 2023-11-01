@@ -84,7 +84,6 @@ chrome.runtime.onMessage.addListener(
 const getStepData = (res: any, num: number) => {
   const { basic, principal_data, web_site } = res;
   // 第一步表单数据
-  console.log(res, '初始值');
   if (num === 1) {
     let data: any = {};
     data['main_unit'] = {
@@ -125,7 +124,6 @@ const getStepData = (res: any, num: number) => {
       let language = item.language_type.split(',').map((item: any) => {
         return getPowerToTwo(item);
       });
-      console.log(item.approval_list);
       obj['basic_info'] = {
         serverType: item.server_type,
         websitename: item.name,
@@ -167,7 +165,6 @@ const getStepData = (res: any, num: number) => {
       };
       data.push(obj);
     }
-    console.log(data, '最终数据2');
     return data;
   }
   // 第三步表单数据

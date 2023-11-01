@@ -7,26 +7,19 @@ import {
 } from '@/common/agreement';
 
 export const MAIN_UNIT: any = {
-  unitname_textarea: '#FirstStep #formDiv #main_unit ul:first-child .formLiWidth8 .textareaClass',
+  unitname_textarea: '#FirstStep #formDiv #main_unit ul .formLiWidth8 #unitname',
   branchid_select: '#FirstStep #formDiv #main_unit ul:nth-child(2) .formLiWidth3 .formInputWidth',
-  unitpropertyId_select_custom:
-    '#FirstStep #formDiv #main_unit ul:nth-child(3) .formLiWidth3:nth-child(2) .formInputWidth',
-  unitprovinceID_select:
-    '#FirstStep #formDiv #main_unit ul:nth-child(3) .formLiWidth3:last-child .formInputWidth',
-  unitcityID_select:
-    '#FirstStep #formDiv #main_unit ul:nth-child(4) .formLiWidth3:nth-child(2) .formInputWidth',
-  unitcountyID_select:
-    '#FirstStep #formDiv #main_unit ul:nth-child(4) .formLiWidth3:last-child .formInputWidth',
+  unitpropertyId_select_custom: '#FirstStep #formDiv #main_unit ul .formLiWidth3 #unitProperty',
+  unitprovinceID_select: '#FirstStep #formDiv #main_unit ul .formLiWidth3 #mainProvince',
+  unitcityID_select: '#FirstStep #formDiv #main_unit ul .formLiWidth3 #mainCity',
+  unitcountyID_select: '#FirstStep #formDiv #main_unit ul .formLiWidth3 #mainCountry',
   unitcertificatetypeId_select:
-    '#FirstStep #formDiv #main_unit ul:nth-child(5) .formLiWidth3:nth-child(2) .formInputWidth',
-  unitcertificatenum_input:
-    '#FirstStep #formDiv #main_unit ul:nth-child(5) .formLiWidth3:last-child .formInputWidth',
-  unitaddress_textarea:
-    '#FirstStep #formDiv #main_unit ul:nth-child(6) .formLiWidth8 .textareaClass',
+    '#FirstStep #formDiv #main_unit ul .formLiWidth3 #unitcertificatetypeId',
+  unitcertificatenum_input: '#FirstStep #formDiv #main_unit ul .formLiWidth3 #unitcertificatenum',
+  unitaddress_textarea: '#FirstStep #formDiv #main_unit ul .formLiWidth8 #unitaddress',
   certificateaddress_textarea:
-    '#FirstStep #formDiv #main_unit ul:nth-child(7) .formLiWidth8 .textareaClass',
-  unitsuperior_textarea:
-    '#FirstStep #formDiv #main_unit ul:nth-child(9) .formLiWidth8 .textareaClass',
+    '#FirstStep #formDiv #main_unit ul .formLiWidth8 #certificateaddress',
+  unitsuperior_textarea: '#FirstStep #formDiv #main_unit ul .formLiWidth8 #unitsuperior',
 };
 export const MAIN_UNIT_ADMIN: any = {
   unitprincipalcertificatetypeId_select:
@@ -35,9 +28,9 @@ export const MAIN_UNIT_ADMIN: any = {
   unitprincipalcertificatenum_select:
     '#FirstStep #formDiv #main_unitAdmin ul:first-child .formLiWidth3:last-child .formInputWidth',
   certificateValidityStart_input_date:
-    '#FirstStep #formDiv #main_unitAdmin ul:nth-child(3) .formLiWidth3:nth-child(2) .table_item_input_time',
+    '#FirstStep #formDiv #main_unitAdmin ul:nth-child(3) .formLiWidth3 #beginDateFind',
   certificateValidityEnd_input_date:
-    '#FirstStep #formDiv #main_unitAdmin ul:nth-child(3) .formLiWidth3:last-child .table_item_input_time',
+    '#FirstStep #formDiv #main_unitAdmin ul:nth-child(3) .formLiWidth3 #endDateFind',
   unitprincipalname_input:
     '#FirstStep #formDiv #main_unitAdmin ul:nth-child(4) .formLiWidth3:nth-child(2) .formInputWidth',
   unitprincipalmobilephone_input:
@@ -169,7 +162,7 @@ export const DispatchMouseEvent = (dom: any, event: string) => {
 const getElementList = (data: any) => {
   let list = [];
   for (let i in data) {
-    if (data.hasOwnProperty(i)) {
+    if (data?.hasOwnProperty(i)) {
       let pairs = i.split('_');
       let option: any = {
         key: pairs[0],
@@ -308,7 +301,7 @@ export const recursiveExecution = (params: any, callback: any) => {
     return;
   }
   const { type, element, key, custom } = list[index];
-  if (!data.hasOwnProperty(key) || data[key] === undefined) {
+  if (!data?.hasOwnProperty(key) || data[key] === undefined) {
     recursiveExecution({ ...params, index: index + 1 }, callback);
     return;
   }
@@ -319,7 +312,9 @@ export const recursiveExecution = (params: any, callback: any) => {
   if (type === 'input') {
     let dom: any = queryFirstIframeEle(iframe, element);
     dom.value = data[key];
-    DispatchEvent(dom, 'focus');
+    if (!custom) {
+      DispatchEvent(dom, 'focus');
+    }
   }
   if (type === 'upload') {
     if (typeof data[key] === 'object') {
@@ -391,33 +386,42 @@ export const recursiveExecution = (params: any, callback: any) => {
     }
   }
   if (type === 'select') {
-    if (custom === 'click') {
-      let dom: any = queryFirstIframeEle(iframe, element);
-      dom.value = data[key];
-      DispatchMouseEvent(dom, 'click');
-    } else {
-      let dom: any = queryFirstIframeEle(iframe, element);
-      dom.value = data[key];
-      DispatchEvent(dom, 'change');
+    let dom: any = queryFirstIframeEle(iframe, element);
+    if (dom?.value && data?.hasOwnProperty(key)) {
+      if (custom === 'click') {
+        dom.value = data[key];
+        DispatchMouseEvent(dom, 'click');
+      } else {
+        let dom: any = queryFirstIframeEle(iframe, element);
+        dom.value = data[key];
+        DispatchEvent(dom, 'change');
+      }
     }
   }
   if (type === 'column') {
     let inputList = data[key];
-    let btnElement = element + ' #ipFirstDiv ul .formLiWidth8 .addIpButton';
+    let btnElement = '#addIpButton';
     let addBtn: any = queryFirstIframeEle(iframe, btnElement);
+    addBtn?.click();
     for (let i = 0; i < inputList.length; i++) {
       let resInput = element + ' div:nth-child(' + (i + 1) + ') ul .formLiWidth8 input';
       let view: any = queryFirstIframeEleAll(iframe, resInput);
       view[0].value = inputList[i].webIpBegin;
-      view[1].value = inputList[i].webIpEnd;
+      view[1].value = inputList[i]?.webIpEnd || inputList[i].webIpBegin;
       DispatchEvent(view[0], 'focus');
       DispatchEvent(view[1], 'focus');
       if (i < inputList.length - 1) {
         addBtn.click();
       }
     }
+    setTimeout(() => {
+      let inputDiv = queryFirstIframeEle(iframe, '#ipScopeDiv>div:last-child');
+      let input: any = queryFirstIframeEle(iframe, '#ipScopeDiv>div:last-child .formInputWidth');
+      if (!input?.value) {
+        inputDiv?.remove();
+      }
+    }, 1200);
   }
-
   // 延时等待请求填充数据处理
   if (
     type === 'select' ||
@@ -450,7 +454,6 @@ export const recursiveExecution = (params: any, callback: any) => {
 const addStepSecondDataFile = (info: any) => {
   let contentEl = '#wsManageContentDiv' + info.approval_type;
   let manager = secondStepElementQuery(contentEl);
-
   // 设置input值
   let input: any = queryFirstIframeEle(manager, 'ul li input:first-child');
   input.value = info['approval_num'];
@@ -981,7 +984,6 @@ const chooseImage = ({ el, data }: any, callback: any) => {
       dataTransfer.items.add(res);
     }
     upload.files = dataTransfer.files;
-    console.log(upload.files[0], upload.files[0].type, '文件类型1');
 
     DispatchEvent(upload, 'change');
     setTimeout(() => {
@@ -1067,7 +1069,6 @@ const chooseFileImage = ({ upload, data }: any, callback: any) => {
     }
     upload.files = dataTransfer.files;
 
-    console.log(upload.files[0], upload.files[0].type, '文件类型2');
     DispatchEvent(upload, 'change');
     let uploadConfirm =
       '#ICP-Upload-picture-window .x-window-bwrap .x-window-bl .x-panel-btns table tr table';
