@@ -25,7 +25,7 @@ export const MAIN_UNIT_ADMIN: any = {
   unitprincipalcertificatetypeId_select:
     '#FirstStep #formDiv #main_unitAdmin ul:first-child .formLiWidth3:nth-child(2) .formInputWidth',
   isLongTerm_radio: '#FirstStep #formDiv #main_unitAdmin ul:nth-child(2) .formLiWidth3 input',
-  unitprincipalcertificatenum_select:
+  unitprincipalcertificatenum_input:
     '#FirstStep #formDiv #main_unitAdmin ul:first-child .formLiWidth3:last-child .formInputWidth',
   certificateValidityStart_input_date:
     '#FirstStep #formDiv #main_unitAdmin ul:nth-child(3) .formLiWidth3 #beginDateFind',
@@ -309,6 +309,7 @@ export const recursiveExecution = (params: any, callback: any) => {
     let dom: any = queryFirstIframeEle(iframe, element);
     dom.value = data[key];
   }
+  console.log(key, data[key], custom);
   if (type === 'input') {
     let dom: any = queryFirstIframeEle(iframe, element);
     dom.value = data[key];

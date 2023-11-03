@@ -165,6 +165,7 @@ const getStepData = (res: any, num: number) => {
       };
       data.push(obj);
     }
+    console.log(data, '最终数据2');
     return data;
   }
   // 第三步表单数据
@@ -178,8 +179,12 @@ const getStepData = (res: any, num: number) => {
       if (file.img_cert?.show_src) {
         img_cert.push(file.img_cert);
       }
-      if (file.img_supp?.show_src) {
-        img_supp.push(file.img_supp);
+      if (Array.isArray(file.img_supp)) {
+        img_supp = file.img_supp;
+      } else {
+        if (file.img_supp?.show_src) {
+          img_supp.push(file.img_supp);
+        }
       }
       if (file.principal_data?.img_cert?.show_src) {
         img_main_cert.push(file.principal_data?.img_cert);
@@ -187,9 +192,15 @@ const getStepData = (res: any, num: number) => {
       if (file.principal_data?.img_photo?.show_src) {
         img_main_photo.push(file.principal_data?.img_photo);
       }
+      // if (file.principal_data?.img_cert?.show_src) {
+      //   img_main_cert.push(file.principal_data?.img_cert);
+      // }
+      // if (file.principal_data?.img_photo?.show_src) {
+      //   img_main_photo.push(file.principal_data?.img_photo);
+      // }
     });
     data['web_side_id_card_p1'] = {
-      mainOtherPicUl: [basic.img_supp],
+      mainOtherPicUl: Array.isArray(basic.img_supp) ? basic.img_supp : [basic.img_supp],
       webOtherPicUl: img_supp,
       unitpic0ul: [basic.img_cert],
       identitypic0ul: [principal_data.img_cert],
@@ -226,7 +237,6 @@ const settingListenerScreen = () => {
   if (element_site2.length <= 0) return;
   for (let item of element_site2) {
     item.removeEventListener('click', () => {});
-    console.log(item, 'input');
     let id = getAttributeData(item, 'data-batools_id');
     let type = getAttributeData(item, 'data-batools_type');
     let baseUrl = getAttributeData(item, 'data-url');
