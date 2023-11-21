@@ -1,4 +1,4 @@
-import { base64ToFile, queryEle } from '@/pages/content/tools';
+import { base64ToFile } from '@/pages/content/tools';
 import { ElementType } from '@/pages/types';
 import {
   SET_FIRST_STEP_UPLOAD,
@@ -70,12 +70,12 @@ export const BASIC_INFO_ADMIN: any = {
   websiteprincipalemail_input: '#websiteprincipalemail',
   webinstantmessageid_select: '#webinstantmessageid',
   instantmessageaccount_input: '#webinstantmessageaccount',
-  remark_input: '#remarkMode',
+  remark_remark: '#remarkMode',
 };
 export const BASIC_INFO_ICP: any = {
-  websiteconnenctmodeVODiv_checkout: '#websiteconnenctmodeVODiv ul .formLiWidth8 input',
+  websiteconnenctmodeVODiv_checkout: '#websiteconnenctmodeVODiv ul li input',
   ipScopeDiv_column: '#ipScopeDiv',
-  serveraddressDiv_checkout: '#serveraddressDiv ul .formLiWidth8 input',
+  serveraddressDiv_checkout: '#serveraddressDiv ul li input',
 };
 export const WEB_SIDE_ID_CARD_P1: any = {
   mainOtherPicUl_upload_not: '#otherPicDiv #mainOtherPicUl',
@@ -123,7 +123,6 @@ export const OLD_THIRD_STEP: any = {
   name: '#ext-comp-1096 .x-form-element input',
   domain: '#ext-comp-1097 .x-form-element textarea',
   first_page_url: '#ext-comp-1098 .x-form-element input',
-  // cert_validity_end: '#ext-comp-1269 .x-form-element .x-form-field-wrap input',
   ip_address: '#ext-comp-1271 .x-form-element textarea',
 };
 
@@ -301,6 +300,8 @@ export const recursiveExecution = (params: any, callback: any) => {
     return;
   }
   const { type, element, key, custom } = list[index];
+  console.log(key, '---', type, data, !data?.hasOwnProperty(key), data[key] === undefined);
+
   if (!data?.hasOwnProperty(key) || data[key] === undefined) {
     recursiveExecution({ ...params, index: index + 1 }, callback);
     return;
@@ -309,7 +310,6 @@ export const recursiveExecution = (params: any, callback: any) => {
     let dom: any = queryFirstIframeEle(iframe, element);
     dom.value = data[key];
   }
-  console.log(key, data[key], custom);
   if (type === 'input') {
     let dom: any = queryFirstIframeEle(iframe, element);
     dom.value = data[key];
@@ -362,6 +362,20 @@ export const recursiveExecution = (params: any, callback: any) => {
       }
     }
   }
+  if (type === 'remark') {
+    if (!custom) {
+      let remark: any = queryFirstIframeEle(iframe, '#remark');
+      let remarkMode: any = queryFirstIframeEle(iframe, '#remarkMode');
+      if (remark) {
+        remark.value = data[key];
+        DispatchEvent(remark, 'focus');
+      }
+      if (remarkMode) {
+        remarkMode.value = data[key];
+        DispatchEvent(remarkMode, 'focus');
+      }
+    }
+  }
   if (type === 'checkout') {
     if (custom === 'upload') {
       let checkout: any = queryFirstIframeEleAll(iframe, element);
@@ -371,7 +385,8 @@ export const recursiveExecution = (params: any, callback: any) => {
       }
       for (let i of checkout) {
         if (list.includes(i.value)) {
-          i.click();
+          // i.click();
+          DispatchMouseEvent(i, 'click');
           let val = data[key].find((item: any) => item.approval_type === i.value);
           addStepSecondDataFile(val);
         }
@@ -381,7 +396,8 @@ export const recursiveExecution = (params: any, callback: any) => {
       let reg_list = data[key].split(',');
       for (let i of checkout) {
         if (reg_list.includes(i.id)) {
-          i.click();
+          // i.click();
+          DispatchMouseEvent(i, 'click');
         }
       }
     }
@@ -434,6 +450,10 @@ export const recursiveExecution = (params: any, callback: any) => {
     let duration = 800;
     if (type === 'input' && custom === 'date') {
       duration = 800;
+    }
+    if (type === 'checkout') {
+      let num = data[key].length;
+      duration = num * 800;
     }
     if (type === 'checkout' && custom === 'upload') {
       let num = data[key].length;
@@ -754,21 +774,6 @@ export const setWriteOldData = (data: any) => {
       );
     }
   );
-
-  // for (const i in OLD_FIRST_STEP) {
-  //   let input: any = queryFirstIframeEle(iframe1024, OLD_FIRST_STEP[i]);
-  //   input.value = data.basic[i];
-  // }
-  // let iframe1046: any = finalElementQuery('#ext-comp-1046');
-  // for (const i in OLD_SECOND_STEP) {
-  //   if (i === 'remark') {
-  //     let textarea: any = queryFirstIframeEle(iframe1046, OLD_SECOND_STEP[i]);
-  //     textarea.value = data.principal_data[i];
-  //     return;
-  //   }
-  //   let input: any = queryFirstIframeEle(iframe1046, OLD_SECOND_STEP[i]);
-  //   input.value = data.principal_data[i];
-  // }
 };
 
 const getFileIndex = (img: any) => {
@@ -862,9 +867,6 @@ const setInputVal = ({ iframeId, list, data, json, index }: any, callback: any) 
   let iframe: any = finalElementQueryFromBody(iframeId);
   let key = json[index].key;
   let fInput: any = queryFirstIframeEle(iframe, list[key]);
-  console.log('iframeId, fInput, list, key, data, json--------------------');
-  console.log(iframeId, fInput, list, key, data, json);
-  console.log('iframeId, fInput, list, key, data, json--------------------');
   fInput.value = data[key];
   DispatchEvent(fInput, 'focus');
   setTimeout(() => {
@@ -921,26 +923,6 @@ const setUploadVal = ({ iframeId, list, data, json, index }: any, callback: any)
     '.x-column-inner .x-column .x-panel-bwrap>.x-panel-body>.x-column-inner'
   );
   setOldUpload({ list: inputView, data, num: 0 }, () => {});
-
-  // let values = data[key].split(',');
-  // console.log(data, key, uploads);
-  // for (let item of uploads) {
-  //   if (values.includes(item.value)) {
-  //     item.click();
-  //   }
-  // }
-  // setTimeout(() => {
-  //   setUploadVal(
-  //     {
-  //       iframeId,
-  //       list,
-  //       data,
-  //       json,
-  //       index: index + 1,
-  //     },
-  //     callback
-  //   );
-  // }, 200);
 };
 const setOldUpload = ({ list, data, num }: any, callback: any) => {
   if (num >= data.length) {
@@ -1014,10 +996,8 @@ const setUploadFile = ({ data, index, elements }: any, callback: any) => {
     let mainElement = '.x-combo-list:last-child';
     let mainViews: any;
     if (elList?.mainId) {
-      console.log('body #' + elList.mainId);
       mainViews = finalElementQueryFilesBody('body #' + elList.mainId);
     } else {
-      console.log('body ' + mainElement);
       mainViews = finalElementQueryFilesBody('body ' + mainElement);
     }
     elList.mainId = mainViews.id;

@@ -19,14 +19,12 @@ import { appConfig } from '@/common/config';
 
 export let oldFinalData: any = {};
 
-export const listenerDataInfoMessage = (mobiles: string[]) => {
+export const listenerDataInfoMessage = () => {
   chrome.runtime.onMessage?.removeListener(() => {});
   chrome.runtime.onMessage.addListener(function (response, sender, sendResponse) {
     if (response?.type === EXECUTE_SCRIPT) {
       const { tab } = sender;
-      if (!tab?.id) {
-        return;
-      }
+      if (!tab?.id) return;
       const code =
         'let script = document.createElement(\'script\');script.text = \'$(".jump_site").off("click")\';(document.head || document.documentElement).appendChild(script);';
       chrome.scripting.executeScript({
@@ -39,10 +37,9 @@ export const listenerDataInfoMessage = (mobiles: string[]) => {
         },
         args: [code],
         world: 'MAIN',
-        //injectImmediately: true, // Chrome 102+
+        //injectImmediately: true,
       });
     }
-
     if (response?.type === NEW_VERSION_FILING_DATA) {
       const { tab } = sender;
       if (!tab?.id) return true;
@@ -100,7 +97,6 @@ export const listenerDataInfoMessage = (mobiles: string[]) => {
     if (response?.type === SETTING_LISTENER_SCREEN) {
       const { position, id } = response;
       getCurrentData(id, (result: any) => {
-        console.log(result, '结果');
         oldFinalData = { ...result, dateTimes: new Date().getTime() };
       });
       if (response?.event === GET_DATA_NEW_JUMP) {
@@ -130,6 +126,7 @@ export const listenerDataInfoMessage = (mobiles: string[]) => {
   });
 };
 
+// 判断目标链接是否有标签页存在
 const queryAllScreen = (position: string, callback: any) => {
   // 新系统链接;
   let strList = [position];
@@ -149,20 +146,22 @@ const queryAllScreen = (position: string, callback: any) => {
   });
 };
 
+// 对数据进行处理将文件转为Base64
 const getCurrentData = (id: any, callback: any) => {
   let BaseUrl = appConfig.prod;
   GetAPI({
-    url: BaseUrl + '/api/batools/enter/info?id=' + id + '&merchant_sn=7J6zvmx81',
+    url: BaseUrl + '/api/batools/enter/info?id=' + id + '&merchant_sn=7J6zvmx81&ver=1',
   }).then((res: any) => {
     const { basic, principal_data, web_site } = res.data;
-    loadImageFile(basic.img_cert).then((res) => {
-      basic.img_cert = res;
-      loadImageFile(basic.img_supp).then((res) => {
+    loadImageFiles([basic.img_cert], 0, (res: any[]) => {
+      basic.img_cert = res[0];
+      loadImageFiles(basic.img_supp, 0, (res: any[]) => {
         basic.img_supp = res;
-        loadImageFile(principal_data.img_cert).then((res) => {
-          principal_data.img_cert = res;
-          loadImageFile(principal_data.img_photo).then((res) => {
-            principal_data.img_photo = res;
+        loadImageFiles([principal_data.img_cert], 0, (res: any[]) => {
+          principal_data.img_cert = res[0];
+          loadImageFiles([principal_data.img_photo], 0, (res: any[]) => {
+            principal_data.img_photo = res[0];
+            // 处理网站文件的格式
             getAllImgFile(web_site, 0, (list: any) => {
               const data = {
                 basic,
@@ -177,22 +176,20 @@ const getCurrentData = (id: any, callback: any) => {
     });
   });
 };
-
 const getAllImgFile = (list: any, index: any, callback: any) => {
   if (index >= list.length) {
     callback(list);
     return;
   }
   let item = list[index];
-  loadImageFile(item.img_cert).then((res) => {
-    item.img_cert = res;
-    loadImageFile(item.img_promise).then((res) => {
-      item.img_promise = res;
-      loadImageFile(item.img_supp).then((res) => {
+  loadImageFiles([item.img_cert], 0, (res: any[]) => {
+    item.img_cert = res[0];
+    loadImageFiles([item.img_promise], 0, (res: any[]) => {
+      item.img_promise = res[0];
+      loadImageFiles(item.img_supp, 0, (res: any[]) => {
         item.img_supp = res;
         getAllApprovalFile(item.approval_list, 0, (aList: any) => {
           item.approval_list = aList;
-          console.log(item);
           getAllPrincipalFile(item.principal_data, (pList: any) => {
             item.principal_data = pList;
             list[index] = { ...item };
@@ -203,55 +200,58 @@ const getAllImgFile = (list: any, index: any, callback: any) => {
     });
   });
 };
-
 const getAllApprovalFile = (list: any, index: any, callback: any) => {
   if (index >= list.length) {
     callback(list);
     return;
   }
   let item = list[index];
-  loadImageFile(item.img_data).then((res) => {
-    item.img_data = res;
+  loadImageFiles([item.img_data], 0, (res: any[]) => {
+    item.img_data = res[0];
     list[index] = { ...item };
     getAllApprovalFile(list, index + 1, callback);
   });
 };
-
 const getAllPrincipalFile = (item: any, callback: any) => {
-  loadImageFile(item.img_cert).then((res) => {
+  loadImageFiles([item.img_cert], 0, (res: any[]) => {
     item.img_cert = res;
-    loadImageFile(item.img_photo).then((res) => {
+    loadImageFiles([item.img_photo], 0, (res: any[]) => {
       item.img_photo = res;
       callback(item);
     });
   });
 };
-const loadImageFile = async (file: any) => {
-  console.log(file, '文件数据');
-  if (!file) return undefined;
-  let url = file.show_src;
-  let fileName = getFileNameFromUrl(url);
-  return new Promise((resolve, rejects) => {
-    fetch(url)
+const loadImageFiles = async (data: any, ind: number, callback: any) => {
+  let list: any[] = [];
+  if (!data || !data[0]) {
+    callback([]);
+    return;
+  }
+  const uploadList: any = async (file: any, num: number) => {
+    let url = file[num].show_src;
+    let fileName = getFileNameFromUrl(url);
+    await fetch(url)
       .then((res) => {
         return res.blob();
       })
-      .then((blob) => {
+      .then(async (blob) => {
         let imgFile = new File([blob], fileName, { type: blob.type });
         var reader = new FileReader();
-        reader.onloadend = function () {
-          // 将 base64data 发送给 content 页面
-          file.show_src = reader.result;
-          resolve({ ...file });
+        reader.onloadend = async function () {
+          file[num].show_src = reader.result;
+          list = [...list, file[num]];
+          if (num + 1 >= file.length || !file[num + 1]) {
+            await callback(list);
+            return;
+          } else {
+            await loadImageFiles(file, num + 1, callback);
+          }
         };
         reader.readAsDataURL(imgFile);
-      })
-      .catch((err) => {
-        resolve(undefined);
       });
-  });
+  };
+  await uploadList(data, ind);
 };
-
 const getFileNameFromUrl = (url: string) => {
   const path = new URL(url).pathname;
   return path.substring(path.lastIndexOf('/') + 1);

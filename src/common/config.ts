@@ -1,4 +1,4 @@
 export const appConfig = {
   dev: 'http://www.dev.cms.cn',
-  prod: 'http:bt.corp.cqqgsafe.com',
+  prod: 'http://bt.corp.cqqgsafe.com',
 };

@@ -1,22 +1,5 @@
-// addEventListener('fetch', (event: any) => {
-//   event.respondWith(handleRequest(event.request));
-// });
-//
-// export const handleRequest = async (request: any) => {
-//   const cookieRequest = new Request(request, {
-//     headers: {
-//       Cookie: 'PHPSESSID=r8m3m03qh28sfhf14dcomna1lv; sidebarStatus=1',
-//     },
-//   });
-//   return await fetch(cookieRequest);
-// };
-
-export const FetchApi = ({ url, method, data, type }: FetchType) => {
+export const FetchApi = ({ url, method, data }: FetchType) => {
   return new Promise((resolve) => {
-    // let contentType = 'application/json';
-    // if (type === 'form') {
-    //   contentType = 'application/x-www-form-urlencoded';
-    // }
     const option: any = {
       method,
       mode: 'cors',
@@ -44,6 +27,14 @@ export const FetchApi = ({ url, method, data, type }: FetchType) => {
   });
 };
 
+export const PostAPI = async (params: FetchType) => {
+  return await FetchApi({ ...params, method: 'POST' });
+};
+
+export const GetAPI = async (params: FetchType) => {
+  return await FetchApi({ ...params, method: 'GET' });
+};
+
 export const UploadFiles = async (files: any, blob: any) => {
   // application/x-www-form-urlencoded
   // multipart/form-data
@@ -66,14 +57,6 @@ export const UploadFiles = async (files: any, blob: any) => {
       // 处理上传失败的情况
       console.error('上传失败:', error);
     });
-};
-
-export const PostAPI = async (params: FetchType) => {
-  return await FetchApi({ ...params, method: 'POST' });
-};
-
-export const GetAPI = async (params: FetchType) => {
-  return await FetchApi({ ...params, method: 'GET' });
 };
 
 export type FetchType = {

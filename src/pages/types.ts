@@ -45,36 +45,3 @@ export type IndexObj = {
   x: number;
   y: number;
 };
-
-export enum situationType {
-  '东',
-  '南',
-  '西',
-  '北',
-  '东南' = 1,
-  '南北' = 1,
-}
-export enum unitType {
-  '1室',
-  '2室',
-  '3室',
-  '4室',
-}
-
-export enum sitType {
-  '毛坯',
-  '毛坯房' = 0,
-  '简装',
-  '简装修' = 1,
-  '中等',
-  '精装',
-  '精装修' = 3,
-  '豪华',
-}
-
-export type InfoType = {
-  area: boolean;
-  contacts: boolean;
-  json: string;
-  url: string;
-};

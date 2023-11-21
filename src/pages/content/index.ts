@@ -1,4 +1,4 @@
-import { createContentView, CreateOldDataList } from '@/pages/content/component/FloatView';
+import { createContentView } from '@/pages/content/component/FilingDataTools';
 import {
   EXECUTE_SCRIPT,
   GET_DATA_NEW_JUMP,
@@ -11,6 +11,7 @@ import {
   SET_FINAL_STEP_DATA,
   SET_FIRST_STEP_DATA,
   SET_SECOND_STEP_DATA,
+  SETTING_LIST_DATA,
   SETTING_LISTENER_SCREEN,
 } from '@/common/agreement';
 import { MessageEventType } from '@/pages/types';
@@ -24,7 +25,8 @@ import {
   setWriteOldWebFile,
 } from '@/pages/content/output';
 import { getPowerToTwo, queryEleAll } from '@/pages/content/tools';
-import { createDataForServices, updateStepDataIndex } from '@/pages/content/messageStore';
+import { createDataForServices } from '@/pages/content/messageStore';
+import { watchScreenReg } from '@/pages/content/component/ListSortingTool';
 chrome.runtime.onMessage.addListener(
   (
     request: MessageEventType,
@@ -70,6 +72,10 @@ chrome.runtime.onMessage.addListener(
     }
     if (request?.msg === SETTING_LISTENER_SCREEN) {
       settingListenerScreen();
+      return;
+    }
+    if (request?.msg === SETTING_LIST_DATA) {
+      watchScreenReg();
       return;
     }
     sendResponse('received');
@@ -186,11 +192,11 @@ const getStepData = (res: any, num: number) => {
           img_supp.push(file.img_supp);
         }
       }
-      if (file.principal_data?.img_cert?.show_src) {
-        img_main_cert.push(file.principal_data?.img_cert);
+      if (file.principal_data?.img_cert?.length > 0) {
+        img_main_cert = file.principal_data?.img_cert;
       }
-      if (file.principal_data?.img_photo?.show_src) {
-        img_main_photo.push(file.principal_data?.img_photo);
+      if (file.principal_data?.img_photo?.length > 0) {
+        img_main_photo = file.principal_data?.img_photo;
       }
       // if (file.principal_data?.img_cert?.show_src) {
       //   img_main_cert.push(file.principal_data?.img_cert);
@@ -253,5 +259,4 @@ chrome.runtime.sendMessage({ type: EXECUTE_SCRIPT }).then((res) => {
   console.log(res);
   console.log('info-res------------------>');
 });
-
 export {};

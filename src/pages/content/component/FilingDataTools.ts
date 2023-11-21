@@ -1,4 +1,3 @@
-import { DomDataSheet } from '../config';
 import { stylesContextTwo } from '@/pages/content/component/styleSheet';
 import { updateStepData, updateStepDataIndex } from '@/pages/content/messageStore';
 import { createDom, queryEle } from '@/pages/content/tools';
@@ -13,7 +12,6 @@ import {
   SET_FIRST_STEP_DATA,
   SET_SECOND_STEP_DATA,
 } from '@/common/agreement';
-
 // 设置css;
 export const createContentStyle = (css: string) => {
   let style: any = document.createElement('style');
@@ -26,7 +24,6 @@ export const createContentStyle = (css: string) => {
   let head = document.getElementsByTagName('head')[0];
   head.appendChild(style);
 };
-
 // 筛选域名
 export const RegUrlConfig = (local: any) => {
   let list = ['116.177.253.34:8088', '61.136.101.51:8443'];
@@ -38,11 +35,10 @@ export const RegUrlConfig = (local: any) => {
   });
   return res;
 };
-
+// 创建第一步按钮
 export const createContentView = (data: any) => {
   let idx = RegUrlConfig(document.location);
   let dom: any = queryEle('body');
-  console.log(data, idx);
   createContentStyle(stylesContextTwo);
   if (idx === 0) {
     CreateDataModal(dom);
@@ -56,8 +52,7 @@ export const createContentView = (data: any) => {
     CreateOldDataList(data);
   }
 };
-
-const CreateOldModal = (dom: any) => {
+export const CreateOldModal = (dom: any) => {
   let oldView = queryEle('.oldView');
   if (oldView) oldView.remove();
   oldView = createDom({ tag: 'div', cla: 'oldView' });
@@ -73,7 +68,6 @@ const CreateOldModal = (dom: any) => {
     updateStepData(OLD_VERSION_FILING_DATA, SET_FINAL_OLD_DATA);
   });
 };
-
 // 创建第二步按钮
 export const CreateStepTwoDataStep = (data: any) => {
   let stepTwoView = queryEle('.floatView');
@@ -89,7 +83,6 @@ export const CreateStepTwoDataStep = (data: any) => {
   }
   stepTwoView?.appendChild(AddModal);
 };
-
 // 创建第三步按钮
 export const CreateStepThreeDataStep = () => {
   let FinalModal: any = queryEle('.floatView>.FinalModal');
@@ -101,7 +94,6 @@ export const CreateStepThreeDataStep = () => {
     updateStepData(NEW_VERSION_FILING_DATA, SET_FINAL_STEP_DATA);
   });
 };
-
 export const CreateOldDataList = (data: any) => {
   let oldView = queryEle('.oldView');
   const { web_site } = data;
@@ -137,15 +129,7 @@ export const CreateOldFileList = (dom: any) => {
 };
 export const CreateWebDataModal = (data: any) => {
   const { web_site } = data;
-  // let dom: any = document.querySelector(
-  //   'body .x-panel-bwrap .x-panel-body .x-tree-node .x-tree-node-ct .x-tree-node-el .x-tree-node-anchor'
-  // );
-  // dom?.click();
   setTimeout(() => {
-    // let dom1: any = document.querySelector(
-    //   'body .x-panel-bwrap .x-panel-body .x-tree-node .x-tree-node-ct .x-tree-node-leaf'
-    // );
-    // dom1?.click();
     let oldFileView = queryEle('.oldFileView');
     let WebModal: any = queryEle('.oldFileView>.WebModal');
     WebModal?.remove();
@@ -176,8 +160,3 @@ export const CreateDataModal = (dom: any) => {
     updateStepData(NEW_VERSION_FILING_DATA, SET_FIRST_STEP_DATA);
   });
 };
-
-// const createDataInfo = () => {
-//   let params: any = getHostDataParams(document.location);
-//   copyInfoToServices(params);
-// };

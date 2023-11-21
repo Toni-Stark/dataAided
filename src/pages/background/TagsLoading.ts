@@ -1,4 +1,8 @@
-import { OPEN_MOUSE_LISTENER, SETTING_LISTENER_SCREEN } from '@/common/agreement';
+import {
+  OPEN_MOUSE_LISTENER,
+  SETTING_LIST_DATA,
+  SETTING_LISTENER_SCREEN,
+} from '@/common/agreement';
 import { oldFinalData } from '@/pages/background/DataServices';
 let tabTimer: any = {};
 export const listenerTagLoadingMessage = () => {
@@ -8,6 +12,10 @@ export const listenerTagLoadingMessage = () => {
       clearTimeout(tabTimer[tabId]);
       tabTimer[tabId] = null;
       console.log(oldFinalData, '数据深度1');
+      // 功能二 列表排序
+      if (tab?.url && tab.url.indexOf('corp-query-search') >= 0) {
+        chrome.tabs.sendMessage(tabId, { msg: SETTING_LIST_DATA });
+      }
       chrome.tabs.sendMessage(tabId, { msg: OPEN_MOUSE_LISTENER, num: 1, data: oldFinalData });
       // 验证是否处于中台系统；
       let isSystem = verifyOldVersionPath(tab.url, '/batools/enter/index');
@@ -19,33 +27,23 @@ export const listenerTagLoadingMessage = () => {
   chrome.tabs.onActivated.addListener(function (activeInfo) {
     // 获取当前活动标签页的ID
     const tabId = activeInfo.tabId;
-
     // 根据ID获取当前标签页的信息
     chrome.tabs.get(tabId, function (tab) {
       // 获取该标签页的标题和URL
       let isSystem = verifyOldVersionPath(tab.url, '/batools/enter/index');
-      console.log('监听页面', isSystem);
       console.log(oldFinalData, '数据深度2');
       if (isSystem) {
       }
     });
   });
-};
-
-const regCurrentScreenRefresh = (resent: any, tab: any): boolean => {
-  let id = tab.id;
-  if (resent.hasOwnProperty(id) && resent[id].id === tab.id) {
-    if (resent[id].url !== tab.url) {
-      resent[id] = tab;
-      return true;
-    } else {
-      resent[id] = tab;
-      return false;
-    }
-  } else {
-    resent[id] = tab;
-    return true;
-  }
+  chrome.webRequest.onCompleted.addListener(
+    (detail) => {
+      if (detail.url.indexOf('corp-query-search') >= 0) {
+        chrome.tabs.sendMessage(detail.tabId, { msg: SETTING_LIST_DATA });
+      }
+    },
+    { urls: ['<all_urls>'] }
+  );
 };
 
 const verifyOldVersionPath = (src?: string, target?: string): boolean => {
