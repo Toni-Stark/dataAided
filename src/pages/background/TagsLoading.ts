@@ -11,7 +11,7 @@ export const listenerTagLoadingMessage = () => {
     clearTimeout(tabTimer[tabId]);
     tabTimer[tabId] = null;
     tabTimer[tabId] = setTimeout(() => {
-      RegUrlPolice(tab, tabId);
+      RegUrlListSort(tab, tabId);
       RegUrlSorting(tab, tabId);
     }, 1000);
   });
@@ -21,14 +21,14 @@ export const listenerTagLoadingMessage = () => {
   });
   chrome.webRequest.onCompleted.addListener(
     (detail) => {
-      RegUrlPolice(detail, detail.tabId);
+      RegUrlListSort(detail, detail.tabId);
     },
     { urls: ['<all_urls>'] }
   );
 };
 
 // 判断是否企业信用信息列表排序页面
-const RegUrlPolice = (tab: any, tabId: any) => {
+const RegUrlListSort = (tab: any, tabId: any) => {
   if (tab?.url && tab.url.indexOf('corp-query-search') >= 0) {
     chrome.tabs.sendMessage(tabId, { msg: SETTING_LIST_DATA });
   }
