@@ -240,6 +240,7 @@ const settingListenerScreen = () => {
   if (element_site2.length <= 0) return;
   addEventClickList(element_site2, '2', GET_DATA_OLD_JUMP);
 };
+
 chrome.runtime.sendMessage({ type: EXECUTE_SCRIPT }).then((res) => {
   console.log('info-res------------------>');
   console.log(res);
