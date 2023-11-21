@@ -26,7 +26,7 @@ import {
 } from '@/pages/content/output';
 import { getPowerToTwo, queryEleAll } from '@/pages/content/tools';
 import { createDataForServices } from '@/pages/content/messageStore';
-import { watchScreenReg } from '@/pages/content/component/ListSortingTool';
+import { RegGsxtConfig } from '@/pages/content/component/ListSortingTool';
 chrome.runtime.onMessage.addListener(
   (
     request: MessageEventType,
@@ -75,7 +75,7 @@ chrome.runtime.onMessage.addListener(
       return;
     }
     if (request?.msg === SETTING_LIST_DATA) {
-      watchScreenReg();
+      RegGsxtConfig();
       return;
     }
     sendResponse('received');

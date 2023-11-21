@@ -1,3 +1,4 @@
+// 云网备案工具
 import { stylesContextTwo } from '@/pages/content/component/styleSheet';
 import { updateStepData, updateStepDataIndex } from '@/pages/content/messageStore';
 import { createDom, queryEle } from '@/pages/content/tools';
@@ -24,7 +25,7 @@ export const createContentStyle = (css: string) => {
   let head = document.getElementsByTagName('head')[0];
   head.appendChild(style);
 };
-// 筛选域名
+// 筛选工信备案域名
 export const RegUrlConfig = (local: any) => {
   let list = ['116.177.253.34:8088', '61.136.101.51:8443'];
   let res = -1;
