@@ -198,12 +198,6 @@ const getStepData = (res: any, num: number) => {
       if (file.principal_data?.img_photo?.length > 0) {
         img_main_photo = file.principal_data?.img_photo;
       }
-      // if (file.principal_data?.img_cert?.show_src) {
-      //   img_main_cert.push(file.principal_data?.img_cert);
-      // }
-      // if (file.principal_data?.img_photo?.show_src) {
-      //   img_main_photo.push(file.principal_data?.img_photo);
-      // }
     });
     data['web_side_id_card_p1'] = {
       mainOtherPicUl: Array.isArray(basic.img_supp) ? basic.img_supp : [basic.img_supp],
@@ -222,37 +216,29 @@ const getStepData = (res: any, num: number) => {
 const getAttributeData = (dom: any, key: string) => {
   return dom.getAttribute(key);
 };
-const settingListenerScreen = () => {
-  const element_site1: any = queryEleAll('.jump_site_1');
-  if (element_site1.length <= 0) return;
-  for (let item of element_site1) {
-    item.removeEventListener('click', (e: any) => {
-      console.log(item, e, 'input');
-    });
 
+const addEventClickList = (element: any, type: string, msg: string) => {
+  for (let item of element) {
+    item.removeEventListener('click', (e: any) => {});
     let id = getAttributeData(item, 'data-batools_id');
     let type = getAttributeData(item, 'data-batools_type');
     let baseUrl = getAttributeData(item, 'data-url');
     if (type == '1') {
-      item.addEventListener('click', (e: any) => {
-        createDataForServices(GET_DATA_NEW_JUMP, baseUrl, id);
+      item.addEventListener('click', () => {
+        createDataForServices(msg, baseUrl, id);
       });
     }
   }
+};
+
+const settingListenerScreen = () => {
+  const element_site1: any = queryEleAll('.jump_site_1');
+  if (element_site1.length <= 0) return;
+  addEventClickList(element_site1, '1', GET_DATA_NEW_JUMP);
+
   const element_site2: any = queryEleAll('.jump_site_2');
   if (element_site2.length <= 0) return;
-  for (let item of element_site2) {
-    item.removeEventListener('click', () => {});
-    let id = getAttributeData(item, 'data-batools_id');
-    let type = getAttributeData(item, 'data-batools_type');
-    let baseUrl = getAttributeData(item, 'data-url');
-    if (type == '2') {
-      item?.removeEventListener('click', () => {});
-      item.addEventListener('click', (e: any) => {
-        createDataForServices(GET_DATA_OLD_JUMP, baseUrl, id);
-      });
-    }
-  }
+  addEventClickList(element_site2, '2', GET_DATA_OLD_JUMP);
 };
 chrome.runtime.sendMessage({ type: EXECUTE_SCRIPT }).then((res) => {
   console.log('info-res------------------>');
