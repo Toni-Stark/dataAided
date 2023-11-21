@@ -5,6 +5,8 @@ import { createDom, queryEle } from '@/pages/content/tools';
 import {
   NEW_VERSION_FILING_DATA,
   OLD_VERSION_FILING_DATA,
+  POLICE_MAIN_DATA,
+  POLICE_VERSION_DATA,
   SET_FINAL_OLD_DATA,
   SET_FINAL_OLD_DATA_SECOND,
   SET_FINAL_OLD_MAIN_FILE,
@@ -27,7 +29,7 @@ export const createContentStyle = (css: string) => {
 };
 // 筛选工信备案域名
 export const RegUrlConfig = (local: any) => {
-  let list = ['116.177.253.34:8088', '61.136.101.51:8443'];
+  let list = ['116.177.253.34:8088', '61.136.101.51:8443', 'beian.mps.gov.cn'];
   let res = -1;
   list.find((item, index) => {
     if (local.host?.indexOf(item) !== -1) {
@@ -36,7 +38,7 @@ export const RegUrlConfig = (local: any) => {
   });
   return res;
 };
-// 创建第一步按钮
+// 云网版本数据填写
 export const createContentView = (data: any) => {
   let idx = RegUrlConfig(document.location);
   let dom: any = queryEle('body');
@@ -51,6 +53,10 @@ export const createContentView = (data: any) => {
     CreateOldFileList(dom);
     CreateWebDataModal(data);
     CreateOldDataList(data);
+  }
+  if (idx === 2) {
+    console.log('公安数据');
+    CreatePoliceModal(dom);
   }
 };
 export const CreateOldModal = (dom: any) => {
@@ -69,7 +75,6 @@ export const CreateOldModal = (dom: any) => {
     updateStepData(OLD_VERSION_FILING_DATA, SET_FINAL_OLD_DATA);
   });
 };
-// 创建第二步按钮
 export const CreateStepTwoDataStep = (data: any) => {
   let stepTwoView = queryEle('.floatView');
   let AddModal: any = queryEle('.floatView>.AddModal');
@@ -84,7 +89,6 @@ export const CreateStepTwoDataStep = (data: any) => {
   }
   stepTwoView?.appendChild(AddModal);
 };
-// 创建第三步按钮
 export const CreateStepThreeDataStep = () => {
   let FinalModal: any = queryEle('.floatView>.FinalModal');
   FinalModal?.remove();
@@ -95,6 +99,7 @@ export const CreateStepThreeDataStep = () => {
     updateStepData(NEW_VERSION_FILING_DATA, SET_FINAL_STEP_DATA);
   });
 };
+// 老网站版本数据填写
 export const CreateOldDataList = (data: any) => {
   let oldView = queryEle('.oldView');
   const { web_site } = data;
@@ -159,5 +164,21 @@ export const CreateDataModal = (dom: any) => {
   floatView?.appendChild(FirstStepModal);
   FirstStepModal.addEventListener('click', () => {
     updateStepData(NEW_VERSION_FILING_DATA, SET_FIRST_STEP_DATA);
+  });
+};
+// 公安版本数据填写
+export const CreatePoliceModal = (dom: any) => {
+  let floatView = queryEle('.floatView');
+  if (floatView) floatView.remove();
+  floatView = createDom({ tag: 'div', cla: 'floatView' });
+  dom.appendChild(floatView);
+  let NewTitle = createDom({ tag: 'div', cla: 'NewTitle', txt: '公安版本' });
+  floatView?.appendChild(NewTitle);
+  let FirstStepModal: any = queryEle('.floatView>.FirstStepModal');
+  FirstStepModal?.remove();
+  FirstStepModal = createDom({ tag: 'div', cla: 'FirstStepModal', txt: '主体数据' });
+  floatView?.appendChild(FirstStepModal);
+  FirstStepModal.addEventListener('click', () => {
+    updateStepData(POLICE_VERSION_DATA, POLICE_MAIN_DATA);
   });
 };

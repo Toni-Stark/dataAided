@@ -12,7 +12,7 @@ export const listenerTagLoadingMessage = () => {
     tabTimer[tabId] = null;
     tabTimer[tabId] = setTimeout(() => {
       RegUrlListSort(tab, tabId);
-      RegUrlSorting(tab, tabId);
+      RegUrlFiling(tab, tabId);
     }, 1000);
   });
   chrome.tabs.onActivated.addListener(function (activeInfo) {
@@ -33,9 +33,10 @@ const RegUrlListSort = (tab: any, tabId: any) => {
     chrome.tabs.sendMessage(tabId, { msg: SETTING_LIST_DATA });
   }
 };
-// 判断是否云网备案数据添加页面
-const RegUrlSorting = (tab: any, tabId: any) => {
+// 判断是否备案数据添加页面
+const RegUrlFiling = (tab: any, tabId: any) => {
   chrome.tabs.sendMessage(tabId, { msg: OPEN_MOUSE_LISTENER, num: 1, data: oldFinalData });
+  // 判断是否后台系统
   let isSystem = verifyOldVersionPath(tab.url, '/batools/enter/index');
   if (isSystem) {
     chrome.tabs.sendMessage(tabId, { msg: SETTING_LISTENER_SCREEN });

@@ -2,13 +2,6 @@
 export const EXECUTE_SCRIPT = 'execute_script';
 // 打开内容页面监听；
 export const OPEN_MOUSE_LISTENER = 'open_mouse_listener';
-// 唤起edi数据分类
-export const ASK_CATE_TO_SERVICES = 'ask_cate_to_services';
-
-// 截图快捷键
-export const SCREENSHOT_SHORTCUT = 'screenshot_shortcut';
-// 上传选中图片
-export const UPLOAD_IMG_FILES = 'upload_img_files';
 
 // 新版备案数据
 export const NEW_VERSION_FILING_DATA = 'new_version_filing_data';
@@ -47,3 +40,8 @@ export const GET_FILES_ADDRESS = 'get_files_address';
 
 // 设置列表数据顺序-第二种功能
 export const SETTING_LIST_DATA = 'setting_list_data';
+
+// 公安备案数据
+export const POLICE_VERSION_DATA = 'police_version_data';
+// 公安备案主体数据
+export const POLICE_MAIN_DATA = 'police_main_data';

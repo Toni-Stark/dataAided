@@ -122,3 +122,5 @@ export const stepThirdData = {
       'https://cpimg.compass-realestate.com/guang_img/20230712/7f05020230712143521755757.jpg',
   },
 };
+
+export const dataMainTemplate = {};

@@ -125,7 +125,6 @@ export const OLD_THIRD_STEP: any = {
   first_page_url: '#ext-comp-1098 .x-form-element input',
   ip_address: '#ext-comp-1271 .x-form-element textarea',
 };
-
 export const OLD_THIRD_CHECK_STEP: any = {
   // 第三部分
   language_type:
@@ -143,6 +142,10 @@ export const OLD_THIRD_UPLOAD_STEP: any = {
   // 第三部分
   approval_list:
     '#ext-comp-1136>.x-panel-bwrap>.x-panel-body>.x-column-inner>.x-panel>.x-panel-bwrap>.x-panel-body>.x-column-inner',
+};
+
+export const POLICE_INFO_MAIN: any = {
+  unitpty: '.ant-select',
 };
 
 export const DispatchEvent = (dom: any, event: string) => {
@@ -293,6 +296,13 @@ export const setFirstStepData = (data: any) => {
   );
 };
 
+export const setPoliceMainData = (data: any) => {
+  // let iframe: any = document.querySelector('');
+  // policeSelectView(iframe, POLICE_INFO_MAIN);
+};
+
+// export const policeSelectView = (iframe, list) => {};
+
 export const recursiveExecution = (params: any, callback: any) => {
   const { iframe, result, list, data, index } = params;
   if (index > list.length - 1) {
@@ -385,7 +395,6 @@ export const recursiveExecution = (params: any, callback: any) => {
       }
       for (let i of checkout) {
         if (list.includes(i.value)) {
-          // i.click();
           DispatchMouseEvent(i, 'click');
           let val = data[key].find((item: any) => item.approval_type === i.value);
           addStepSecondDataFile(val);
@@ -396,7 +405,6 @@ export const recursiveExecution = (params: any, callback: any) => {
       let reg_list = data[key].split(',');
       for (let i of checkout) {
         if (reg_list.includes(i.id)) {
-          // i.click();
           DispatchMouseEvent(i, 'click');
         }
       }
@@ -979,7 +987,6 @@ const chooseImage = ({ el, data }: any, callback: any) => {
     }, 400);
   });
 };
-
 const setUploadFile = ({ data, index, elements }: any, callback: any) => {
   if (index >= data.length) {
     callback();

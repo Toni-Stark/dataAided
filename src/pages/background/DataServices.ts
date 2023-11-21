@@ -12,10 +12,13 @@ import {
   SETTING_LISTENER_SCREEN,
   GET_DATA_OLD_JUMP,
   EXECUTE_SCRIPT,
+  POLICE_VERSION_DATA,
+  POLICE_MAIN_DATA,
 } from '@/common/agreement';
 import { sendMessageQueryCurrent } from '@/pages/background/SettingStore';
 import { GetAPI } from '@/pages/background/FetchStore';
 import { appConfig } from '@/common/config';
+import { dataMainTemplate } from '@/common/element';
 
 export let oldFinalData: any = {};
 
@@ -93,6 +96,16 @@ export const listenerDataInfoMessage = () => {
         });
       }
       return true;
+    }
+    if (response?.type === POLICE_VERSION_DATA) {
+      const { tab } = sender;
+      if (!tab?.id) return true;
+      if (response?.step === POLICE_MAIN_DATA) {
+        sendMessageQueryCurrent(tab.id, {
+          msg: POLICE_MAIN_DATA,
+          data: dataMainTemplate,
+        });
+      }
     }
     if (response?.type === SETTING_LISTENER_SCREEN) {
       const { position, id } = response;

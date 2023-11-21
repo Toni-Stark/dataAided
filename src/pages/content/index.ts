@@ -4,6 +4,7 @@ import {
   GET_DATA_NEW_JUMP,
   GET_DATA_OLD_JUMP,
   OPEN_MOUSE_LISTENER,
+  POLICE_MAIN_DATA,
   SET_FINAL_OLD_DATA,
   SET_FINAL_OLD_DATA_SECOND,
   SET_FINAL_OLD_MAIN_FILE,
@@ -17,6 +18,7 @@ import {
 import { MessageEventType } from '@/pages/types';
 import {
   setFirstStepData,
+  setPoliceMainData,
   setSecondStepData,
   setThreeStepData,
   setWriteOldData,
@@ -34,6 +36,10 @@ chrome.runtime.onMessage.addListener(
     sendResponse: (response: string) => void
   ) => {
     if (document.readyState !== 'complete') return;
+    if (request?.msg === SETTING_LISTENER_SCREEN) {
+      settingListenerScreen();
+      return;
+    }
     if (request?.msg === OPEN_MOUSE_LISTENER) {
       createContentView(request.data);
       return;
@@ -70,12 +76,12 @@ chrome.runtime.onMessage.addListener(
       setWriteOldWebFile(request.data, request.num);
       return;
     }
-    if (request?.msg === SETTING_LISTENER_SCREEN) {
-      settingListenerScreen();
-      return;
-    }
     if (request?.msg === SETTING_LIST_DATA) {
       RegGsxtConfig();
+      return;
+    }
+    if (request?.msg === POLICE_MAIN_DATA) {
+      setPoliceMainData(request.data);
       return;
     }
     sendResponse('received');
