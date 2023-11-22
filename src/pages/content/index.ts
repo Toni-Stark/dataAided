@@ -18,7 +18,6 @@ import {
 import { MessageEventType } from '@/pages/types';
 import {
   setFirstStepData,
-  setPoliceMainData,
   setSecondStepData,
   setThreeStepData,
   setWriteOldData,
@@ -29,6 +28,7 @@ import {
 import { getPowerToTwo, queryEleAll } from '@/pages/content/tools';
 import { createDataForServices } from '@/pages/content/messageStore';
 import { RegGsxtConfig } from '@/pages/content/component/ListSortingTool';
+import { setPoliceMainData } from '@/pages/content/component/PoliceDataTool';
 chrome.runtime.onMessage.addListener(
   (
     request: MessageEventType,
@@ -81,7 +81,8 @@ chrome.runtime.onMessage.addListener(
       return;
     }
     if (request?.msg === POLICE_MAIN_DATA) {
-      setPoliceMainData(request.data);
+      // setPoliceMainData(request.data);
+      setPoliceMainData();
       return;
     }
     sendResponse('received');

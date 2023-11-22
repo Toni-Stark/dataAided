@@ -124,3 +124,28 @@ export const stepThirdData = {
 };
 
 export const dataMainTemplate = {};
+
+export const infoMain = {
+  unitpty: '单位',
+  unitpty_sub: "基金会",
+}
+export const infoCompany = {
+  form_item_unitnm: '和东来公司',
+  form_item_uitcfttype: "营业执照证书",
+  form_item_uitcftnum: "fs43523452345",
+  form_item_uitadrstr: "重庆市江北区保税港",
+  form_item_uitregadrstr: "重庆市渝中区红岩村",
+  form_item_lglnm: "和仁东",
+}
+
+export const infoPerson = {
+  form_item_rpbnm: '和仁东',
+  form_item_rpbcfttype: "居民身份证",
+  form_item_rpbcftnum: "500229200109218555",
+  form_item_idecardvalid: "2023-11-22",
+  form_item_isLongValid: true,
+  form_item_rpbadsstr: "重庆市江北区保税港",
+  form_item_rpbmobile: "15502354225",
+  form_item_offtel: "015-13354456",
+  form_item_rpbmail: "15502354225",
+}
