@@ -257,7 +257,7 @@ const loadImageFiles = async (data: any, ind: number, callback: any) => {
             await callback(list);
             return;
           } else {
-            await loadImageFiles(file, num + 1, callback);
+            await uploadList(file, num + 1, callback);
           }
         };
         reader.readAsDataURL(imgFile);
