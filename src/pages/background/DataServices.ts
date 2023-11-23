@@ -156,6 +156,7 @@ const getCurrentData = (id: any, callback: any) => {
     loadImageFiles([basic.img_cert], 0, (res: any[]) => {
       basic.img_cert = res[0];
       loadImageFiles(basic.img_supp, 0, (res: any[]) => {
+        console.log(res,basic.img_supp, '补充材料结果');
         basic.img_supp = res;
         loadImageFiles([principal_data.img_cert], 0, (res: any[]) => {
           principal_data.img_cert = res[0];
@@ -227,7 +228,7 @@ const loadImageFiles = async (data: any, ind: number, callback: any) => {
     callback([]);
     return;
   }
-  const uploadList: any = async (file: any, num: number) => {
+  const uploadList: any = async (file: any, num: number) => {``
     let url = file[num].show_src;
     let fileName = getFileNameFromUrl(url);
     await fetch(url)
@@ -240,11 +241,12 @@ const loadImageFiles = async (data: any, ind: number, callback: any) => {
         reader.onloadend = async function () {
           file[num].show_src = reader.result;
           list = [...list, file[num]];
+          console.log(num, file)
           if (num + 1 >= file.length || !file[num + 1]) {
             await callback(list);
             return;
           } else {
-            await loadImageFiles(file, num + 1, callback);
+            await uploadList(file, num + 1, callback);
           }
         };
         reader.readAsDataURL(imgFile);
