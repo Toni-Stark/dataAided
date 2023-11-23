@@ -1,7 +1,13 @@
 // 云网备案工具
 import { stylesContextTwo } from '@/pages/content/component/styleSheet';
 import { updateStepData, updateStepDataIndex } from '@/pages/content/messageStore';
-import { createDom, queryEle } from '@/pages/content/tools';
+import {
+  base64ToFileTypeImage,
+  createDom,
+  getFileBase64,
+  getFileName,
+  queryEle,
+} from '@/pages/content/tools';
 import {
   NEW_VERSION_FILING_DATA,
   OLD_VERSION_FILING_DATA,
@@ -55,7 +61,6 @@ export const createContentView = (data: any) => {
     CreateOldDataList(data);
   }
   if (idx === 2) {
-    console.log('公安数据');
     CreatePoliceModal(dom);
   }
 };
@@ -182,3 +187,5 @@ export const CreatePoliceModal = (dom: any) => {
     updateStepData(POLICE_VERSION_DATA, POLICE_MAIN_DATA);
   });
 };
+
+

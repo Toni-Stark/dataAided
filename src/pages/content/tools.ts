@@ -60,3 +60,50 @@ export const base64ToFile = (base64Data: any, fileName: any) => {
     type: type,
   });
 };
+
+export const base64ToFileTypeImage = (base64Data: any, fileName: any) => {
+  let data = base64Data.split(',');
+  const bstr = window.atob(data[1]);
+  let type = "image/png";
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new File([u8arr], `${fileName}`, {
+    type: type,
+  });
+};
+export const getFileBase64 = (url: any) => {
+  return new Promise((resolve)=>{
+    fetch(url)
+      .then(response => response.blob())
+      .then(blobData => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64Data = reader.result;
+          // 在这里处理Base64编码的图像数据
+          resolve(base64Data);
+        };
+        reader.readAsDataURL(blobData);
+      })
+  })
+}
+export const getFileBlob = (url: any) => {
+  return new Promise((resolve)=>{
+    fetch(url)
+      .then(response => response.blob())
+      .then(blobData => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64Data = reader.result;
+          // 在这里处理Base64编码的图像数据
+          resolve(base64Data);
+        };
+        reader.readAsDataURL(blobData);
+      })
+  })
+}
+export const getFileName = (url: any) => {
+  return url.match(/\/([^\/?#]+)[^\/]*$/)[1];
+}

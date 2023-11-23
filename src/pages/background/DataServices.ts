@@ -16,7 +16,7 @@ import {
   POLICE_MAIN_DATA,
 } from '@/common/agreement';
 import { sendMessageQueryCurrent } from '@/pages/background/SettingStore';
-import { GetAPI } from '@/pages/background/FetchStore';
+import { GetAPI, UploadFiles } from '@/pages/background/FetchStore';
 import { appConfig } from '@/common/config';
 import { dataMainTemplate } from '@/common/element';
 

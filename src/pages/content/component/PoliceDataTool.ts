@@ -1,5 +1,6 @@
 import { DispatchEvent, DispatchMouseEvent, queryFirstIframeEle, queryFirstIframeEleAll } from '@/pages/content/output';
 import { infoCompany, infoMain, infoPerson } from '@/common/element';
+import { base64ToFileTypeImage, getFileBase64, getFileName } from '@/pages/content/tools';
 
 
 export const POLICE_INFO_MAIN: any = {
@@ -13,6 +14,7 @@ export const POLICE_INFO_COMPANY: any = {
   form_item_uitadrstrAndInput: '.ant-row #form_item_uitadrstr',
   form_item_uitregadrstrAndInput: '.ant-row #form_item_uitregadrstr',
   form_item_lglnmAndInput: '.ant-row #form_item_lglnm',
+  // form_item_fileidAndUpload: '',
 }
 export const POLICE_INFO_PERSON: any = {
   form_item_rpbnmAndInput : '.ant-row #form_item_rpbnm',
@@ -55,7 +57,6 @@ export const setPoliceMainData = () => {
     }
     let personCompany = getKeysList(POLICE_INFO_PERSON);
     currentEnterData(rootNode, personCompany, infoPerson, () => {
-
     })
   });
 };
@@ -73,6 +74,11 @@ const currentEnterData = (root: any, element: any, data: any, callback: any) => 
     }
     if (obj.type === "Input") {
       setInputValue(root, obj, info[obj.key], ()=>{
+        currentListRun(ele, info, num+1);
+      });
+    }
+    if (obj.type === "Upload") {
+      setUploadValue(root, obj, info[obj.key], ()=>{
         currentListRun(ele, info, num+1);
       });
     }
@@ -105,4 +111,23 @@ const setInputValue = (root: any, tag: any, val: any, callback: any) => {
   inputDom.value = val;
   DispatchEvent(inputDom, 'change');
   callback()
+}
+const setUploadValue = (root: any, tag: any, val: any, callback: any) => {
+  // UploadImageAndAddElement()
+  callback()
+}
+
+
+const UploadImageAndAddElement = (src: string, imgView: any) => {
+  getFileBase64(src).then(base => {
+    let file = base64ToFileTypeImage(base, getFileName(src));
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+    imgView.files = dataTransfer.files;
+    let e = new Event('change');
+    imgView.dispatchEvent(e);
+  })
+    .catch(error => {
+      console.error('Error converting image to Blob:', error);
+    });
 }

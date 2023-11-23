@@ -136,6 +136,8 @@ export const infoCompany = {
   form_item_uitadrstr: "重庆市江北区保税港",
   form_item_uitregadrstr: "重庆市渝中区红岩村",
   form_item_lglnm: "和仁东",
+  form_item_uitcftid: 'https://bt.corp.cqqgsafe.com/static/batools/upload/word/images/20231123/df2898022e4655446ae174a4b06c24cb.jpg',
+
 }
 
 export const infoPerson = {
@@ -148,4 +150,7 @@ export const infoPerson = {
   form_item_rpbmobile: "15502354225",
   form_item_offtel: "015-13354456",
   form_item_rpbmail: "15502354225",
+  form_item_idecardfrontid: 'https://bt.corp.cqqgsafe.com/static/batools/upload/word/images/20231123/f12463e24cb39e96b47e6ec21b0c64e6.jpg',
+  form_item_idecardbackid: 'https://bt.corp.cqqgsafe.com/static/batools/upload/word/images/20231123/b6d6ec7f77994e9d0d352b921df7b8ea.jpg',
+  form_item_idecardgroupid: 'https://bt.corp.cqqgsafe.com/static/batools/upload/word/images/20231123/9cd92b647a16bd43124faffb4ea88037.jpg'
 }
