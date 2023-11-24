@@ -157,7 +157,12 @@ export const DispatchMouseEvent = (dom: any, event: string) => {
   });
   dom?.dispatchEvent(e);
 };
-
+export const DispatchScrollEvent = (dom: any, num: number) => {
+  const wheelEvent = new WheelEvent('wheel', {
+    deltaY: num,
+  });
+  dom.dispatchEvent(wheelEvent);
+};
 const getElementList = (data: any) => {
   let list = [];
   for (let i in data) {

@@ -34,6 +34,8 @@ export const SETTING_LISTENER_SCREEN = 'setting_listener_screen';
 export const GET_DATA_NEW_JUMP = 'get_data_new_jump';
 // 更新数据进入旧系统
 export const GET_DATA_OLD_JUMP = 'get_data_old_jump';
+// 更新数据进入旧系统
+export const SETTING_POLICE_SCREEN = 'setting_police_screen';
 
 // 请求图片资源文件
 export const GET_FILES_ADDRESS = 'get_files_address';
@@ -45,3 +47,5 @@ export const SETTING_LIST_DATA = 'setting_list_data';
 export const POLICE_VERSION_DATA = 'police_version_data';
 // 公安备案主体数据
 export const POLICE_MAIN_DATA = 'police_main_data';
+// 公安备案网站数据
+export const POLICE_WEB_DATA = 'police_web_data';

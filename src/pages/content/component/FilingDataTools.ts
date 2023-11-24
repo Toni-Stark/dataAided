@@ -1,25 +1,23 @@
 // 云网备案工具
 import { stylesContextTwo } from '@/pages/content/component/styleSheet';
-import { updateStepData, updateStepDataIndex } from '@/pages/content/messageStore';
+import { createDataForServices, updateStepData, updateStepDataIndex } from '@/pages/content/messageStore';
 import {
-  base64ToFileTypeImage,
   createDom,
-  getFileBase64,
-  getFileName,
   queryEle,
 } from '@/pages/content/tools';
 import {
+  GET_DATA_NEW_JUMP,
   NEW_VERSION_FILING_DATA,
   OLD_VERSION_FILING_DATA,
   POLICE_MAIN_DATA,
-  POLICE_VERSION_DATA,
+  POLICE_VERSION_DATA, POLICE_WEB_DATA,
   SET_FINAL_OLD_DATA,
   SET_FINAL_OLD_DATA_SECOND,
   SET_FINAL_OLD_MAIN_FILE,
   SET_FINAL_OLD_WEB_FILE,
   SET_FINAL_STEP_DATA,
   SET_FIRST_STEP_DATA,
-  SET_SECOND_STEP_DATA,
+  SET_SECOND_STEP_DATA, SETTING_POLICE_SCREEN,
 } from '@/common/agreement';
 // 设置css;
 export const createContentStyle = (css: string) => {
@@ -61,6 +59,7 @@ export const createContentView = (data: any) => {
     CreateOldDataList(data);
   }
   if (idx === 2) {
+    createDataForServices(SETTING_POLICE_SCREEN, 'http://116.177.253.34:8088/', 14);
     CreatePoliceModal(dom);
   }
 };
@@ -179,12 +178,21 @@ export const CreatePoliceModal = (dom: any) => {
   dom.appendChild(floatView);
   let NewTitle = createDom({ tag: 'div', cla: 'NewTitle', txt: '公安版本' });
   floatView?.appendChild(NewTitle);
+
   let FirstStepModal: any = queryEle('.floatView>.FirstStepModal');
   FirstStepModal?.remove();
   FirstStepModal = createDom({ tag: 'div', cla: 'FirstStepModal', txt: '主体数据' });
   floatView?.appendChild(FirstStepModal);
   FirstStepModal.addEventListener('click', () => {
     updateStepData(POLICE_VERSION_DATA, POLICE_MAIN_DATA);
+  });
+
+  let WebStepModal: any = queryEle('.floatView>.FinalModal');
+  WebStepModal?.remove();
+  WebStepModal = createDom({ tag: 'div', cla: 'FinalModal', txt: '网站数据' });
+  floatView?.appendChild(WebStepModal);
+  WebStepModal.addEventListener('click', () => {
+    updateStepData(POLICE_VERSION_DATA, POLICE_WEB_DATA);
   });
 };
 

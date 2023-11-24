@@ -13,12 +13,11 @@ import {
   GET_DATA_OLD_JUMP,
   EXECUTE_SCRIPT,
   POLICE_VERSION_DATA,
-  POLICE_MAIN_DATA,
+  POLICE_MAIN_DATA, POLICE_WEB_DATA, SETTING_POLICE_SCREEN,
 } from '@/common/agreement';
 import { sendMessageQueryCurrent } from '@/pages/background/SettingStore';
 import { GetAPI, UploadFiles } from '@/pages/background/FetchStore';
 import { appConfig } from '@/common/config';
-import { dataMainTemplate } from '@/common/element';
 
 export let oldFinalData: any = {};
 
@@ -103,7 +102,13 @@ export const listenerDataInfoMessage = () => {
       if (response?.step === POLICE_MAIN_DATA) {
         sendMessageQueryCurrent(tab.id, {
           msg: POLICE_MAIN_DATA,
-          data: dataMainTemplate,
+          data: oldFinalData,
+        });
+      }
+      if (response?.step === POLICE_WEB_DATA) {
+        sendMessageQueryCurrent(tab.id, {
+          msg: POLICE_WEB_DATA,
+          data: oldFinalData,
         });
       }
     }
@@ -134,6 +139,13 @@ export const listenerDataInfoMessage = () => {
           }
         });
       }
+    }
+    if (response?.event === SETTING_POLICE_SCREEN) {
+      const { position, id } = response;
+      getCurrentPoliceData(id, (result: any) => {
+        oldFinalData = { ...result, dateTimes: new Date().getTime() };
+      });
+      console.log('公安数据更新', oldFinalData)
     }
     return true;
   });
@@ -269,3 +281,12 @@ const getFileNameFromUrl = (url: string) => {
   const path = new URL(url).pathname;
   return path.substring(path.lastIndexOf('/') + 1);
 };
+// 获取数据
+const getCurrentPoliceData = (id: any, callback: any) => {
+  let BaseUrl = appConfig.prod;
+  GetAPI({
+    url: BaseUrl + '/api/batools/enter/info?id=' + id + '&merchant_sn=7J6zvmx81&ver=1',
+  }).then((res: any) => {
+    callback(res.data);
+  })
+}

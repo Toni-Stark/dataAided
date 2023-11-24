@@ -107,3 +107,13 @@ export const getFileBlob = (url: any) => {
 export const getFileName = (url: any) => {
   return url.match(/\/([^\/?#]+)[^\/]*$/)[1];
 }
+
+export const getMapValue = (key: any, Map: any) => {
+  let value = '';
+  for(let i in Map) {
+    if (i == key){
+      value = Map[i];
+    }
+  }
+  return value
+}

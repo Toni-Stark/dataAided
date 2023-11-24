@@ -4,7 +4,7 @@ import {
   GET_DATA_NEW_JUMP,
   GET_DATA_OLD_JUMP,
   OPEN_MOUSE_LISTENER,
-  POLICE_MAIN_DATA,
+  POLICE_MAIN_DATA, POLICE_WEB_DATA,
   SET_FINAL_OLD_DATA,
   SET_FINAL_OLD_DATA_SECOND,
   SET_FINAL_OLD_MAIN_FILE,
@@ -25,10 +25,11 @@ import {
   setWriteOldMainFile,
   setWriteOldWebFile,
 } from '@/pages/content/output';
-import { getPowerToTwo, queryEleAll } from '@/pages/content/tools';
+import { getMapValue, getPowerToTwo, queryEleAll } from '@/pages/content/tools';
 import { createDataForServices } from '@/pages/content/messageStore';
 import { RegGsxtConfig } from '@/pages/content/component/ListSortingTool';
-import { setPoliceMainData } from '@/pages/content/component/PoliceDataTool';
+import { setPoliceMainData, setPoliceWebData } from '@/pages/content/component/PoliceDataTool';
+import { PropertyMap, ProMap, CertMap, UserMap } from '@/common/element';
 chrome.runtime.onMessage.addListener(
   (
     request: MessageEventType,
@@ -52,7 +53,6 @@ chrome.runtime.onMessage.addListener(
     if (request?.msg === SET_SECOND_STEP_DATA) {
       let data = getStepData(request.data, 2);
       setSecondStepData(data, request.num);
-
       return;
     }
     if (request?.msg === SET_FINAL_STEP_DATA) {
@@ -81,8 +81,13 @@ chrome.runtime.onMessage.addListener(
       return;
     }
     if (request?.msg === POLICE_MAIN_DATA) {
-      // setPoliceMainData(request.data);
-      setPoliceMainData();
+      let data = getPoliceData(request.data, 1);
+      setPoliceMainData(data);
+      return;
+    }
+    if (request?.msg === POLICE_WEB_DATA) {
+      let data = getPoliceData(request.data, 2);
+      setPoliceWebData(data);
       return;
     }
     sendResponse('received');
@@ -94,13 +99,48 @@ chrome.runtime.onMessage.addListener(
     }
   }
 );
+const getPoliceData = (res: any, num: number) => {
+  const { basic, principal_data, web_site } = res;
+  // 备案主体
+  if (num === 1) {
+    let data: any = {};
+    data['main_info'] = {
+      unitpty: basic.unit_property==5?'个人':'单位',
+      unitpty_sub: getMapValue(basic.unit_property, ProMap),
+    };
+    data['company_info'] = {
+      form_item_unitnm: basic.unit_name,
+      form_item_uitcfttype: getMapValue(basic.unit_cert_type, CertMap),
+      form_item_uitcftnum: basic.unit_cert_num,
+      form_item_uitcftid: basic.img_cert.show_src,
+      form_item_uitadrstr: basic.unit_cert_address,
+      form_item_uitregadrstr: basic.unit_contact_address,
+      form_item_lglnm: principal_data.name,
+    }
+    data['person_info'] = {
+      form_item_rpbnm: principal_data.name,
+      form_item_rpbcfttype: getMapValue(principal_data.cert_type, UserMap),
+      form_item_rpbcftnum: principal_data.cert_num,
+      form_item_idecardvalid: principal_data.cert_validity_end,
+      form_item_isLongValid: principal_data.is_long_term,
+      form_item_rpbmobile: principal_data.mobile_phone,
+      form_item_offtel: principal_data.tel,
+      form_item_rpbmail: principal_data.email,
+      form_item_idecardfrontid: principal_data.img_cert.show_src,
+      form_item_idecardbackid: principal_data.img_photo.show_src,
+      form_item_idecardgroupid: principal_data.img_cert.show_src,
+    }
+    console.log(data, 'result');
+    return data;
+  }
+}
 const getStepData = (res: any, num: number) => {
   const { basic, principal_data, web_site } = res;
-  // 第一步表单数据
+  // 备案主体
   if (num === 1) {
     let data: any = {};
     data['main_unit'] = {
-      unitname: basic.unit_name,
+      form_item_unitnm: basic.unit_name,
       unitpropertyId: basic.unit_property,
       unitprovinceID: basic.unit_province,
       unitcityID: basic.unit_city,
@@ -129,7 +169,7 @@ const getStepData = (res: any, num: number) => {
     console.log(data, '最终数据1');
     return data;
   }
-  // 第二步表单数据
+  // 网站业务
   if (num === 2) {
     let data: any = [];
     for (let item of web_site) {
@@ -179,43 +219,6 @@ const getStepData = (res: any, num: number) => {
       data.push(obj);
     }
     console.log(data, '最终数据2');
-    return data;
-  }
-  // 第三步表单数据
-  if (num === 3) {
-    let data: any = {};
-    let img_cert: any = []; // 网站核验单扫描件
-    let img_supp: any = []; // 网站补充材料
-    let img_main_cert: any = []; // 网站补充材料
-    let img_main_photo: any = [];
-    web_site.map((file: any) => {
-      if (file.img_cert?.show_src) {
-        img_cert.push(file.img_cert);
-      }
-      if (Array.isArray(file.img_supp)) {
-        img_supp = file.img_supp;
-      } else {
-        if (file.img_supp?.show_src) {
-          img_supp.push(file.img_supp);
-        }
-      }
-      if (file.principal_data?.img_cert?.length > 0) {
-        img_main_cert = file.principal_data?.img_cert;
-      }
-      if (file.principal_data?.img_photo?.length > 0) {
-        img_main_photo = file.principal_data?.img_photo;
-      }
-    });
-    data['web_side_id_card_p1'] = {
-      mainOtherPicUl: Array.isArray(basic.img_supp) ? basic.img_supp : [basic.img_supp],
-      webOtherPicUl: img_supp,
-      unitpic0ul: [basic.img_cert],
-      identitypic0ul: [principal_data.img_cert],
-      verificationpic0ul: img_cert,
-      websidechiefpic0ul: img_main_photo,
-      websideidentitycardpic0ul: img_main_cert,
-    };
-    console.log(data, '最终数据3');
     return data;
   }
 };

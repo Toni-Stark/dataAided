@@ -25,7 +25,7 @@ export const updateStepDataIndex = (type: string, step: string, num: number) => 
   });
 };
 
-// 修改当前数据的地址老版本
+// 获取数据
 export const createDataForServices = (event: string, position: string, id: number) => {
   chrome.runtime.sendMessage({ type: SETTING_LISTENER_SCREEN, event, position, id }).then((res) => {
     console.log('info-res------------------>');
