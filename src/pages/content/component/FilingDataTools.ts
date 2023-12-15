@@ -49,8 +49,9 @@ export const createContentView = (data: any) => {
   createContentStyle(stylesContextTwo);
   if (idx === 0) {
     CreateDataModal(dom);
+    console.log(data, '数据')
     CreateStepTwoDataStep(data.web_site);
-    CreateStepThreeDataStep();
+    CreateStepThreeDataStep(data.web_site);
   }
   if (idx === 1) {
     CreateOldModal(dom);
@@ -68,7 +69,7 @@ export const CreateOldModal = (dom: any) => {
   if (oldView) oldView.remove();
   oldView = createDom({ tag: 'div', cla: 'oldView' });
   dom.appendChild(oldView);
-  let NewTitle = createDom({ tag: 'div', cla: 'NewTitle', txt: '旧版本' });
+  let NewTitle = createDom({ tag: 'div', cla: 'NewTitle', txt: '新众一' });
   oldView?.appendChild(NewTitle);
 
   let firstModal: any = queryEle('.oldView>.OldViewModal');
@@ -93,15 +94,19 @@ export const CreateStepTwoDataStep = (data: any) => {
   }
   stepTwoView?.appendChild(AddModal);
 };
-export const CreateStepThreeDataStep = () => {
-  let FinalModal: any = queryEle('.floatView>.FinalModal');
-  FinalModal?.remove();
-  let floatView = queryEle('.floatView');
-  FinalModal = createDom({ tag: 'div', cla: 'FinalModal', txt: '第三步' });
-  floatView?.appendChild(FinalModal);
-  FinalModal.addEventListener('click', () => {
-    updateStepData(NEW_VERSION_FILING_DATA, SET_FINAL_STEP_DATA);
-  });
+export const CreateStepThreeDataStep = (data:any) => {
+  let stepTwoView = queryEle('.floatView');
+  let FiModal: any = queryEle('.floatView>.FiModal');
+  FiModal?.remove();
+  FiModal = createDom({ tag: 'div', cla: 'FiModal' });
+  for (let i = 0; i <= data.length - 1; i++) {
+    let FinalModal = createDom({ tag: 'div', cla: 'FinalModal', txt: '核验单' + (i + 1)  });
+    FinalModal.addEventListener('click', () => {
+      updateStepData(NEW_VERSION_FILING_DATA, SET_FINAL_STEP_DATA, i);
+    });
+    FiModal?.appendChild(FinalModal);
+  }
+  stepTwoView?.appendChild(FiModal);
 };
 // 老网站版本数据填写
 export const CreateOldDataList = (data: any) => {
@@ -159,7 +164,7 @@ export const CreateDataModal = (dom: any) => {
   if (floatView) floatView.remove();
   floatView = createDom({ tag: 'div', cla: 'floatView' });
   dom.appendChild(floatView);
-  let NewTitle = createDom({ tag: 'div', cla: 'NewTitle', txt: '新版本' });
+  let NewTitle = createDom({ tag: 'div', cla: 'NewTitle', txt: '云网' });
   floatView?.appendChild(NewTitle);
 
   let FirstStepModal: any = queryEle('.floatView>.FirstStepModal');

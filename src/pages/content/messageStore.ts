@@ -9,8 +9,8 @@ export const sendMessageStoreIndex = ({ key, cate, type }: any) => {
 };
 
 // 修改当前数据的地址
-export const updateStepData = (type: string, step: string) => {
-  chrome.runtime.sendMessage({ type, step }).then((res) => {
+export const updateStepData = (type: string, step: string, num?: number) => {
+  chrome.runtime.sendMessage({ type, step, num }).then((res) => {
     console.log('info-res------------------>');
     console.log(res);
     console.log('info-res------------------>');

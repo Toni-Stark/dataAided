@@ -231,23 +231,54 @@ export const queryFirstIframeEleAll = (dom: any, str: string): ElementType => {
 export const setThreeBtnStepData = () => {
   console.log('上传成功，在此触发保存按钮');
 };
-export const setThreeStepData = (data: any) => {
+export const setThreeStepData = (data: any, num: number) => {
   let iframe: any = thirdStepElementQuery('#modalFormBody');
+  removeThreeStrpData(iframe);
   let web_side_id_card_p1 = getElementList(WEB_SIDE_ID_CARD_P1);
-  console.log('res-------------------');
-  console.log(data, web_side_id_card_p1);
-  console.log('res-------------------');
+  let res: any = data['web_side_id_card_p1'];
+  let obj = { ...res};
+  console.log({ ...obj },'res-------------------');
+  if(res.Verification.length > num) {
+    obj = {...obj, ...res.Verification[num]}
+  }
+  console.log(data, web_side_id_card_p1, num,res.Verification, obj, '-----------------------');
   recursiveExecution(
     {
       iframe,
       result: data,
       list: web_side_id_card_p1,
-      data: data['web_side_id_card_p1'],
+      data: obj,
       index: 0,
     },
     setThreeBtnStepData
   );
 };
+
+const removeBtnClick = (list: any) => {
+  for (let i = 0; i<list.length; i ++) {
+    if(list[i]){
+      console.log(list[i])
+      DispatchMouseEvent(list[i], 'click')
+    }
+  }
+}
+
+export const removeThreeStrpData = (iframe: any, ) => {
+  let webOtherPicUl: any = queryFirstIframeEleAll(iframe, '#webOtherPicUl .fileDel_button');
+  let mainOtherPicUl: any = queryFirstIframeEleAll(iframe, '#mainOtherPicUl .fileDel_button');
+  let unitpic0ul: any = queryFirstIframeEleAll(iframe, '#traditionUploadDiv #unitpic0ul .fileDel_button');
+  let identitypic0ul: any = queryFirstIframeEleAll(iframe, '#traditionUploadDiv #identitypic0ul .fileDel_button');
+  let verificationpic0ul: any = queryFirstIframeEleAll(iframe, '#traditionUploadDiv #verificationpic0ul .fileDel_button');
+  let websidechiefpic0ul: any = queryFirstIframeEleAll(iframe, '#traditionUploadDiv #websidechiefpic0ul .fileDel_button');
+  let websideidentitycardpic0ul: any = queryFirstIframeEleAll(iframe, '#traditionUploadDiv #websideidentitycardpic0ul .fileDel_button');
+  if(webOtherPicUl.length>0)removeBtnClick(webOtherPicUl);
+  if(mainOtherPicUl.length>0)removeBtnClick(mainOtherPicUl);
+  if(unitpic0ul.length>0)removeBtnClick(unitpic0ul);
+  if(identitypic0ul.length>0)removeBtnClick(identitypic0ul);
+  if(verificationpic0ul.length>0)removeBtnClick(verificationpic0ul);
+  if(websidechiefpic0ul.length>0)removeBtnClick(websidechiefpic0ul);
+  if(websideidentitycardpic0ul.length>0)removeBtnClick(websideidentitycardpic0ul);
+}
 
 export const setSecondDownInfoStepData = (data: any) => {
   let iframe: any = secondStepElementQuery('#modalFormBody');

@@ -62,6 +62,7 @@ export const listenerDataInfoMessage = () => {
         sendMessageQueryCurrent(tab.id, {
           msg: SET_FINAL_STEP_DATA,
           data: oldFinalData,
+          num: response?.num,
         });
       }
     }

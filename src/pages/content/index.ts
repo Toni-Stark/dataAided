@@ -58,7 +58,7 @@ chrome.runtime.onMessage.addListener(
     }
     if (request?.msg === SET_FINAL_STEP_DATA) {
       let data = getStepData(request.data, 3);
-      setThreeStepData(data);
+      setThreeStepData(data, request.num);
       return;
     }
     if (request?.msg === SET_FINAL_OLD_DATA) {
@@ -246,38 +246,40 @@ const getStepData = (res: any, num: number) => {
   // 第三步表单数据
   if (num === 3) {
     let data: any = {};
-    let img_cert: any = []; // 网站核验单扫描件
-    let img_supp: any = []; // 网站补充材料
-    let img_main_cert: any = []; // 网站补充材料
-    let img_main_photo: any = [];
-    web_site.map((file: any) => {
-      if (file.img_cert?.show_src) {
-        img_cert.push(file.img_cert);
+    let uploads = [];
+    for (let item of web_site) {
+      let obj: any = {
+        webOtherPicUl: [],
+        verificationpic0ul: [],
+        websidechiefpic0ul: [],
+        websideidentitycardpic0ul: [],
+      };
+      if (item.img_cert?.show_src) {
+        obj.verificationpic0ul.push(item.img_cert);
       }
-      if (Array.isArray(file.img_supp)) {
-        img_supp = file.img_supp;
+      if (Array.isArray(item.img_supp)) {
+        obj.webOtherPicUl = item.img_supp;
       } else {
-        if (file.img_supp?.show_src) {
-          img_supp.push(file.img_supp);
+        if (item.img_supp?.show_src) {
+          obj.webOtherPicUl.push(item.img_supp);
         }
       }
-      if (file.principal_data?.img_cert?.length > 0) {
-        img_main_cert = file.principal_data?.img_cert;
+      if (item.principal_data?.img_cert?.length > 0) {
+        obj.websideidentitycardpic0ul = item.principal_data?.img_cert;
       }
-      if (file.principal_data?.img_photo?.length > 0) {
-        img_main_photo = file.principal_data?.img_photo;
+      if (item.principal_data?.img_photo?.length > 0) {
+        obj.websidechiefpic0ul = item.principal_data?.img_photo;
       }
-    });
+      uploads.push(obj);
+    }
     data['web_side_id_card_p1'] = {
       mainOtherPicUl: Array.isArray(basic.img_supp) ? basic.img_supp : [basic.img_supp],
-      webOtherPicUl: img_supp,
-      unitpic0ul: [basic.img_cert],
       identitypic0ul: [principal_data.img_cert],
-      verificationpic0ul: img_cert,
-      websidechiefpic0ul: img_main_photo,
-      websideidentitycardpic0ul: img_main_cert,
+      unitpic0ul: [basic.img_cert],
+      // 核验单
+      Verification: uploads
     };
-    console.log(data, '最终数据3');
+    console.log(res,data, '最终数据3');
     return data;
   }
 };
