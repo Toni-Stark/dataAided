@@ -232,11 +232,11 @@ export const setThreeBtnStepData = () => {
   console.log('上传成功，在此触发保存按钮');
 };
 export const setThreeStepData = (data: any) => {
-  console.log('res-------------------');
-  console.log(data);
-  console.log('res-------------------');
   let iframe: any = thirdStepElementQuery('#modalFormBody');
   let web_side_id_card_p1 = getElementList(WEB_SIDE_ID_CARD_P1);
+  console.log('res-------------------');
+  console.log(data, web_side_id_card_p1);
+  console.log('res-------------------');
   recursiveExecution(
     {
       iframe,

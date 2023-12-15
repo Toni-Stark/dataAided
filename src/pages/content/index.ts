@@ -4,7 +4,8 @@ import {
   GET_DATA_NEW_JUMP,
   GET_DATA_OLD_JUMP,
   OPEN_MOUSE_LISTENER,
-  POLICE_MAIN_DATA, POLICE_WEB_DATA,
+  POLICE_MAIN_DATA,
+  POLICE_WEB_DATA,
   SET_FINAL_OLD_DATA,
   SET_FINAL_OLD_DATA_SECOND,
   SET_FINAL_OLD_MAIN_FILE,
@@ -29,7 +30,7 @@ import { getMapValue, getPowerToTwo, queryEleAll } from '@/pages/content/tools';
 import { createDataForServices } from '@/pages/content/messageStore';
 import { RegGsxtConfig } from '@/pages/content/component/ListSortingTool';
 import { setPoliceMainData, setPoliceWebData } from '@/pages/content/component/PoliceDataTool';
-import { PropertyMap, ProMap, CertMap, UserMap } from '@/common/element';
+import { ProMap, CertMap, UserMap } from '@/common/element';
 chrome.runtime.onMessage.addListener(
   (
     request: MessageEventType,
@@ -105,9 +106,16 @@ const getPoliceData = (res: any, num: number) => {
   if (num === 1) {
     let data: any = {};
     data['main_info'] = {
-      unitpty: basic.unit_property==5?'个人':'单位',
+      unitpty: basic.unit_property == 5 ? '个人' : '单位',
       unitpty_sub: getMapValue(basic.unit_property, ProMap),
     };
+    let dcc = [];
+    if (basic?.unit_province_show) dcc.push(basic?.unit_province_show);
+    if (basic?.unit_city_show) dcc.push(basic?.unit_city_show);
+    if (basic?.unit_county_show) dcc.push(basic?.unit_county_show);
+    // if (basic?.unit_province_show) dcc.push('河北省');
+    // if (basic?.unit_city_show) dcc.push('秦皇岛市');
+    // if (basic?.unit_county_show) dcc.push('昌黎县');
     data['company_info'] = {
       form_item_unitnm: basic.unit_name,
       form_item_uitcfttype: getMapValue(basic.unit_cert_type, CertMap),
@@ -116,7 +124,16 @@ const getPoliceData = (res: any, num: number) => {
       form_item_uitadrstr: basic.unit_cert_address,
       form_item_uitregadrstr: basic.unit_contact_address,
       form_item_lglnm: principal_data.name,
-    }
+      dcc,
+    };
+
+    let pcc = [];
+    if (principal_data?.province_show) pcc.push(principal_data?.province_show);
+    if (principal_data?.city_show) pcc.push(principal_data?.city_show);
+    if (principal_data?.county_show) pcc.push(principal_data?.county_show);
+    // pcc.push('山西省');
+    // pcc.push('阳泉市');
+    // pcc.push('平定县');
     data['person_info'] = {
       form_item_rpbnm: principal_data.name,
       form_item_rpbcfttype: getMapValue(principal_data.cert_type, UserMap),
@@ -126,21 +143,26 @@ const getPoliceData = (res: any, num: number) => {
       form_item_rpbmobile: principal_data.mobile_phone,
       form_item_offtel: principal_data.tel,
       form_item_rpbmail: principal_data.email,
+      form_item_rpbadsstr: principal_data?.address || '',
       form_item_idecardfrontid: principal_data.img_cert.show_src,
       form_item_idecardbackid: principal_data.img_photo.show_src,
       form_item_idecardgroupid: principal_data.img_cert.show_src,
-    }
+      pcc,
+    };
     console.log(data, 'result');
     return data;
   }
-}
+  if(num === 2) {
+
+  }
+};
 const getStepData = (res: any, num: number) => {
   const { basic, principal_data, web_site } = res;
   // 备案主体
   if (num === 1) {
     let data: any = {};
     data['main_unit'] = {
-      form_item_unitnm: basic.unit_name,
+      unitname: basic.unit_name,
       unitpropertyId: basic.unit_property,
       unitprovinceID: basic.unit_province,
       unitcityID: basic.unit_city,
@@ -219,6 +241,43 @@ const getStepData = (res: any, num: number) => {
       data.push(obj);
     }
     console.log(data, '最终数据2');
+    return data;
+  }
+  // 第三步表单数据
+  if (num === 3) {
+    let data: any = {};
+    let img_cert: any = []; // 网站核验单扫描件
+    let img_supp: any = []; // 网站补充材料
+    let img_main_cert: any = []; // 网站补充材料
+    let img_main_photo: any = [];
+    web_site.map((file: any) => {
+      if (file.img_cert?.show_src) {
+        img_cert.push(file.img_cert);
+      }
+      if (Array.isArray(file.img_supp)) {
+        img_supp = file.img_supp;
+      } else {
+        if (file.img_supp?.show_src) {
+          img_supp.push(file.img_supp);
+        }
+      }
+      if (file.principal_data?.img_cert?.length > 0) {
+        img_main_cert = file.principal_data?.img_cert;
+      }
+      if (file.principal_data?.img_photo?.length > 0) {
+        img_main_photo = file.principal_data?.img_photo;
+      }
+    });
+    data['web_side_id_card_p1'] = {
+      mainOtherPicUl: Array.isArray(basic.img_supp) ? basic.img_supp : [basic.img_supp],
+      webOtherPicUl: img_supp,
+      unitpic0ul: [basic.img_cert],
+      identitypic0ul: [principal_data.img_cert],
+      verificationpic0ul: img_cert,
+      websidechiefpic0ul: img_main_photo,
+      websideidentitycardpic0ul: img_main_cert,
+    };
+    console.log(data, '最终数据3');
     return data;
   }
 };

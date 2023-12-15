@@ -5,8 +5,7 @@ import {
   queryFirstIframeEle,
   queryFirstIframeEleAll,
 } from '@/pages/content/output';
-import { infoCompany, infoMain, infoPerson } from '@/common/element';
-import { base64ToFileTypeImage, getFileBase64, getFileName } from '@/pages/content/tools';
+import { base64ToFileTypeImage, getFileBase64, getFileName, queryEle, queryEleAll } from '@/pages/content/tools';
 
 
 export const POLICE_INFO_MAIN: any = {
@@ -35,7 +34,21 @@ export const POLICE_INFO_PERSON: any = {
   form_item_idecardfrontidAndUpload: '.ant-row #form_item_idecardfrontid',
   form_item_idecardbackidAndUpload: '.ant-row #form_item_idecardbackid',
   form_item_idecardgroupidAndUpload: '.ant-row #form_item_idecardgroupid',
+}
 
+export const POLICE_WEB_INFO_MAIN: any = {
+  form_item_rpbnmAndInput : '.ant-row #form_item_rpbnm',
+  form_item_rpbcfttypeAndSelectAnd16: '.ant-row #form_item_rpbcfttype',
+  form_item_rpbcftnumAndInput: '.ant-row #form_item_rpbcftnum',
+  form_item_idecardvalidAndInput: '.ant-row #form_item_idecardvalid',
+  form_item_isLongValidAndCheckout: '.ant-row #form_item_isLongValid',
+  form_item_rpbadsstrAndInput: '.ant-row #form_item_rpbadsstr',
+  form_item_rpbmobileAndInput: '.ant-row #form_item_rpbmobile',
+  form_item_offtelAndInput: '.ant-row #form_item_offtel',
+  form_item_rpbmailAndInput: '.ant-row #form_item_rpbmail',
+  form_item_idecardfrontidAndUpload: '.ant-row #form_item_idecardfrontid',
+  form_item_idecardbackidAndUpload: '.ant-row #form_item_idecardbackid',
+  form_item_idecardgroupidAndUpload: '.ant-row #form_item_idecardgroupid',
 }
 
 const getKeysList = (data: any) => {
@@ -56,20 +69,20 @@ const getKeysList = (data: any) => {
 };
 
 export const setPoliceWebData = (data: any) => {
-  console.log(data, 1);
-  let rootNode = document.querySelector('.bcyr-layout-content .bcyr-page-wrapper-content');
-  let elements = getKeysList(POLICE_INFO_MAIN);
-  currentEnterData(rootNode, elements, infoMain, () => {
-    if(infoMain['unitpty']=="单位"){
-      let elementCompany = getKeysList(POLICE_INFO_COMPANY);
-      currentEnterData(rootNode, elementCompany, infoCompany, () => {
-
-      })
-    }
-    let personCompany = getKeysList(POLICE_INFO_PERSON);
-    currentEnterData(rootNode, personCompany, infoPerson,   () => {
-    })
-  });
+  // console.log(data, 1);
+  // let rootNode = document.querySelector('.bcyr-layout-content .bcyr-page-wrapper-content');
+  // let elements = getKeysList(POLICE_INFO_MAIN);
+  // currentEnterData(rootNode, elements, infoMain, () => {
+  //   if(infoMain['unitpty']=="单位"){
+  //     let elementCompany = getKeysList(POLICE_INFO_COMPANY);
+  //     currentEnterData(rootNode, elementCompany, infoCompany, () => {
+  //
+  //     })
+  //   }
+  //   let personCompany = getKeysList(POLICE_INFO_PERSON);
+  //   currentEnterData(rootNode, personCompany, infoPerson,   () => {
+  //   })
+  // });
 };
 
 export const setPoliceMainData = (data: any) => {
@@ -81,11 +94,25 @@ export const setPoliceMainData = (data: any) => {
     if(main_info['unitpty']=="单位"){
       let elementCompany = getKeysList(POLICE_INFO_COMPANY);
       currentEnterData(rootNode, elementCompany, company_info, () => {
+        chooseSelectListValue("#form_item_uitadrpvs", company_info.dcc, ()=>{
+          let personCompany = getKeysList(POLICE_INFO_PERSON);
+          currentEnterData(rootNode, personCompany, person_info, () => {
+            if(person_info?.pcc){
+              chooseSelectListValue("#form_item_rpbadspvs", person_info.pcc, ()=>{
+              })
+            }
+          })
+        })
+      })
+    } else {
+      let personCompany = getKeysList(POLICE_INFO_PERSON);
+      currentEnterData(rootNode, personCompany, person_info, () => {
+        if(person_info?.pcc){
+          chooseSelectListValue("#form_item_rpbadspvs", person_info.pcc, ()=>{
+          })
+        }
       })
     }
-    let personCompany = getKeysList(POLICE_INFO_PERSON);
-    currentEnterData(rootNode, personCompany, person_info, () => {
-    })
   });
 };
 const currentEnterData = (root: any, element: any, data: any, callback: any) => {
@@ -174,7 +201,6 @@ const setUploadValue = (root: any, tag: any, val: any, callback: any) => {
   UploadImageAndAddElement(val, uploadDom);
   callback()
 }
-
 const setCheckValue = (root: any, tag: any, val: any, callback: any) => {
   let checkDom: any = queryFirstIframeEle(root, tag.element);
   console.log(checkDom, val)
@@ -183,7 +209,6 @@ const setCheckValue = (root: any, tag: any, val: any, callback: any) => {
   }
   callback()
 }
-
 const UploadImageAndAddElement = (src: string, imgView: any) => {
   getFileBase64(src).then(base => {
     let file = base64ToFileTypeImage(base, getFileName(src));
@@ -196,4 +221,49 @@ const UploadImageAndAddElement = (src: string, imgView: any) => {
     .catch(error => {
       console.error('Error converting image to Blob:', error);
     });
+}
+const chooseSelectListValue = (root: any, data: any, callback:any) => {
+  let selectDiv = queryEle(root);
+  DispatchMouseEvent(selectDiv, 'mousedown');
+  setTimeout(()=>{
+    let dom = getOnlyDom(queryEleAll(".ant-cascader-dropdown"));
+    const chooseItem = (data: any, num: any, callback: any) => {
+      if(num>=data.length){
+        callback();
+        return;
+      }
+      let lev = num+1;
+      let val = data[num];
+      let list: any = queryFirstIframeEleAll(dom, ".ant-cascader-menus>.ant-cascader-menu:nth-child("+lev+")>.ant-cascader-menu-item");
+      for (let i = 0; i<=list?.length-1; i++){
+        if(list[i].title == val){
+          DispatchMouseEvent(list[i], 'click');
+        }
+      }
+      chooseTimerFun(()=>{
+        chooseItem(data, num+1, callback)
+      },700)
+    }
+    chooseItem(data, 0, callback);
+  }, 1200);
+}
+const getOnlyDom = (list: any) => {
+  if(!list || list?.length<=0){
+    return undefined;
+  }
+  let dom = undefined;
+  for(let i = 0; i<=list.length-1;i++){
+    if(list[i].style.display != "none" && !dom){
+      dom = list[i];
+    }
+  }
+  return dom;
+}
+let chooseTimer: any = null;
+const chooseTimerFun = (callback: any, time = 600)=>{
+  clearTimeout(chooseTimer);
+  chooseTimer = null;
+  chooseTimer = setTimeout(()=>{
+    callback();
+  }, time)
 }
