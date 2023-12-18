@@ -36,19 +36,29 @@ export const POLICE_INFO_PERSON: any = {
   form_item_idecardgroupidAndUpload: '.ant-row #form_item_idecardgroupid',
 }
 
-export const POLICE_WEB_INFO_MAIN: any = {
-  form_item_rpbnmAndInput : '.ant-row #form_item_rpbnm',
-  form_item_rpbcfttypeAndSelectAnd16: '.ant-row #form_item_rpbcfttype',
-  form_item_rpbcftnumAndInput: '.ant-row #form_item_rpbcftnum',
-  form_item_idecardvalidAndInput: '.ant-row #form_item_idecardvalid',
-  form_item_isLongValidAndCheckout: '.ant-row #form_item_isLongValid',
-  form_item_rpbadsstrAndInput: '.ant-row #form_item_rpbadsstr',
-  form_item_rpbmobileAndInput: '.ant-row #form_item_rpbmobile',
-  form_item_offtelAndInput: '.ant-row #form_item_offtel',
-  form_item_rpbmailAndInput: '.ant-row #form_item_rpbmail',
-  form_item_idecardfrontidAndUpload: '.ant-row #form_item_idecardfrontid',
-  form_item_idecardbackidAndUpload: '.ant-row #form_item_idecardbackid',
-  form_item_idecardgroupidAndUpload: '.ant-row #form_item_idecardgroupid',
+export const POLICE_WEB_INFO_FIRST: any = {
+  form_item_webnmAndInput: '.ant-row #form_item_webnm',
+  form_item_moinumAndInput: '.ant-row #form_item_moinum',
+  form_item_webopentimeAndInput: '.ant-row #form_item_webopentime',
+  form_item_maindmnAndInput: '.ant-row #form_item_maindmn',
+  form_item_ymzsidAndUpload: '#form_item_ymzsid',
+  form_item_ymzsvalidAndDateFull: '#form_item_ymzsvalid',
+  form_item_ip0AndList: '#form_item_ip0',
+}
+export const POLICE_WEB_INFO_SECOND: any = {
+  form_item_aspabroadAndSelect: '.ant-row #form_item_aspabroad',
+  form_item_dsppvsAndSelect: '.ant-row #form_item_dsppvs',
+  form_item_dspnameAndInput: '.ant-row #form_item_dspname',
+}
+export const POLICE_WEB_INFO_THIRD: any = {
+  form_item_treeAndTree: '.ant-tree-list-holder-inner',
+}
+export const POLICE_WEB_INFO_FOUR: any = {
+  form_item_cotitemFileAndCheckout: '#form_item_cotitemFile',
+  form_item_proaudFileAndCheckout: '#form_item_proaudFile',
+}
+export const POLICE_WEB_INFO_FIVE: any = {
+  form_item_languageAndRadio: '#form_item_language',
 }
 
 const getKeysList = (data: any) => {
@@ -68,21 +78,16 @@ const getKeysList = (data: any) => {
   return list;
 };
 
-export const setPoliceWebData = (data: any) => {
-  // console.log(data, 1);
-  // let rootNode = document.querySelector('.bcyr-layout-content .bcyr-page-wrapper-content');
-  // let elements = getKeysList(POLICE_INFO_MAIN);
-  // currentEnterData(rootNode, elements, infoMain, () => {
-  //   if(infoMain['unitpty']=="单位"){
-  //     let elementCompany = getKeysList(POLICE_INFO_COMPANY);
-  //     currentEnterData(rootNode, elementCompany, infoCompany, () => {
-  //
-  //     })
-  //   }
-  //   let personCompany = getKeysList(POLICE_INFO_PERSON);
-  //   currentEnterData(rootNode, personCompany, infoPerson,   () => {
-  //   })
-  // });
+export const setPoliceWebData = (data: any, num: number) => {
+  console.log(data, '666666');
+  let info = data[num];
+  let rootNode = document.querySelector('.bcyr-layout-content .bcyr-page-wrapper-content');
+  let elements = getKeysList(POLICE_WEB_INFO_FIRST);
+  currentEnterData(rootNode, elements, info.info_first, () => {
+    // let personCompany = getKeysList(POLICE_INFO_PERSON);
+    // currentEnterData(rootNode, personCompany, infoPerson,   () => {
+    // })
+  });
 };
 
 export const setPoliceMainData = (data: any) => {
@@ -138,6 +143,7 @@ const currentEnterData = (root: any, element: any, data: any, callback: any) => 
       }, 0, true);
     }
     if (obj.type === "Input") {
+      console.log(info[obj.key], obj.key)
       setInputValue(root, obj, info[obj.key], ()=>{
         currentListRun(ele, info, num+1);
       });
@@ -147,8 +153,18 @@ const currentEnterData = (root: any, element: any, data: any, callback: any) => 
         currentListRun(ele, info, num+1);
       });
     }
-    if(obj.type === "Checkout") {
+    if (obj.type === "Checkout") {
       setCheckValue(root, obj, info[obj.key], ()=>{
+        currentListRun(ele, info, num+1);
+      });
+    }
+    if (obj.type === "DateFull") {
+      setFullDateValue(root, obj, info[obj.key], ()=>{
+        currentListRun(ele, info, num+1);
+      });
+    }
+    if(obj.type === "List") {
+      setListAddValue(root, obj, info[obj.key], ()=>{
         currentListRun(ele, info, num+1);
       });
     }
@@ -191,12 +207,19 @@ const setSelectValue = (root: any, tag: any, val: any, callback: any, type: numb
   }, 500);
 }
 const setInputValue = (root: any, tag: any, val: any, callback: any) => {
+  if(!val){
+    return callback()
+  }
   let inputDom: any = queryFirstIframeEle(root, tag.element);
   inputDom.value = val;
   DispatchEvent(inputDom, 'change');
   callback()
 }
 const setUploadValue = (root: any, tag: any, val: any, callback: any) => {
+  console.log('upload', val)
+  if(!val){
+    return callback()
+  }
   let uploadDom: any = queryFirstIframeEle(root, tag.element);
   UploadImageAndAddElement(val, uploadDom);
   callback()
@@ -207,6 +230,23 @@ const setCheckValue = (root: any, tag: any, val: any, callback: any) => {
   if(val){
     DispatchMouseEvent(checkDom, 'click');
   }
+  callback()
+}
+const setFullDateValue = (root: any, tag: any, val: any, callback: any) => {
+  let checkDom: any = queryFirstIframeEle(root, tag.element);
+  console.log(checkDom, 'date_full');
+  if(val.length>=1){
+    checkDom.value = val[0];
+    DispatchEvent(checkDom, 'change');
+  }
+  if(val.length>=2){
+    let bro = checkDom.parentNode.nextSibling.nextSibling.childNodes[0];
+    bro.value = val[1];
+    DispatchEvent(bro, 'change');
+  }
+  callback()
+};
+const setListAddValue = (root: any, tag: any, val: any, callback: any) => {
   callback()
 }
 const UploadImageAndAddElement = (src: string, imgView: any) => {

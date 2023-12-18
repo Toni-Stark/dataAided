@@ -88,7 +88,7 @@ chrome.runtime.onMessage.addListener(
     }
     if (request?.msg === POLICE_WEB_DATA) {
       let data = getPoliceData(request.data, 2);
-      setPoliceWebData(data);
+      setPoliceWebData(data, request.num);
       return;
     }
     sendResponse('received');
@@ -153,7 +153,39 @@ const getPoliceData = (res: any, num: number) => {
     return data;
   }
   if(num === 2) {
-
+    let data: any = [];
+    for (let i = 0; i < web_site.length; i ++) {
+      let obj: any = {};
+      let webInfo = web_site[i];
+      console.log(webInfo, res, '11111')
+      obj['info_first'] = {
+        form_item_webnm: webInfo.name,
+        form_item_moinum: webInfo.record_num,
+        form_item_webopentime: webInfo.web_open_date,
+        form_item_maindmn: webInfo.domain,
+        form_item_ymzsid: webInfo?.domain_cert?.show_src,
+        form_item_ymzsvalid: [webInfo.principal_data.cert_validity_start, webInfo.principal_data.cert_validity_end],
+        form_item_ip0: webInfo.ip_address.split(';'),
+      };
+      let ycc = [];
+      if (webInfo?.dsp_province_show) ycc.push(webInfo?.dsp_province_show);
+      if (webInfo?.dsp_city_show) ycc.push(webInfo?.dsp_city_show);
+      if (webInfo?.dsp_county_show) ycc.push(webInfo?.dsp_county_show);
+      obj['info_second'] = {
+        form_item_aspabroad: webInfo.name,
+        ycc,
+        dsp_name: webInfo.dsp_name
+      }
+      obj['info_third'] = {
+        form_item_interactive: webInfo.interactive_arr,
+      }
+      obj['info_four'] = {
+        permit_list: webInfo.permit_list,
+        approval_list: webInfo.approval_list
+      }
+      data.push(obj);
+    }
+    return data;
   }
 };
 const getStepData = (res: any, num: number) => {

@@ -61,7 +61,7 @@ export const createContentView = (data: any) => {
   }
   if (idx === 2) {
     createDataForServices(SETTING_POLICE_SCREEN, 'http://116.177.253.34:8088/', 14);
-    CreatePoliceModal(dom);
+    CreatePoliceModal(dom, data);
   }
 };
 export const CreateOldModal = (dom: any) => {
@@ -176,7 +176,7 @@ export const CreateDataModal = (dom: any) => {
   });
 };
 // 公安版本数据填写
-export const CreatePoliceModal = (dom: any) => {
+export const CreatePoliceModal = (dom: any, data: any) => {
   let floatView = queryEle('.floatView');
   if (floatView) floatView.remove();
   floatView = createDom({ tag: 'div', cla: 'floatView' });
@@ -192,13 +192,14 @@ export const CreatePoliceModal = (dom: any) => {
     updateStepData(POLICE_VERSION_DATA, POLICE_MAIN_DATA);
   });
 
-  let WebStepModal: any = queryEle('.floatView>.FinalModal');
-  WebStepModal?.remove();
-  WebStepModal = createDom({ tag: 'div', cla: 'FinalModal', txt: '网站数据' });
-  floatView?.appendChild(WebStepModal);
-  WebStepModal.addEventListener('click', () => {
-    updateStepData(POLICE_VERSION_DATA, POLICE_WEB_DATA);
-  });
+  console.log(23423424, data.web_site)
+  for(let i = 0; i<data.web_site.length;i++){
+    let WebStepModal = createDom({ tag: 'div', cla: 'FinalModal', txt: '网站'+(i+1) });
+    floatView?.appendChild(WebStepModal);
+    WebStepModal.addEventListener('click', () => {
+      updateStepData(POLICE_VERSION_DATA, POLICE_WEB_DATA, i);
+    });
+  }
 };
 
 

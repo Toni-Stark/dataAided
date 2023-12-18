@@ -16,7 +16,7 @@ import {
   POLICE_MAIN_DATA, POLICE_WEB_DATA, SETTING_POLICE_SCREEN,
 } from '@/common/agreement';
 import { sendMessageQueryCurrent } from '@/pages/background/SettingStore';
-import { GetAPI, UploadFiles } from '@/pages/background/FetchStore';
+import { GetAPI, PostAPI, UploadFiles } from '@/pages/background/FetchStore';
 import { appConfig } from '@/common/config';
 
 export let oldFinalData: any = {};
@@ -110,6 +110,7 @@ export const listenerDataInfoMessage = () => {
         sendMessageQueryCurrent(tab.id, {
           msg: POLICE_WEB_DATA,
           data: oldFinalData,
+          num: response.num
         });
       }
     }
@@ -214,12 +215,18 @@ const getAllImgFile = (list: any, index: any, callback: any) => {
       item.img_promise = res[0];
       loadImageFiles(item.img_supp, 0, (res: any[]) => {
         item.img_supp = res;
-        getAllApprovalFile(item.approval_list, 0, (aList: any) => {
-          item.approval_list = aList;
-          getAllPrincipalFile(item.principal_data, (pList: any) => {
-            item.principal_data = pList;
-            list[index] = { ...item };
-            getAllImgFile(list, index + 1, callback);
+        loadImageFiles([item.domain_cert], 0, (res: any[]) => {
+          item.domain_cert = res[0];
+          loadImageFiles(item.permit_list, 0, (res: any[]) => {
+            item.permit_list = res;
+            getAllApprovalFile(item.approval_list, 0, (aList: any) => {
+              item.approval_list = aList;
+              getAllPrincipalFile(item.principal_data, (pList: any) => {
+                item.principal_data = pList;
+                list[index] = { ...item };
+                getAllImgFile(list, index + 1, callback);
+              });
+            });
           });
         });
       });
@@ -284,10 +291,32 @@ const getFileNameFromUrl = (url: string) => {
 };
 // 获取数据
 const getCurrentPoliceData = (id: any, callback: any) => {
-  let BaseUrl = appConfig.prod;
-  GetAPI({
+  let BaseUrl = appConfig.dev;
+  PostAPI({
     url: BaseUrl + '/api/batools/enter/info?id=' + id + '&merchant_sn=7J6zvmx81&ver=1',
   }).then((res: any) => {
-    callback(res.data);
+    let BaseUrl = appConfig.prod;
+    const { basic, principal_data, web_site } = res.data;
+    loadImageFiles([basic.img_cert], 0, (res: any[]) => {
+        basic.img_cert = res[0];
+        loadImageFiles(basic.img_supp, 0, (res: any[]) => {
+          basic.img_supp = res;
+          loadImageFiles([principal_data.img_cert], 0, (res: any[]) => {
+            principal_data.img_cert = res[0];
+            loadImageFiles([principal_data.img_photo], 0, (res: any[]) => {
+              principal_data.img_photo = res[0];
+              // 处理网站文件的格式
+              getAllImgFile(web_site, 0, (list: any) => {
+                const data = {
+                  basic,
+                  principal_data,
+                  web_site: list,
+                };
+                callback(data);
+              });
+            });
+          });
+        });
+      });
   })
 }
