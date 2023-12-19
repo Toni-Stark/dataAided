@@ -152,37 +152,53 @@ const getPoliceData = (res: any, num: number) => {
     console.log(data, 'result');
     return data;
   }
-  if(num === 2) {
+  if (num === 2) {
     let data: any = [];
-    for (let i = 0; i < web_site.length; i ++) {
+    for (let i = 0; i < web_site.length; i++) {
       let obj: any = {};
       let webInfo = web_site[i];
-      console.log(webInfo, res, '11111')
+      console.log(webInfo, res, '11111');
       obj['info_first'] = {
         form_item_webnm: webInfo.name,
         form_item_moinum: webInfo.record_num,
         form_item_webopentime: webInfo.web_open_date,
         form_item_maindmn: webInfo.domain,
         form_item_ymzsid: webInfo?.domain_cert?.show_src,
-        form_item_ymzsvalid: [webInfo.principal_data.cert_validity_start, webInfo.principal_data.cert_validity_end],
+        form_item_ymzsvalid: [
+          webInfo.principal_data.cert_validity_start,
+          webInfo.principal_data.cert_validity_end,
+        ],
         form_item_ip0: webInfo.ip_address.split(';'),
       };
       let ycc = [];
       if (webInfo?.dsp_province_show) ycc.push(webInfo?.dsp_province_show);
       if (webInfo?.dsp_city_show) ycc.push(webInfo?.dsp_city_show);
       if (webInfo?.dsp_county_show) ycc.push(webInfo?.dsp_county_show);
+      ycc.push('重庆市');
+      ycc.push('市辖区');
+      ycc.push('万州区');
       obj['info_second'] = {
-        form_item_aspabroad: webInfo.name,
+        form_item_aspname: webInfo.dsp_name || '重庆长城宽带网络服务有限公司',
+        form_item_acctype: webInfo.name,
         ycc,
-        dsp_name: webInfo.dsp_name
-      }
+      };
+      // 接口没有
+      let zcc = [];
+      if (webInfo?.dsp_province_show) zcc.push(webInfo?.dsp_province_show);
+      if (webInfo?.dsp_city_show) zcc.push(webInfo?.dsp_city_show);
+      if (webInfo?.dsp_county_show) zcc.push(webInfo?.dsp_county_show);
+      zcc.push('重庆市');
+      zcc.push('市辖区');
+      zcc.push('万州区');
       obj['info_third'] = {
+        form_item_dspname: '重庆智佳信息科技有限公司',
         form_item_interactive: webInfo.interactive_arr,
-      }
+        zcc,
+      };
       obj['info_four'] = {
         permit_list: webInfo.permit_list,
-        approval_list: webInfo.approval_list
-      }
+        approval_list: webInfo.approval_list,
+      };
       data.push(obj);
     }
     return data;
@@ -309,9 +325,9 @@ const getStepData = (res: any, num: number) => {
       identitypic0ul: [principal_data.img_cert],
       unitpic0ul: [basic.img_cert],
       // 核验单
-      Verification: uploads
+      Verification: uploads,
     };
-    console.log(res,data, '最终数据3');
+    console.log(res, data, '最终数据3');
     return data;
   }
 };

@@ -13,7 +13,9 @@ import {
   GET_DATA_OLD_JUMP,
   EXECUTE_SCRIPT,
   POLICE_VERSION_DATA,
-  POLICE_MAIN_DATA, POLICE_WEB_DATA, SETTING_POLICE_SCREEN,
+  POLICE_MAIN_DATA,
+  POLICE_WEB_DATA,
+  SETTING_POLICE_SCREEN,
 } from '@/common/agreement';
 import { sendMessageQueryCurrent } from '@/pages/background/SettingStore';
 import { GetAPI, PostAPI, UploadFiles } from '@/pages/background/FetchStore';
@@ -110,16 +112,17 @@ export const listenerDataInfoMessage = () => {
         sendMessageQueryCurrent(tab.id, {
           msg: POLICE_WEB_DATA,
           data: oldFinalData,
-          num: response.num
+          num: response.num,
         });
       }
     }
     if (response?.type === SETTING_LISTENER_SCREEN) {
+      console.log(response, '触发来源');
       const { position, id } = response;
-      getCurrentData(id, (result: any) => {
-        oldFinalData = { ...result, dateTimes: new Date().getTime() };
-      });
       if (response?.event === GET_DATA_NEW_JUMP) {
+        getCurrentData(id, (result: any) => {
+          oldFinalData = { ...result, dateTimes: new Date().getTime() };
+        });
         queryAllScreen(position, (res: any) => {
           if (res?.id) {
             chrome.tabs.update(res?.id, { active: true });
@@ -130,6 +133,9 @@ export const listenerDataInfoMessage = () => {
         });
       }
       if (response?.event === GET_DATA_OLD_JUMP) {
+        getCurrentData(id, (result: any) => {
+          oldFinalData = { ...result, dateTimes: new Date().getTime() };
+        });
         queryAllScreen('https://61.136.101.51:8443/ispis/login/loginSuccess', (res: any) => {
           if (res?.id) {
             chrome.tabs.update(res?.id, { active: true });
@@ -141,13 +147,12 @@ export const listenerDataInfoMessage = () => {
           }
         });
       }
-    }
-    if (response?.event === SETTING_POLICE_SCREEN) {
-      const { position, id } = response;
-      getCurrentPoliceData(id, (result: any) => {
-        oldFinalData = { ...result, dateTimes: new Date().getTime() };
-      });
-      console.log('公安数据更新', oldFinalData)
+      if (response?.event === SETTING_POLICE_SCREEN) {
+        getCurrentPoliceData(id, (result: any) => {
+          console.log('公安数据更新', result);
+          oldFinalData = { ...result, dateTimes: new Date().getTime() };
+        });
+      }
     }
     return true;
   });
@@ -298,25 +303,25 @@ const getCurrentPoliceData = (id: any, callback: any) => {
     let BaseUrl = appConfig.prod;
     const { basic, principal_data, web_site } = res.data;
     loadImageFiles([basic.img_cert], 0, (res: any[]) => {
-        basic.img_cert = res[0];
-        loadImageFiles(basic.img_supp, 0, (res: any[]) => {
-          basic.img_supp = res;
-          loadImageFiles([principal_data.img_cert], 0, (res: any[]) => {
-            principal_data.img_cert = res[0];
-            loadImageFiles([principal_data.img_photo], 0, (res: any[]) => {
-              principal_data.img_photo = res[0];
-              // 处理网站文件的格式
-              getAllImgFile(web_site, 0, (list: any) => {
-                const data = {
-                  basic,
-                  principal_data,
-                  web_site: list,
-                };
-                callback(data);
-              });
+      basic.img_cert = res[0];
+      loadImageFiles(basic.img_supp, 0, (res: any[]) => {
+        basic.img_supp = res;
+        loadImageFiles([principal_data.img_cert], 0, (res: any[]) => {
+          principal_data.img_cert = res[0];
+          loadImageFiles([principal_data.img_photo], 0, (res: any[]) => {
+            principal_data.img_photo = res[0];
+            // 处理网站文件的格式
+            getAllImgFile(web_site, 0, (list: any) => {
+              const data = {
+                basic,
+                principal_data,
+                web_site: list,
+              };
+              callback(data);
             });
           });
         });
       });
-  })
-}
+    });
+  });
+};
