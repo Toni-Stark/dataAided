@@ -1,5 +1,7 @@
 import { createContentView } from '@/pages/content/component/FilingDataTools';
 import {
+  ALI_MAIN_DATA,
+  ALI_WEB_DATA,
   EXECUTE_SCRIPT,
   GET_DATA_NEW_JUMP,
   GET_DATA_OLD_JUMP,
@@ -31,6 +33,7 @@ import { createDataForServices } from '@/pages/content/messageStore';
 import { RegGsxtConfig } from '@/pages/content/component/ListSortingTool';
 import { setPoliceMainData, setPoliceWebData } from '@/pages/content/component/PoliceDataTool';
 import { ProMap, CertMap, UserMap } from '@/common/element';
+import { setAliMainData } from '@/pages/content/component/AliDataTool';
 chrome.runtime.onMessage.addListener(
   (
     request: MessageEventType,
@@ -91,6 +94,16 @@ chrome.runtime.onMessage.addListener(
       setPoliceWebData(data, request.num);
       return;
     }
+    if (request?.msg === ALI_MAIN_DATA) {
+      let data = getAliData(request.data, 1);
+      setAliMainData(data);
+      return;
+    }
+    if (request?.msg === ALI_WEB_DATA) {
+      // let data = getPoliceData(request.data, 2);
+      // setPoliceWebData(data, request.num);
+      return;
+    }
     sendResponse('received');
     if (process.env.NODE_ENV === 'development') {
       if (request.type === 'window.location.reload') {
@@ -100,6 +113,24 @@ chrome.runtime.onMessage.addListener(
     }
   }
 );
+const getAliData = (res: any, num: number) => {
+  const { basic, principal_data, web_site } = res;
+  // 备案主体
+  if (num === 1) {
+    let data: any = {};
+    data['first_info'] = {
+      unit_province_show: basic.unit_province_show,
+      unit_city_show: basic.unit_city_show,
+      unit_county_show: basic.unit_county_show,
+      unit_property_show: basic.unit_property_show,
+      unit_cert_type_show: basic.unit_cert_type_show,
+      entity_comName: basic.principal_data.name,
+      entity_comIdNum: basic.principal_data.cert_num,
+      entity_comIdAddress: basic.principal_data.address,
+    };
+    return data;
+  }
+};
 const getPoliceData = (res: any, num: number) => {
   const { basic, principal_data, web_site } = res;
   // 备案主体
@@ -171,15 +202,17 @@ const getPoliceData = (res: any, num: number) => {
         form_item_ip0: webInfo.ip_address.split(';'),
       };
       let ycc = [];
-      if (webInfo?.dsp_province_show) ycc.push(webInfo?.dsp_province_show);
-      if (webInfo?.dsp_city_show) ycc.push(webInfo?.dsp_city_show);
-      if (webInfo?.dsp_county_show) ycc.push(webInfo?.dsp_county_show);
-      ycc.push('重庆市');
-      ycc.push('市辖区');
-      ycc.push('万州区');
+      if (webInfo?.asp_data.asp_info.province_show)
+        ycc.push(webInfo?.asp_data.asp_info.province_show);
+      if (webInfo?.asp_data.asp_info.city_show) ycc.push(webInfo?.asp_data.asp_info.city_show);
+      if (webInfo?.asp_data.asp_info.county_show) ycc.push(webInfo?.asp_data.asp_info.county_show);
+      // ycc.push('重庆市');
+      // ycc.push('市辖区');
+      // ycc.push('万州区');
       obj['info_second'] = {
-        form_item_aspname: webInfo.dsp_name || '重庆长城宽带网络服务有限公司',
-        form_item_acctype: webInfo.name,
+        form_item_aspname:
+          webInfo.asp_data.asp_info?.company_name || '重庆长城宽带网络服务有限公司',
+        form_item_acctype: webInfo.asp_data?.asp_name || '自建机房',
         ycc,
       };
       // 接口没有
@@ -187,16 +220,31 @@ const getPoliceData = (res: any, num: number) => {
       if (webInfo?.dsp_province_show) zcc.push(webInfo?.dsp_province_show);
       if (webInfo?.dsp_city_show) zcc.push(webInfo?.dsp_city_show);
       if (webInfo?.dsp_county_show) zcc.push(webInfo?.dsp_county_show);
-      zcc.push('重庆市');
-      zcc.push('市辖区');
-      zcc.push('万州区');
+      // zcc.push('重庆市');
+      // zcc.push('市辖区');
+      // zcc.push('万州区');
       obj['info_third'] = {
         form_item_dspname: '重庆智佳信息科技有限公司',
-        form_item_interactive: webInfo.interactive_arr,
+        // form_item_interactive: webInfo.interactive_arr,
+        form_item_interactive: [
+          {
+            type: 'A1',
+            name: '接入服务类（A1）',
+            desc: '专门或主要从事互联网接入服务的平台，包括基础运营商。',
+            disable: false,
+          },
+          {
+            type: 'A3',
+            name: 'CDN加速服务类（A3）',
+            desc: '专门或主要从事内容分发网络服务。',
+            disable: false,
+          },
+        ],
         zcc,
+        permit_listFile: webInfo.permit_list,
+        approval_listFile: webInfo.approval_list,
       };
       obj['info_four'] = {
-        permit_list: webInfo.permit_list,
         approval_list: webInfo.approval_list,
       };
       data.push(obj);

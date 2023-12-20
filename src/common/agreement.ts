@@ -30,16 +30,17 @@ export const SET_FINAL_OLD_WEB_FILE = 'set_final_old_web_file';
 
 // 后台添加页面动作监听
 export const SETTING_LISTENER_SCREEN = 'setting_listener_screen';
-// 更新数据进入新系统
+// 更新数据进入云网系统
 export const GET_DATA_NEW_JUMP = 'get_data_new_jump';
-// 更新数据进入旧系统
+// 更新数据进入新众一系统
 export const GET_DATA_OLD_JUMP = 'get_data_old_jump';
-// 更新数据进入旧系统
+// 更新数据进入公安系统
 export const SETTING_POLICE_SCREEN = 'setting_police_screen';
+// 更新数据进入阿里云系统
+export const SETTING_ALI_SCREEN = 'setting_ali_screen';
 
 // 请求图片资源文件
 export const GET_FILES_ADDRESS = 'get_files_address';
-
 // 设置列表数据顺序-第二种功能
 export const SETTING_LIST_DATA = 'setting_list_data';
 
@@ -49,3 +50,10 @@ export const POLICE_VERSION_DATA = 'police_version_data';
 export const POLICE_MAIN_DATA = 'police_main_data';
 // 公安备案网站数据
 export const POLICE_WEB_DATA = 'police_web_data';
+
+// 阿里备案数据
+export const ALI_VERSION_DATA = 'ali_version_data';
+// 阿里备案主办者信息
+export const ALI_MAIN_DATA = 'ali_main_data';
+// 阿里备案网站信息
+export const ALI_WEB_DATA = 'ali_web_data';

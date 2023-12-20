@@ -15,59 +15,16 @@ import {
 } from '@/pages/content/tools';
 import { BookMap, StudyMap } from '@/common/element';
 
-export const POLICE_INFO_MAIN: any = {
-  unitptyAndSelectStringAnd2: '.ant-row #form_item_unitpty',
-  unitpty_subAndSelectScrollAnd3: '.ant-row #form_item_unitpty_sub',
-};
-export const POLICE_INFO_COMPANY: any = {
-  form_item_unitnmAndInput: '.ant-row #form_item_unitnm',
-  form_item_uitcfttypeAndSelectAnd6: '.ant-row #form_item_uitcfttype',
-  form_item_uitcftnumAndInput: '.ant-row #form_item_uitcftnum',
-  form_item_uitadrstrAndInput: '.ant-row #form_item_uitadrstr',
-  form_item_uitregadrstrAndInput: '.ant-row #form_item_uitregadrstr',
-  form_item_lglnmAndInput: '.ant-row #form_item_lglnm',
-  form_item_uitcftidAndUpload: '#form_item_uitcftid',
-};
-export const POLICE_INFO_PERSON: any = {
-  form_item_rpbnmAndInput: '.ant-row #form_item_rpbnm',
-  form_item_rpbcfttypeAndSelectAnd16: '.ant-row #form_item_rpbcfttype',
-  form_item_rpbcftnumAndInput: '.ant-row #form_item_rpbcftnum',
-  form_item_idecardvalidAndInput: '.ant-row #form_item_idecardvalid',
-  form_item_isLongValidAndCheckout: '.ant-row #form_item_isLongValid',
-  form_item_rpbadsstrAndInput: '.ant-row #form_item_rpbadsstr',
-  form_item_rpbmobileAndInput: '.ant-row #form_item_rpbmobile',
-  form_item_offtelAndInput: '.ant-row #form_item_offtel',
-  form_item_rpbmailAndInput: '.ant-row #form_item_rpbmail',
-  form_item_idecardfrontidAndUpload: '.ant-row #form_item_idecardfrontid',
-  form_item_idecardbackidAndUpload: '.ant-row #form_item_idecardbackid',
-  form_item_idecardgroupidAndUpload: '.ant-row #form_item_idecardgroupid',
-};
-
-export const POLICE_WEB_INFO_FIRST: any = {
-  form_item_webnmAndInput: '.ant-row #form_item_webnm',
-  form_item_moinumAndInput: '.ant-row #form_item_moinum',
-  form_item_webopentimeAndInput: '.ant-row #form_item_webopentime',
-  form_item_maindmnAndInput: '.ant-row #form_item_maindmn',
-  form_item_ymzsidAndUpload: '#form_item_ymzsid',
-  form_item_ymzsvalidAndDateFull: '#form_item_ymzsvalid',
-  form_item_ip0AndList: '#form_item_ip0',
-};
-export const POLICE_WEB_INFO_SECOND: any = {
-  form_item_aspnameAndSelectSSS: '.ant-row #form_item_aspname',
-  form_item_acctypeAndSelectSSS: '.ant-row #form_item_acctype',
-};
-export const POLICE_WEB_INFO_THIRD: any = {
-  form_item_dspnameAndSelectSSS: '#form_item_dspname',
-  form_item_interactiveAndTree1: '.ant-tree-list-holder-inner',
-  permit_listFileAndCheckUpload: '#form_item_cotitemFile .ant-checkbox-wrapper',
-  approval_listFileAndCheckUploadRun: '#form_item_proaudFile .ant-checkbox-wrapper',
-};
-export const POLICE_WEB_INFO_FOUR: any = {
-  form_item_cotitemFileAndCheckout: '#form_item_cotitemFile',
-  form_item_proaudFileAndCheckout: '#form_item_proaudFile',
-};
-export const POLICE_WEB_INFO_FIVE: any = {
-  form_item_languageAndRadio: '#form_item_language',
+export const Ali_INFO_MAIN: any = {
+  unit_province_showAndSelectStringAnd0: '.input-item-area .ant-select-selector',
+  unit_city_showAndSelectStringAnd1: '.input-item-area .ant-select-selector',
+  unit_county_showAndSelectStringAnd2: '.input-item-area .ant-select-selector',
+  unit_property_showAndSelectStringAnd3: '.input-item-area .ant-select-selector',
+  unit_cert_type_showAndSelectStringAnd4: '.input-item-area .ant-select-selector',
+  entity_comNameAndSelectScrollAnd3: '.ant-row #form_item_unitpty_sub',
+  // entity_comName: basic.principal_data.name,
+  // entity_comIdNum: basic.principal_data.cert_num,
+  // entity_comIdAddress: basic.principal_data.address,
 };
 
 const getKeysList = (data: any) => {
@@ -86,55 +43,11 @@ const getKeysList = (data: any) => {
   }
   return list;
 };
-
-export const setPoliceWebData = (data: any, num: number) => {
-  console.log(data, '666666');
-  let info = data[num];
-  let rootNode = document.querySelector('.bcyr-layout-content .bcyr-page-wrapper-content');
-  let elements1 = getKeysList(POLICE_WEB_INFO_FIRST);
-  currentEnterData(rootNode, elements1, info.info_first, () => {
-    if (info.info_second?.ycc) {
-      chooseSelectListValue('#form_item_asppvs', info.info_second.ycc, () => {
-        let elements2 = getKeysList(POLICE_WEB_INFO_SECOND);
-        currentEnterData(rootNode, elements2, info.info_second, () => {
-          chooseSelectListValue('#form_item_dsppvs', info.info_third.zcc, () => {
-            let elements3 = getKeysList(POLICE_WEB_INFO_THIRD);
-            currentEnterData(rootNode, elements3, info.info_third, () => {});
-          });
-        });
-      });
-    }
-  });
-};
-
-export const setPoliceMainData = (data: any) => {
-  console.log(data, 2);
-
-  const { main_info, company_info, person_info } = data;
-  let rootNode = document.querySelector('.bcyr-layout-content .bcyr-page-wrapper-content');
-  let elements = getKeysList(POLICE_INFO_MAIN);
-  currentEnterData(rootNode, elements, main_info, () => {
-    if (main_info['unitpty'] == '单位') {
-      let elementCompany = getKeysList(POLICE_INFO_COMPANY);
-      currentEnterData(rootNode, elementCompany, company_info, () => {
-        chooseSelectListValue('#form_item_uitadrpvs', company_info.dcc, () => {
-          let personCompany = getKeysList(POLICE_INFO_PERSON);
-          currentEnterData(rootNode, personCompany, person_info, () => {
-            if (person_info?.pcc) {
-              chooseSelectListValue('#form_item_rpbadspvs', person_info.pcc, () => {});
-            }
-          });
-        });
-      });
-    } else {
-      let personCompany = getKeysList(POLICE_INFO_PERSON);
-      currentEnterData(rootNode, personCompany, person_info, () => {
-        if (person_info?.pcc) {
-          chooseSelectListValue('#form_item_rpbadspvs', person_info.pcc, () => {});
-        }
-      });
-    }
-  });
+export const setAliMainData = (data: any) => {
+  const { info_first } = data;
+  let elements1 = getKeysList(Ali_INFO_MAIN);
+  let rootNode = queryEle('.icp-page-form');
+  currentEnterData(rootNode, elements1, info_first, () => {});
 };
 const currentEnterData = (root: any, element: any, data: any, callback: any) => {
   const currentListRun = (ele: any, info: any, num: number) => {
@@ -233,6 +146,7 @@ const currentEnterData = (root: any, element: any, data: any, callback: any) => 
   };
   currentListRun(element, data, 0);
 };
+
 const setSelectValue = (
   root: any,
   tag: any,

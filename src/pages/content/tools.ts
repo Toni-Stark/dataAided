@@ -64,7 +64,7 @@ export const base64ToFile = (base64Data: any, fileName: any) => {
 export const base64ToFileTypeImage = (base64Data: any, fileName: any) => {
   let data = base64Data.split(',');
   const bstr = window.atob(data[1]);
-  let type = "image/png";
+  let type = 'image/png';
   let n = bstr.length;
   const u8arr = new Uint8Array(n);
   while (n--) {
@@ -75,10 +75,10 @@ export const base64ToFileTypeImage = (base64Data: any, fileName: any) => {
   });
 };
 export const getFileBase64 = (url: any) => {
-  return new Promise((resolve)=>{
+  return new Promise((resolve) => {
     fetch(url)
-      .then(response => response.blob())
-      .then(blobData => {
+      .then((response) => response.blob())
+      .then((blobData) => {
         const reader = new FileReader();
         reader.onloadend = () => {
           const base64Data = reader.result;
@@ -86,14 +86,14 @@ export const getFileBase64 = (url: any) => {
           resolve(base64Data);
         };
         reader.readAsDataURL(blobData);
-      })
-  })
-}
+      });
+  });
+};
 export const getFileBlob = (url: any) => {
-  return new Promise((resolve)=>{
+  return new Promise((resolve) => {
     fetch(url)
-      .then(response => response.blob())
-      .then(blobData => {
+      .then((response) => response.blob())
+      .then((blobData) => {
         const reader = new FileReader();
         reader.onloadend = () => {
           const base64Data = reader.result;
@@ -101,19 +101,26 @@ export const getFileBlob = (url: any) => {
           resolve(base64Data);
         };
         reader.readAsDataURL(blobData);
-      })
-  })
-}
+      });
+  });
+};
 export const getFileName = (url: any) => {
   return url.match(/\/([^\/?#]+)[^\/]*$/)[1];
-}
+};
 
 export const getMapValue = (key: any, Map: any) => {
   let value = '';
-  for(let i in Map) {
-    if (i == key){
+  for (let i in Map) {
+    if (i == key) {
       value = Map[i];
     }
   }
-  return value
-}
+  return value;
+};
+export const TimeoutFunEvent = (callback: any, duration: any) => {
+  let timer: any = setTimeout(() => {
+    callback();
+    clearTimeout(timer);
+    timer = null;
+  }, duration);
+};
