@@ -10,6 +10,7 @@ import {
   ALI_MAIN_DATA,
   ALI_VERSION_DATA,
   ALI_WEB_DATA,
+  ALI_WEB_DATA_FIRST,
   GET_DATA_NEW_JUMP,
   NEW_VERSION_FILING_DATA,
   OLD_VERSION_FILING_DATA,
@@ -25,6 +26,10 @@ import {
   SET_SECOND_STEP_DATA,
   SETTING_ALI_SCREEN,
   SETTING_POLICE_SCREEN,
+  SETTING_TX_SCREEN,
+  TX_MAIN_DATA,
+  TX_VERSION_DATA,
+  TX_WEB_DATA,
 } from '@/common/agreement';
 // 设置css;
 export const createContentStyle = (css: string) => {
@@ -40,7 +45,13 @@ export const createContentStyle = (css: string) => {
 };
 // 筛选工信备案域名
 export const RegUrlConfig = (local: any) => {
-  let list = ['116.177.253.34:8088', '61.136.101.51:8443', 'beian.mps.gov.cn', 'beian.aliyun.com'];
+  let list = [
+    '116.177.253.34:8088',
+    '61.136.101.51:8443',
+    'beian.mps.gov.cn',
+    'beian.aliyun.com',
+    'console.cloud.tencent.com',
+  ];
   let res = -1;
   list.find((item, index) => {
     if (local.host?.indexOf(item) !== -1) {
@@ -56,7 +67,6 @@ export const createContentView = (data: any) => {
   createContentStyle(stylesContextTwo);
   if (idx === 0) {
     CreateDataModal(dom);
-    console.log(data, '数据');
     CreateStepTwoDataStep(data.web_site);
     CreateStepThreeDataStep(data.web_site);
   }
@@ -77,6 +87,14 @@ export const createContentView = (data: any) => {
   if (idx === 3) {
     createDataForServices(SETTING_ALI_SCREEN, 'https://beian.aliyun.com/pcContainer/formpage', 31);
     CreateAliModal(dom, data);
+  }
+  if (idx === 4) {
+    createDataForServices(
+      SETTING_TX_SCREEN,
+      'https://console.cloud.tencent.com/beian/manage/welcome',
+      31
+    );
+    CreateTXModal(dom, data);
   }
 };
 export const CreateOldModal = (dom: any) => {
@@ -198,19 +216,53 @@ export const CreateAliModal = (dom: any, data: any) => {
   dom.appendChild(floatView);
   let NewTitle = createDom({ tag: 'div', cla: 'NewTitle', txt: '阿里备案' });
   floatView?.appendChild(NewTitle);
+  for (let i = 0; i < data.web_site.length; i++) {
+    let WebStepModal = createDom({ tag: 'div', cla: 'FinalModal', txt: '网站' + (i + 1) });
+    floatView?.appendChild(WebStepModal);
+    WebStepModal.addEventListener('click', () => {
+      updateStepData(ALI_VERSION_DATA, ALI_WEB_DATA_FIRST, i);
+    });
+  }
+  let FirstStepModal: any = queryEle('.floatView>.FirstStepModal');
+  FirstStepModal?.remove();
+  FirstStepModal = createDom({ tag: 'div', cla: 'FirstStepModal', txt: '主办数据' });
+  floatView?.appendChild(FirstStepModal);
+  FirstStepModal.addEventListener('click', () => {
+    updateStepData(ALI_VERSION_DATA, ALI_MAIN_DATA);
+  });
+  // let FirstStepModal: any = queryEle('.floatView>.FirstStepModal');
+  // FirstStepModal?.remove();
+  // FirstStepModal = createDom({ tag: 'div', cla: 'FirstStepModal', txt: '主办信息' });
+  // floatView?.appendChild(FirstStepModal);
+  // FirstStepModal.addEventListener('click', () => {
+  //   updateStepData(ALI_VERSION_DATA, ALI_MAIN_DATA);
+  // });
+  //
+};
+// 腾讯云备案数据填写
+export const CreateTXModal = (dom: any, data: any) => {
+  let floatView = queryEle('.floatView');
+  if (floatView) floatView.remove();
+  floatView = createDom({ tag: 'div', cla: 'floatView' });
+  dom.appendChild(floatView);
+  let NewTitle = createDom({ tag: 'div', cla: 'NewTitle', txt: '腾讯备案' });
+  floatView?.appendChild(NewTitle);
 
   let FirstStepModal: any = queryEle('.floatView>.FirstStepModal');
   FirstStepModal?.remove();
   FirstStepModal = createDom({ tag: 'div', cla: 'FirstStepModal', txt: '主办信息' });
   floatView?.appendChild(FirstStepModal);
   FirstStepModal.addEventListener('click', () => {
-    updateStepData(ALI_VERSION_DATA, ALI_MAIN_DATA);
+    updateStepData(TX_VERSION_DATA, TX_MAIN_DATA);
   });
-  let WebStepModal = createDom({ tag: 'div', cla: 'FinalModal', txt: '网站信息' });
-  floatView?.appendChild(WebStepModal);
-  WebStepModal.addEventListener('click', () => {
-    updateStepData(ALI_VERSION_DATA, ALI_WEB_DATA);
-  });
+
+  for (let i = 0; i < data.web_site.length; i++) {
+    let WebStepModal = createDom({ tag: 'div', cla: 'FinalModal', txt: '网站' + (i + 1) });
+    floatView?.appendChild(WebStepModal);
+    WebStepModal.addEventListener('click', () => {
+      updateStepData(TX_VERSION_DATA, TX_WEB_DATA, i);
+    });
+  }
 };
 // 公安版本数据填写
 export const CreatePoliceModal = (dom: any, data: any) => {

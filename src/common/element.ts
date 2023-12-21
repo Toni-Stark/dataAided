@@ -1230,3 +1230,50 @@ export const nObj = {
 // let e = new Event('change');
 // imgView.dispatchEvent(e);
 // return;
+
+// let dom = document.querySelectorAll('.ant-select-selection-search-input')[0];
+//
+// const DispatchEvent = (dom, event) => {
+//   let e = new Event(event);
+//   dom.dispatchEvent(e);
+// };
+// const DispatchMouseEvent = (dom, event) => {
+//   let e = new MouseEvent(event, {
+//     bubbles: true, // 事件冒泡
+//     cancelable: true, // 可取消事件
+//     view: window,
+//   });
+//   dom.dispatchEvent(e);
+// };
+// DispatchMouseEvent(dom, 'mousedown');
+
+let domMap = {
+  baOrderId: '2032363049087',
+  orderType: 3,
+  isModifiedKey: false,
+  isVirtualMerchant: false,
+  icpSiteId: null,
+  isAliyun: true,
+  entityId: 42017595,
+  customerDomainId: null,
+  customerSiteId: null,
+  provinceId: 370000,
+  pageAction: 'saveDraft',
+  organizersNature: 4,
+  page: 'selfBaEntity',
+  draftId: 4992528,
+  entity_comMailingAddress: '山东省青岛市市南区fsdf1111',
+  entity_fixAddress: '山东省青岛市市南区',
+  entity_remark: 'fsdf222',
+  entity_fzrName: 'fsdf333',
+  entity_fzrIdType: '2',
+  entity_fzrIdNum: 'fsdf444',
+  entity_fzrMobile: 'fsdf555',
+  entity_phoneVfCode: 'fsdf',
+  entity_fzrTel_extension: '',
+  extension: '',
+  entity_fzrTel: '',
+  entity_fzrEmergencyMobile: 'fsd666',
+  entity_fzrEmail: 'fsd777',
+  entity_userSuppAddress: 'fsdf1111',
+};

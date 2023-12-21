@@ -7,6 +7,7 @@ import {
 } from '@/pages/content/output';
 import {
   base64ToFileTypeImage,
+  getCookie,
   getFileBase64,
   getFileName,
   queryEle,
@@ -16,17 +17,29 @@ import {
 import { BookMap, StudyMap } from '@/common/element';
 
 export const Ali_INFO_MAIN: any = {
-  unit_province_showAndSelectStringAnd0: '.input-item-area .ant-select-selector',
-  unit_city_showAndSelectStringAnd1: '.input-item-area .ant-select-selector',
-  unit_county_showAndSelectStringAnd2: '.input-item-area .ant-select-selector',
-  unit_property_showAndSelectStringAnd3: '.input-item-area .ant-select-selector',
-  unit_cert_type_showAndSelectStringAnd4: '.input-item-area .ant-select-selector',
-  entity_comNameAndSelectScrollAnd3: '.ant-row #form_item_unitpty_sub',
-  // entity_comName: basic.principal_data.name,
-  // entity_comIdNum: basic.principal_data.cert_num,
-  // entity_comIdAddress: basic.principal_data.address,
+  unit_province_showAndSelectAddressAnd0: '.ant-select-selection-search-input',
+  unit_city_showAndSelectAddressAnd1: '.ant-select-selection-search-input',
+  unit_county_showAndSelectAddressAnd2: '.ant-select-selection-search-input',
+  unit_property_showAndSelectAddressAnd3: '.ant-select-selection-search-input',
+  unit_cert_type_showAndSelectAddressAnd4: '.ant-select-selection-search-input',
+  entity_comNameAndInput:
+    '.ant-form-horizontal .ant-space .ant-space-item:nth-child(2) .module-item-wrap:nth-child(2) .ant-space-item:nth-child(3) .ant-form-item-control-input-content input',
+  entity_comIdNumAndInput:
+    '.ant-form-horizontal .ant-space .ant-space-item:nth-child(2) .module-item-wrap:nth-child(2) .ant-space-item:nth-child(4) .ant-form-item-control-input-content input',
+  entity_comIdAddressAndInput:
+    '.ant-form-horizontal .ant-space .ant-space-item:nth-child(2) .module-item-wrap:nth-child(2) .ant-space-item:nth-child(5) .ant-form-item-control-input-content input',
 };
-
+export const Ali_INFO_WEB_FIRST: any = {
+  domainAndInput:
+    '.ant-form-horizontal .ant-space .ant-space-item:nth-child(3)>.module-item-wrap .ant-space-item:nth-child(2) .ant-form-item-control-input-content input',
+};
+export const Ali_INFO_MAIN_FIRST: any = {
+  unit_province_showAndSelectAddressAnd0: '.ant-select-selection-search-input',
+  unit_city_showAndSelectAddressAnd1: '.ant-select-selection-search-input',
+  unit_county_showAndSelectAddressAnd2: '.ant-select-selection-search-input',
+  unit_property_showAndSelectAddressAnd3: '.ant-select-selection-search-input',
+  unit_cert_type_showAndSelectAddressAnd4: '.ant-select-selection-search-input',
+};
 const getKeysList = (data: any) => {
   let list = [];
   for (let i in data) {
@@ -44,11 +57,192 @@ const getKeysList = (data: any) => {
   return list;
 };
 export const setAliMainData = (data: any) => {
-  const { info_first } = data;
+  const { first_info } = data;
   let elements1 = getKeysList(Ali_INFO_MAIN);
   let rootNode = queryEle('.icp-page-form');
-  currentEnterData(rootNode, elements1, info_first, () => {});
+  currentEnterData(rootNode, elements1, first_info, () => {});
 };
+export const setAliWebData = (data: any, num: any) => {
+  const { second_info } = data;
+  let rootNode = queryEle('.icp-page-form');
+  let elements1 = getKeysList(Ali_INFO_WEB_FIRST);
+  currentEnterData(rootNode, elements1, second_info[num], () => {});
+};
+export const setAliWebDataFirst = (data: any, num: any) => {
+  const { first_info } = data;
+  let elements1 = getKeysList(Ali_INFO_MAIN_FIRST);
+  let rootNode = queryEle('.icp-page-form');
+  currentEnterData(rootNode, elements1, first_info, () => {
+    FetchJsonDataFirst(first_info, num);
+  });
+};
+export const setAliWebDataSecond = (data: any) => {
+  const { first_info } = data;
+  // let elements1 = getKeysList(Ali_INFO_MAIN_FIRST);
+  // let rootNode = queryEle('.icp-page-form');
+  // // currentEnterData(rootNode, elements1, first_info, () => {
+  // //   FetchJsonDataSecond(first_info, num);
+  // // });
+  FetchJsonDataSecond(first_info);
+};
+
+const getArtListValue = (element: any) => {
+  let dom = queryEleAll(element);
+  let domItem: any;
+  for (let i = 0; i < dom.length; i++) {
+    if (dom[i].getAttribute('aria-selected') == 'true') {
+      domItem = dom[i];
+    }
+  }
+  return parseInt(domItem?.textContent);
+};
+
+// 第一步JSON文件上传
+const FetchJsonDataFirst = (data: any, num: number) => {
+  let addressT = [
+    getArtListValue('#rc_select_0_list>div'),
+    getArtListValue('#rc_select_1_list>div'),
+    getArtListValue('#rc_select_2_list>div'),
+  ];
+  let sel1 = getArtListValue('#rc_select_3_list>div');
+  let sel2 = getArtListValue('#rc_select_4_list>div');
+  let stor: any = localStorage.getItem('beian_groupHidden');
+  let obj: any = JSON.parse(stor)[0];
+  const formData = new URLSearchParams();
+  let jsonObj: any = {
+    baOrderId: obj.baOrderId,
+    orderType: obj.orderType,
+    isModifiedKey: obj.isModifiedKey,
+    isVirtualMerchant: obj.isVirtualMerchant,
+    icpSiteId: obj.icpSiteId,
+    pageAction: 'saveDraft',
+    isAliyun: obj.isAliyun,
+    organizersNature: obj.organizersNature,
+    customerDomainId: obj.customerDomainId,
+    page: obj.page,
+    customerSiteId: obj.customerSiteId,
+    provinceId: addressT[0],
+    domMap: JSON.stringify({
+      baOrderId: obj.baOrderId,
+      orderType: obj.orderType,
+      isModifiedKey: obj.isModifiedKey,
+      isVirtualMerchant: obj.isVirtualMerchant,
+      icpSiteId: obj.icpSiteId,
+      pageAction: 'saveDraft',
+      isAliyun: obj.isAliyun,
+      organizersNature: obj.organizersNature,
+      customerDomainId: obj.customerDomainId,
+      page: obj.page,
+      customerSiteId: obj.customerSiteId,
+      provinceId: addressT[0],
+      entity_comArea: addressT,
+      entity_comType: sel1,
+      entity_comName: data.entity_comName,
+      entity_comIdType: sel2,
+      entity_comIdNum: data.entity_comIdNum,
+      entity_comIdAddress: data.entity_comIdAddress,
+      site_serviceType: '1',
+      site_selfDomain: data.arr[num].domain,
+    }),
+    _csrf: getCookie('BA-XSRF-TOKEN'),
+  };
+  for (const key in jsonObj) {
+    formData.append(key, jsonObj[key]);
+  }
+  let url = 'https://beian.aliyun.com/front/execute.json';
+  let headers = {
+    // Accept: 'application/json, text/plain, */*',
+    'Bx-V': '2.5.6',
+    'Content-Type': 'application/x-www-form-urlencoded',
+  };
+  function makePostRequest(url: any, headers: any) {
+    fetch(url, {
+      method: 'POST',
+      headers: headers,
+      body: formData,
+    }).then(async (rawResponse) => {
+      var content = await rawResponse.json();
+      console.log(content);
+      location.reload();
+    });
+  }
+  makePostRequest(url, headers);
+};
+
+// 第二步JSON文件上传
+const FetchJsonDataSecond = (data: any) => {
+  let stor: any = localStorage.getItem('beian_groupHidden');
+  let obj: any = JSON.parse(stor)[0];
+  let addStr = queryEle('.address-prefix')?.textContent + data.entity_comIdAddress;
+  const formData = new URLSearchParams();
+  let jsonObj: any = {
+    baOrderId: obj.baOrderId,
+    orderType: obj.orderType,
+    isModifiedKey: obj.isModifiedKey,
+    isVirtualMerchant: obj.isVirtualMerchant,
+    icpSiteId: obj.icpSiteId,
+    isAliyun: obj.isAliyun,
+    entityId: obj.entityId,
+    customerDomainId: obj.customerDomainId,
+    customerSiteId: obj.customerSiteId,
+    provinceId: obj.provinceId,
+    pageAction: 'saveDraft',
+    organizersNature: obj.organizersNature,
+    page: obj.page,
+    domMap: JSON.stringify({
+      baOrderId: obj.baOrderId,
+      orderType: obj.orderType,
+      isModifiedKey: false,
+      isVirtualMerchant: false,
+      icpSiteId: null,
+      isAliyun: true,
+      entityId: obj.entityId,
+      customerDomainId: null,
+      customerSiteId: null,
+      provinceId: obj.provinceId,
+      pageAction: 'saveDraft',
+      organizersNature: obj.organizersNature,
+      page: obj.page,
+      entity_comMailingAddress: addStr,
+      entity_fixAddress: queryEle('.address-prefix')?.textContent,
+      entity_remark: '',
+      entity_fzrName: data.entity_comName,
+      entity_fzrIdType: '2',
+      entity_fzrIdNum: data.entity_comIdNum,
+      entity_fzrMobile: data.mobile_phone,
+      entity_phoneVfCode: null,
+      entity_fzrTel_extension: '',
+      extension: '',
+      entity_fzrTel: '',
+      entity_fzrEmergencyMobile: data.emergency_tel,
+      entity_fzrEmail: data.email,
+      entity_userSuppAddress: data.entity_comIdAddress,
+    }),
+    _csrf: getCookie('BA-XSRF-TOKEN'),
+  };
+  for (const key in jsonObj) {
+    formData.append(key, jsonObj[key]);
+  }
+  let url = 'https://beian.aliyun.com/front/execute.json';
+  let headers = {
+    // Accept: 'application/json, text/plain, */*',
+    'Bx-V': '2.5.6',
+    'Content-Type': 'application/x-www-form-urlencoded',
+  };
+  function makePostRequest(url: any, headers: any) {
+    fetch(url, {
+      method: 'POST',
+      headers: headers,
+      body: formData,
+    }).then(async (rawResponse) => {
+      var content = await rawResponse.json();
+      console.log(content);
+      location.reload();
+    });
+  }
+  makePostRequest(url, headers);
+};
+
 const currentEnterData = (root: any, element: any, data: any, callback: any) => {
   const currentListRun = (ele: any, info: any, num: number) => {
     if (num >= ele.length) {
@@ -67,6 +261,11 @@ const currentEnterData = (root: any, element: any, data: any, callback: any) => 
         0,
         false
       );
+    }
+    if (obj.type === 'SelectAddress') {
+      setSelectAddress(root, obj, info[obj.key], () => {
+        currentListRun(ele, info, num + 1);
+      });
     }
     if (obj.type === 'SelectString') {
       setSelectValue(
@@ -248,6 +447,50 @@ const setSelectSSS = (root: any, tag: any, val: any, callback: any) => {
       callback();
     }, 500);
   }, 500);
+};
+const setSelectAddress = (root: any, tag: any, val: any, callback: any) => {
+  if (!val) {
+    return callback();
+  }
+  console.log(root, tag, val, '22222222');
+  chooseScrollValue(tag, val, () => {
+    TimeoutFunEvent(() => {
+      callback();
+    }, 1000);
+  });
+};
+const chooseScrollValue = (tag: any, val: any, callback: any) => {
+  let dom: any = queryEleAll(tag.element)[tag.ind];
+  DispatchMouseEvent(dom, 'mousedown');
+  const scrollVal = (value: any, num: any) => {
+    TimeoutFunEvent(() => {
+      let root: any = queryEleAll('.rc-virtual-list-holder-inner')[tag.ind];
+      let listN: any = queryFirstIframeEleAll(
+        root,
+        ' .ant-select-item .ant-select-item-option-content'
+      );
+      let btnN: any = queryFirstIframeEleAll(root, ' .ant-select-item');
+      let arr = [];
+      for (let k = 0; k < listN.length; k++) {
+        if (listN[k].textContent === val) {
+          arr.push(btnN[k]);
+        }
+      }
+      if (arr.length > 0) {
+        arr[0].click();
+      }
+      TimeoutFunEvent(() => {
+        if (arr.length <= 0 && num <= 6) {
+          console.log(dom, root.parentElement.parentElement, 'root4------');
+          DispatchScrollEvent(root.parentElement.parentElement, 225);
+          scrollVal(value, num + 1);
+        } else {
+          callback();
+        }
+      }, 500);
+    }, 500);
+  };
+  scrollVal(val, 0);
 };
 const setUploadValue = (root: any, tag: any, val: any, callback: any, bool = false) => {
   if (!val) {

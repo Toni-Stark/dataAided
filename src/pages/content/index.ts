@@ -2,6 +2,7 @@ import { createContentView } from '@/pages/content/component/FilingDataTools';
 import {
   ALI_MAIN_DATA,
   ALI_WEB_DATA,
+  ALI_WEB_DATA_FIRST,
   EXECUTE_SCRIPT,
   GET_DATA_NEW_JUMP,
   GET_DATA_OLD_JUMP,
@@ -17,6 +18,8 @@ import {
   SET_SECOND_STEP_DATA,
   SETTING_LIST_DATA,
   SETTING_LISTENER_SCREEN,
+  TX_MAIN_DATA,
+  TX_WEB_DATA,
 } from '@/common/agreement';
 import { MessageEventType } from '@/pages/types';
 import {
@@ -33,7 +36,12 @@ import { createDataForServices } from '@/pages/content/messageStore';
 import { RegGsxtConfig } from '@/pages/content/component/ListSortingTool';
 import { setPoliceMainData, setPoliceWebData } from '@/pages/content/component/PoliceDataTool';
 import { ProMap, CertMap, UserMap } from '@/common/element';
-import { setAliMainData } from '@/pages/content/component/AliDataTool';
+import {
+  setAliMainData,
+  setAliWebData,
+  setAliWebDataFirst,
+  setAliWebDataSecond,
+} from '@/pages/content/component/AliDataTool';
 chrome.runtime.onMessage.addListener(
   (
     request: MessageEventType,
@@ -96,12 +104,23 @@ chrome.runtime.onMessage.addListener(
     }
     if (request?.msg === ALI_MAIN_DATA) {
       let data = getAliData(request.data, 1);
-      setAliMainData(data);
+      setAliWebDataSecond(data);
       return;
     }
-    if (request?.msg === ALI_WEB_DATA) {
-      // let data = getPoliceData(request.data, 2);
-      // setPoliceWebData(data, request.num);
+    if (request?.msg === ALI_WEB_DATA_FIRST) {
+      let data = getAliData(request.data, 1, true);
+      setAliWebDataFirst(data, request.num);
+      return;
+    }
+    if (request?.msg === TX_MAIN_DATA) {
+      // let data = getTXData(request.data, 1);
+      // setTXMainData(data);
+      return;
+    }
+    if (request?.msg === TX_WEB_DATA) {
+      console.log(request, 'request');
+      // let data = getTXData(request.data, 2);
+      // setTXWebData(data, request.num);
       return;
     }
     sendResponse('received');
@@ -113,7 +132,7 @@ chrome.runtime.onMessage.addListener(
     }
   }
 );
-const getAliData = (res: any, num: number) => {
+const getAliData = (res: any, num: number, key?: boolean) => {
   const { basic, principal_data, web_site } = res;
   // 备案主体
   if (num === 1) {
@@ -124,10 +143,35 @@ const getAliData = (res: any, num: number) => {
       unit_county_show: basic.unit_county_show,
       unit_property_show: basic.unit_property_show,
       unit_cert_type_show: basic.unit_cert_type_show,
-      entity_comName: basic.principal_data.name,
-      entity_comIdNum: basic.principal_data.cert_num,
-      entity_comIdAddress: basic.principal_data.address,
+      entity_comName: principal_data.name,
+      entity_comIdNum: principal_data.cert_num,
+      entity_comIdAddress: basic.unit_cert_address,
+      mobile_phone: principal_data.mobile_phone,
+      emergency_tel: principal_data.emergency_tel,
+      email: principal_data.email,
     };
+    let arr: any = [];
+    for (let i = 0; i < web_site.length; i++) {
+      let info = {
+        domain: web_site[i].domain,
+      };
+      arr.push(info);
+    }
+    if (key) {
+      data['first_info'].arr = arr;
+    }
+    return data;
+  }
+  if (num === 2) {
+    let data: any = {};
+    let arr: any = [];
+    for (let i = 0; i < web_site.length; i++) {
+      let info = {
+        domain: web_site[i].domain,
+      };
+      arr.push(info);
+    }
+    data['second_info'] = arr;
     return data;
   }
 };
@@ -225,21 +269,7 @@ const getPoliceData = (res: any, num: number) => {
       // zcc.push('万州区');
       obj['info_third'] = {
         form_item_dspname: '重庆智佳信息科技有限公司',
-        // form_item_interactive: webInfo.interactive_arr,
-        form_item_interactive: [
-          {
-            type: 'A1',
-            name: '接入服务类（A1）',
-            desc: '专门或主要从事互联网接入服务的平台，包括基础运营商。',
-            disable: false,
-          },
-          {
-            type: 'A3',
-            name: 'CDN加速服务类（A3）',
-            desc: '专门或主要从事内容分发网络服务。',
-            disable: false,
-          },
-        ],
+        form_item_interactive: webInfo.interactive_arr,
         zcc,
         permit_listFile: webInfo.permit_list,
         approval_listFile: webInfo.approval_list,

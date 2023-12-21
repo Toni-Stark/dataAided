@@ -38,6 +38,8 @@ export const GET_DATA_OLD_JUMP = 'get_data_old_jump';
 export const SETTING_POLICE_SCREEN = 'setting_police_screen';
 // 更新数据进入阿里云系统
 export const SETTING_ALI_SCREEN = 'setting_ali_screen';
+// 更新数据进入腾讯云系统
+export const SETTING_TX_SCREEN = 'setting_tx_screen';
 
 // 请求图片资源文件
 export const GET_FILES_ADDRESS = 'get_files_address';
@@ -57,3 +59,13 @@ export const ALI_VERSION_DATA = 'ali_version_data';
 export const ALI_MAIN_DATA = 'ali_main_data';
 // 阿里备案网站信息
 export const ALI_WEB_DATA = 'ali_web_data';
+
+// 阿里备案网站草稿第一步
+export const ALI_WEB_DATA_FIRST = 'ali_web_data_first';
+
+// 腾讯备案数据
+export const TX_VERSION_DATA = 'tx_version_data';
+// 腾讯备案主办者信息
+export const TX_MAIN_DATA = 'tx_main_data';
+// 腾讯备案网站信息
+export const TX_WEB_DATA = 'tx_web_data';

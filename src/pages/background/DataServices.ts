@@ -19,6 +19,10 @@ import {
   ALI_VERSION_DATA,
   ALI_MAIN_DATA,
   ALI_WEB_DATA,
+  TX_VERSION_DATA,
+  TX_MAIN_DATA,
+  TX_WEB_DATA,
+  ALI_WEB_DATA_FIRST,
 } from '@/common/agreement';
 import { sendMessageQueryCurrent } from '@/pages/background/SettingStore';
 import { GetAPI, PostAPI, UploadFiles } from '@/pages/background/FetchStore';
@@ -80,10 +84,28 @@ export const listenerDataInfoMessage = () => {
           data: oldFinalData,
         });
       }
-      if (response?.step === ALI_WEB_DATA) {
+      if (response?.step === ALI_WEB_DATA_FIRST) {
         sendMessageQueryCurrent(tab.id, {
-          msg: ALI_WEB_DATA,
+          msg: ALI_WEB_DATA_FIRST,
           data: oldFinalData,
+          num: response?.num || 0,
+        });
+      }
+    }
+    if (response?.type === TX_VERSION_DATA) {
+      const { tab } = sender;
+      if (!tab?.id) return true;
+      if (response?.step === TX_MAIN_DATA) {
+        sendMessageQueryCurrent(tab.id, {
+          msg: TX_MAIN_DATA,
+          data: oldFinalData,
+        });
+      }
+      if (response?.step === TX_WEB_DATA) {
+        sendMessageQueryCurrent(tab.id, {
+          msg: TX_WEB_DATA,
+          data: oldFinalData,
+          num: response?.num,
         });
       }
     }
@@ -128,6 +150,7 @@ export const listenerDataInfoMessage = () => {
         });
       }
       if (response?.step === POLICE_WEB_DATA) {
+        console.log(oldFinalData, 'data');
         sendMessageQueryCurrent(tab.id, {
           msg: POLICE_WEB_DATA,
           data: oldFinalData,
@@ -198,7 +221,7 @@ const queryAllScreen = (position: string, callback: any) => {
 
 // 对数据进行处理将文件转为Base64
 const getCurrentData = (id: any, callback: any) => {
-  let BaseUrl = appConfig.dev;
+  let BaseUrl = appConfig.prod;
   GetAPI({
     url: BaseUrl + '/api/batools/enter/info?id=' + id + '&merchant_sn=7J6zvmx81&ver=1',
   }).then((res: any) => {
@@ -241,21 +264,20 @@ const getAllImgFile = (list: any, index: any, callback: any) => {
         loadImageFiles([item.domain_cert], 0, (res: any[]) => {
           item.domain_cert = res[0];
           // 测试
-          let l55 = [
-            {
-              id: '887',
-              pid: '87',
-              img_type: '33', //【v20231214新增】31民爆物品许可证,32放射性物品许可证,33管制器具许可证,34剧毒化学物许可证,35警用装备许可证,36枪支弹药许可证,37易制爆危险化学品许可证
-              img_type_show: '管制器具许可证',
-              val: '/static/batools/upload/word/images/20231215/图片15ebb85546a11fcd7d98afa2ede0c5989.png',
-              show_src:
-                'http://www.dev.cms.cn/static/batools/upload/word/images/20231214/35a3c0421914a1a22b5cd17ce163269d.jpg',
-              show_min_src:
-                'http://www.dev.cms.cn/static/batools/upload/word/images/20231215/图片15ebb85546a11fcd7d98afa2ede0c5989.png',
-            },
-          ];
-          // item.permit_list
-          loadImageFiles(l55, 0, (res: any[]) => {
+          // let l55 = [
+          //   {
+          //     id: '887',
+          //     pid: '87',
+          //     img_type: '33', //【v20231214新增】31民爆物品许可证,32放射性物品许可证,33管制器具许可证,34剧毒化学物许可证,35警用装备许可证,36枪支弹药许可证,37易制爆危险化学品许可证
+          //     img_type_show: '管制器具许可证',
+          //     val: '/static/batools/upload/word/images/20231215/图片15ebb85546a11fcd7d98afa2ede0c5989.png',
+          //     show_src:
+          //       'http://www.dev.cms.cn/static/batools/upload/word/images/20231214/35a3c0421914a1a22b5cd17ce163269d.jpg',
+          //     show_min_src:
+          //       'http://www.dev.cms.cn/static/batools/upload/word/images/20231215/图片15ebb85546a11fcd7d98afa2ede0c5989.png',
+          //   },
+          // ];
+          loadImageFiles(item?.permit_list, 0, (res: any[]) => {
             item.permit_list = res;
             getAllApprovalFile(item.approval_list, 0, (aList: any) => {
               item.approval_list = aList;
@@ -329,11 +351,11 @@ const getFileNameFromUrl = (url: string) => {
 };
 // 获取数据
 const getCurrentPoliceData = (id: any, callback: any) => {
-  let BaseUrl = appConfig.dev;
+  let BaseUrl = appConfig.prod;
   PostAPI({
     url: BaseUrl + '/api/batools/enter/info?id=' + id + '&merchant_sn=7J6zvmx81&ver=1',
   }).then((res: any) => {
-    let BaseUrl = appConfig.dev;
+    let BaseUrl = appConfig.prod;
     const { basic, principal_data, web_site } = res.data;
     loadImageFiles([basic.img_cert], 0, (res: any[]) => {
       basic.img_cert = res[0];
