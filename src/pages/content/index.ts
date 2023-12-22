@@ -41,6 +41,7 @@ import {
   setAliWebDataSecond,
   setAliWebDataThird,
 } from '@/pages/content/component/AliDataTool';
+import { setTxWebData } from '@/pages/content/component/TxDataTool';
 
 chrome.runtime.onMessage.addListener(
   (
@@ -125,8 +126,8 @@ chrome.runtime.onMessage.addListener(
     }
     if (request?.msg === TX_WEB_DATA) {
       console.log(request, 'request');
-      // let data = getTXData(request.data, 2);
-      // setTXWebData(data, request.num);
+      let data = getTxData(request.data, 1);
+      setTxWebData(data, request.num);
       return;
     }
     sendResponse('received');
@@ -138,6 +139,39 @@ chrome.runtime.onMessage.addListener(
     }
   }
 );
+const getTxData = (data: any, num: any) => {
+  const { basic, principal_data, web_site } = data;
+  // 备案主体
+  if (num === 1) {
+    let data: any = {};
+    let arr: any = [];
+    for (let i = 0; i < web_site.length; i++) {
+      let info = {
+        domain: web_site[i].domain,
+      };
+      arr.push(info);
+    }
+    let tcc = [];
+    if (basic?.unit_province_show) tcc.push(basic?.unit_province_show);
+    if (basic?.unit_city_show) tcc.push(basic?.unit_city_show);
+    if (basic?.unit_county_show) tcc.push(basic?.unit_county_show);
+    // if (basic?.unit_province_show) tcc.push('河北省');
+    // if (basic?.unit_city_show) tcc.push('秦皇岛市');
+    // if (basic?.unit_county_show) tcc.push('昌黎县');
+    data['first_info'] = {
+      arr,
+      tcc,
+      unit_property_show: basic.unit_property_show,
+      unit_cert_type_show: basic.unit_cert_type_show,
+      type_file: basic.img_cert.show_src,
+      org_name: basic.unit_name,
+      org_number: principal_data.cert_num,
+      org_legal: principal_data.name,
+      org_cer_number: principal_data.cert_num,
+    };
+    return data;
+  }
+};
 const getAliData = (res: any, num: number, key?: boolean) => {
   const { basic, principal_data, web_site } = res;
   // 备案主体

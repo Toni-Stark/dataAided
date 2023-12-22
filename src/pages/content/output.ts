@@ -160,8 +160,19 @@ export const DispatchScrollEvent = (dom: any, num: number) => {
   const wheelEvent = new WheelEvent('wheel', {
     deltaY: num,
   });
-  dom.dispatchEvent(wheelEvent);
+  dom?.dispatchEvent(wheelEvent);
 };
+export const DispatchInputEvent = (dom: any, text: any) => {
+  const event = new KeyboardEvent('input', {
+    bubbles: true,
+    cancelable: true,
+    composed: true,
+  });
+  Object.defineProperty(dom, 'value', { value: text });
+  console.log(dom, text, '1111111111');
+  dom.dispatchEvent(event);
+};
+
 const getElementList = (data: any) => {
   let list = [];
   for (let i in data) {
@@ -235,12 +246,12 @@ export const setThreeStepData = (data: any, num: number) => {
   removeThreeStrpData(iframe);
   let web_side_id_card_p1 = getElementList(WEB_SIDE_ID_CARD_P1);
   let res: any = data['web_side_id_card_p1'];
-  let obj = { ...res};
-  console.log({ ...obj },'res-------------------');
-  if(res.Verification.length > num) {
-    obj = {...obj, ...res.Verification[num]}
+  let obj = { ...res };
+  console.log({ ...obj }, 'res-------------------');
+  if (res.Verification.length > num) {
+    obj = { ...obj, ...res.Verification[num] };
   }
-  console.log(data, web_side_id_card_p1, num,res.Verification, obj, '-----------------------');
+  console.log(data, web_side_id_card_p1, num, res.Verification, obj, '-----------------------');
   recursiveExecution(
     {
       iframe,
@@ -254,30 +265,45 @@ export const setThreeStepData = (data: any, num: number) => {
 };
 
 const removeBtnClick = (list: any) => {
-  for (let i = 0; i<list.length; i ++) {
-    if(list[i]){
-      console.log(list[i])
-      DispatchMouseEvent(list[i], 'click')
+  for (let i = 0; i < list.length; i++) {
+    if (list[i]) {
+      console.log(list[i]);
+      DispatchMouseEvent(list[i], 'click');
     }
   }
-}
+};
 
-export const removeThreeStrpData = (iframe: any, ) => {
+export const removeThreeStrpData = (iframe: any) => {
   let webOtherPicUl: any = queryFirstIframeEleAll(iframe, '#webOtherPicUl .fileDel_button');
   let mainOtherPicUl: any = queryFirstIframeEleAll(iframe, '#mainOtherPicUl .fileDel_button');
-  let unitpic0ul: any = queryFirstIframeEleAll(iframe, '#traditionUploadDiv #unitpic0ul .fileDel_button');
-  let identitypic0ul: any = queryFirstIframeEleAll(iframe, '#traditionUploadDiv #identitypic0ul .fileDel_button');
-  let verificationpic0ul: any = queryFirstIframeEleAll(iframe, '#traditionUploadDiv #verificationpic0ul .fileDel_button');
-  let websidechiefpic0ul: any = queryFirstIframeEleAll(iframe, '#traditionUploadDiv #websidechiefpic0ul .fileDel_button');
-  let websideidentitycardpic0ul: any = queryFirstIframeEleAll(iframe, '#traditionUploadDiv #websideidentitycardpic0ul .fileDel_button');
-  if(webOtherPicUl.length>0)removeBtnClick(webOtherPicUl);
-  if(mainOtherPicUl.length>0)removeBtnClick(mainOtherPicUl);
-  if(unitpic0ul.length>0)removeBtnClick(unitpic0ul);
-  if(identitypic0ul.length>0)removeBtnClick(identitypic0ul);
-  if(verificationpic0ul.length>0)removeBtnClick(verificationpic0ul);
-  if(websidechiefpic0ul.length>0)removeBtnClick(websidechiefpic0ul);
-  if(websideidentitycardpic0ul.length>0)removeBtnClick(websideidentitycardpic0ul);
-}
+  let unitpic0ul: any = queryFirstIframeEleAll(
+    iframe,
+    '#traditionUploadDiv #unitpic0ul .fileDel_button'
+  );
+  let identitypic0ul: any = queryFirstIframeEleAll(
+    iframe,
+    '#traditionUploadDiv #identitypic0ul .fileDel_button'
+  );
+  let verificationpic0ul: any = queryFirstIframeEleAll(
+    iframe,
+    '#traditionUploadDiv #verificationpic0ul .fileDel_button'
+  );
+  let websidechiefpic0ul: any = queryFirstIframeEleAll(
+    iframe,
+    '#traditionUploadDiv #websidechiefpic0ul .fileDel_button'
+  );
+  let websideidentitycardpic0ul: any = queryFirstIframeEleAll(
+    iframe,
+    '#traditionUploadDiv #websideidentitycardpic0ul .fileDel_button'
+  );
+  if (webOtherPicUl.length > 0) removeBtnClick(webOtherPicUl);
+  if (mainOtherPicUl.length > 0) removeBtnClick(mainOtherPicUl);
+  if (unitpic0ul.length > 0) removeBtnClick(unitpic0ul);
+  if (identitypic0ul.length > 0) removeBtnClick(identitypic0ul);
+  if (verificationpic0ul.length > 0) removeBtnClick(verificationpic0ul);
+  if (websidechiefpic0ul.length > 0) removeBtnClick(websidechiefpic0ul);
+  if (websideidentitycardpic0ul.length > 0) removeBtnClick(websideidentitycardpic0ul);
+};
 
 export const setSecondDownInfoStepData = (data: any) => {
   let iframe: any = secondStepElementQuery('#modalFormBody');
@@ -327,7 +353,6 @@ export const setFirstStepData = (data: any) => {
     setFirstDownStepData
   );
 };
-
 
 export const recursiveExecution = (params: any, callback: any) => {
   const { iframe, result, list, data, index } = params;

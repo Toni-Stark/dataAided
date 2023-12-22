@@ -71,3 +71,45 @@ export const TX_VERSION_DATA = 'tx_version_data';
 export const TX_MAIN_DATA = 'tx_main_data';
 // 腾讯备案网站信息
 export const TX_WEB_DATA = 'tx_web_data';
+
+// const DispatchEvent = (dom, event) => {
+//   let e = new Event(event);
+//   dom?.dispatchEvent(e);
+// };
+// const DispatchMouseEvent = (dom, event) => {
+//   let e = new MouseEvent(event, {
+//     bubbles: true, // 事件冒泡
+//     cancelable: true, // 可取消事件
+//     view: window,
+//   });
+//   dom?.dispatchEvent(e);
+// };
+// const DispatchInputEvent = (dom) => {
+//   const inputEvent = new InputEvent('input', {
+//     bubbles: true, // 是否冒泡，默认为 false
+//     cancelable: false, // 是否可取消，默认为 false
+//     composed: false, // 是否触发跨 Shadow DOM 边界，默认为 false
+//     inputType: 'insertText', // 输入类型，比如 'insertText', 'deleteContentBackward' 等
+//     data: 'beian.com', // 输入的数据
+//     target: dom, // 目标元素，即触发事件的元素
+//   });
+// };
+// const keyDownEvent = (dom, val) => {
+//   const event = new KeyboardEvent('input', {
+//     bubbles: true,
+//     cancelable: true,
+//     composed: true,
+//   });
+//   Object.defineProperty(dom, 'value', { value: val });
+//   dom.dispatchEvent(event);
+// }
+// let inputDom = document.querySelector('.app-beian-input');
+// DispatchMouseEvent(inputDom, 'click');
+// setTimeout(()=>{
+//   // inputDom.value = 'wazwk.com';
+//   // keyDownEvent(inputDom, 'wazwk.com')
+//   inputDom.value = 'm';
+//   keyDownEvent(inputDom, 'm')
+//   DispatchEvent(inputDom, 'change');
+//   DispatchMouseEvent(inputDom, 'blur');
+// }, 500)

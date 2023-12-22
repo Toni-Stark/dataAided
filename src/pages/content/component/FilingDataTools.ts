@@ -251,15 +251,6 @@ export const CreateTXModal = (dom: any, data: any) => {
   dom.appendChild(floatView);
   let NewTitle = createDom({ tag: 'div', cla: 'NewTitle', txt: '腾讯备案' });
   floatView?.appendChild(NewTitle);
-
-  let FirstStepModal: any = queryEle('.floatView>.FirstStepModal');
-  FirstStepModal?.remove();
-  FirstStepModal = createDom({ tag: 'div', cla: 'FirstStepModal', txt: '主办信息' });
-  floatView?.appendChild(FirstStepModal);
-  FirstStepModal.addEventListener('click', () => {
-    updateStepData(TX_VERSION_DATA, TX_MAIN_DATA);
-  });
-
   for (let i = 0; i < data.web_site.length; i++) {
     let WebStepModal = createDom({ tag: 'div', cla: 'FinalModal', txt: '网站' + (i + 1) });
     floatView?.appendChild(WebStepModal);
@@ -267,6 +258,13 @@ export const CreateTXModal = (dom: any, data: any) => {
       updateStepData(TX_VERSION_DATA, TX_WEB_DATA, i);
     });
   }
+  // let FirstStepModal: any = queryEle('.floatView>.FirstStepModal');
+  // FirstStepModal?.remove();
+  // FirstStepModal = createDom({ tag: 'div', cla: 'FirstStepModal', txt: '主办信息' });
+  // floatView?.appendChild(FirstStepModal);
+  // FirstStepModal.addEventListener('click', () => {
+  //   updateStepData(TX_VERSION_DATA, TX_MAIN_DATA);
+  // });
 };
 // 公安版本数据填写
 export const CreatePoliceModal = (dom: any, data: any) => {
