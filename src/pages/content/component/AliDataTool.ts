@@ -40,6 +40,9 @@ export const Ali_INFO_MAIN_FIRST: any = {
   unit_property_showAndSelectAddressAnd3: '.ant-select-selection-search-input',
   unit_cert_type_showAndSelectAddressAnd4: '.ant-select-selection-search-input',
 };
+export const Ali_INFO_MAIN_Third: any = {
+  cert_type_showAndSelectAddressAnd2: '.ant-select-selection-search-input',
+};
 const getKeysList = (data: any) => {
   let list = [];
   for (let i in data) {
@@ -78,12 +81,15 @@ export const setAliWebDataFirst = (data: any, num: any) => {
 };
 export const setAliWebDataSecond = (data: any) => {
   const { first_info } = data;
-  // let elements1 = getKeysList(Ali_INFO_MAIN_FIRST);
-  // let rootNode = queryEle('.icp-page-form');
-  // // currentEnterData(rootNode, elements1, first_info, () => {
-  // //   FetchJsonDataSecond(first_info, num);
-  // // });
   FetchJsonDataSecond(first_info);
+};
+export const setAliWebDataThird = (data: any, num: any) => {
+  const { third_info } = data;
+  let elements1 = getKeysList(Ali_INFO_MAIN_Third);
+  let rootNode = queryEle('.icp-page-form');
+  currentEnterData(rootNode, elements1, third_info, () => {
+    FetchJsonDataThird(third_info, num);
+  });
 };
 
 const getArtListValue = (element: any) => {
@@ -94,7 +100,7 @@ const getArtListValue = (element: any) => {
       domItem = dom[i];
     }
   }
-  return parseInt(domItem?.textContent);
+  return parseInt(domItem?.textContent) || '';
 };
 
 // 第一步JSON文件上传
@@ -168,7 +174,6 @@ const FetchJsonDataFirst = (data: any, num: number) => {
   }
   makePostRequest(url, headers);
 };
-
 // 第二步JSON文件上传
 const FetchJsonDataSecond = (data: any) => {
   let stor: any = localStorage.getItem('beian_groupHidden');
@@ -238,6 +243,96 @@ const FetchJsonDataSecond = (data: any) => {
       var content = await rawResponse.json();
       console.log(content);
       location.reload();
+    });
+  }
+  makePostRequest(url, headers);
+};
+// 第三步JSON文件上传
+const FetchJsonDataThird = (data: any, num: any) => {
+  let stor: any = localStorage.getItem('beian_groupHidden');
+  let obj: any = JSON.parse(stor)[0];
+  let addStr: any = queryEle('.address-prefix')?.textContent + data.entity_comIdAddress;
+  let webName: any = queryEle('#site_siteName');
+  let webDomain: any = queryEle('.input-domain-content .ant-input-affix-wrapper .ant-input');
+  let webID: any = queryEle('.icp-page-form .module-title-item .info-name span');
+  let typeVal: any = getArtListValue('#site_fzrIdType_list>div');
+  const formData = new URLSearchParams();
+  let jsonObj: any = {
+    baOrderId: obj.baOrderId,
+    orderType: obj.orderType,
+    isModifiedKey: obj.isModifiedKey,
+    isVirtualMerchant: obj.isVirtualMerchant,
+    icpSiteId: obj.icpSiteId,
+    isAliyun: obj.isAliyun,
+    // entityId: obj.entityId,
+    customerDomainId: obj.customerDomainId,
+    customerSiteId: obj.customerSiteId,
+    provinceId: obj.provinceId,
+    pageAction: 'saveDraft',
+    siteId: null,
+    organizersNature: obj.organizersNature,
+    page: obj.page,
+    site_siteName: webName.value,
+    site_siteRecordNum: webID?.textContent,
+    // draftId: obj.draftId,
+    domMap: JSON.stringify({
+      baOrderId: obj.baOrderId,
+      orderType: obj.orderType,
+      isModifiedKey: false,
+      isVirtualMerchant: false,
+      icpSiteId: null,
+      isAliyun: true,
+      customerDomainId: null,
+      customerSiteId: null,
+      provinceId: obj.provinceId,
+      pageAction: 'saveDraft',
+      siteId: null,
+      organizersNature: obj.organizersNature,
+      page: obj.page,
+      site_siteName: webName.value,
+      site_siteRecordNum: webID?.textContent,
+      site_domain: webDomain?.value,
+      site_domain_add: null,
+      site_domain_delete: null,
+      site_productType: '0',
+      site_productCheckInfo: null,
+      site_preApprovalType: null,
+      site_remark: null,
+      site_siteNum: null,
+      entity_ispid: null,
+      site_reuseCivilSubjectId: '',
+      site_reuseType: '',
+      site_fzrName: data[num].name,
+      site_fzrIdType: typeVal,
+      site_fzrIdNum: data[num].cert_num,
+      site_fzrMobile: data[num].mobile_phone,
+      site_phoneVfCode: null,
+      site_fzrTel_extension: '',
+      extension: '',
+      site_fzrTel: '',
+      site_fzrEmergencyMobile: null,
+      site_fzrEmail: data[num].email,
+    }),
+    _csrf: getCookie('BA-XSRF-TOKEN'),
+  };
+  for (const key in jsonObj) {
+    formData.append(key, jsonObj[key]);
+  }
+  let url = 'https://beian.aliyun.com/front/execute.json';
+  let headers = {
+    Accept: 'application/json, text/plain, */*',
+    'Bx-V': '2.5.6',
+    'Content-Type': 'application/x-www-form-urlencoded',
+  };
+  function makePostRequest(url: any, headers: any) {
+    fetch(url, {
+      method: 'POST',
+      headers: headers,
+      body: formData,
+    }).then(async (rawResponse) => {
+      var content = await rawResponse.json();
+      console.log(content);
+      // location.reload();
     });
   }
   makePostRequest(url, headers);

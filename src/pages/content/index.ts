@@ -1,8 +1,8 @@
 import { createContentView } from '@/pages/content/component/FilingDataTools';
 import {
   ALI_MAIN_DATA,
-  ALI_WEB_DATA,
   ALI_WEB_DATA_FIRST,
+  ALI_WEB_DATA_THIRD,
   EXECUTE_SCRIPT,
   GET_DATA_NEW_JUMP,
   GET_DATA_OLD_JUMP,
@@ -35,13 +35,13 @@ import { getMapValue, getPowerToTwo, queryEleAll } from '@/pages/content/tools';
 import { createDataForServices } from '@/pages/content/messageStore';
 import { RegGsxtConfig } from '@/pages/content/component/ListSortingTool';
 import { setPoliceMainData, setPoliceWebData } from '@/pages/content/component/PoliceDataTool';
-import { ProMap, CertMap, UserMap } from '@/common/element';
+import { CertMap, ProMap, UserMap } from '@/common/element';
 import {
-  setAliMainData,
-  setAliWebData,
   setAliWebDataFirst,
   setAliWebDataSecond,
+  setAliWebDataThird,
 } from '@/pages/content/component/AliDataTool';
+
 chrome.runtime.onMessage.addListener(
   (
     request: MessageEventType,
@@ -112,6 +112,12 @@ chrome.runtime.onMessage.addListener(
       setAliWebDataFirst(data, request.num);
       return;
     }
+    if (request?.msg === ALI_WEB_DATA_THIRD) {
+      let data = getAliData(request.data, 3, true);
+      setAliWebDataThird(data, request.num);
+      return;
+    }
+    // setAliWebDataThird
     if (request?.msg === TX_MAIN_DATA) {
       // let data = getTXData(request.data, 1);
       // setTXMainData(data);
@@ -173,6 +179,23 @@ const getAliData = (res: any, num: number, key?: boolean) => {
     }
     data['second_info'] = arr;
     return data;
+  }
+  if (num === 3) {
+    let arr: any = [];
+    for (let i = 0; i < web_site.length; i++) {
+      let obj = web_site[i];
+      let info: any = {
+        name: obj.principal_data.name,
+        cert_type_show: obj.principal_data.cert_type_show,
+        cert_num: obj.principal_data.cert_num,
+        mobile_phone: obj.principal_data.mobile_phone,
+        email: obj.principal_data.email,
+      };
+      arr.push(info);
+    }
+    return {
+      third_info: arr,
+    };
   }
 };
 const getPoliceData = (res: any, num: number) => {

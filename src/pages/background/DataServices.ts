@@ -23,6 +23,7 @@ import {
   TX_MAIN_DATA,
   TX_WEB_DATA,
   ALI_WEB_DATA_FIRST,
+  ALI_WEB_DATA_THIRD,
 } from '@/common/agreement';
 import { sendMessageQueryCurrent } from '@/pages/background/SettingStore';
 import { GetAPI, PostAPI, UploadFiles } from '@/pages/background/FetchStore';
@@ -87,6 +88,13 @@ export const listenerDataInfoMessage = () => {
       if (response?.step === ALI_WEB_DATA_FIRST) {
         sendMessageQueryCurrent(tab.id, {
           msg: ALI_WEB_DATA_FIRST,
+          data: oldFinalData,
+          num: response?.num || 0,
+        });
+      }
+      if (response?.step === ALI_WEB_DATA_THIRD) {
+        sendMessageQueryCurrent(tab.id, {
+          msg: ALI_WEB_DATA_THIRD,
           data: oldFinalData,
           num: response?.num || 0,
         });

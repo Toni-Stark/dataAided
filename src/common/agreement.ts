@@ -62,6 +62,8 @@ export const ALI_WEB_DATA = 'ali_web_data';
 
 // 阿里备案网站草稿第一步
 export const ALI_WEB_DATA_FIRST = 'ali_web_data_first';
+// 阿里备案网站草稿第一步
+export const ALI_WEB_DATA_THIRD = 'ali_web_data_third';
 
 // 腾讯备案数据
 export const TX_VERSION_DATA = 'tx_version_data';

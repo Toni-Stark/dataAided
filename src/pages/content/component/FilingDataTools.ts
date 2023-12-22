@@ -11,6 +11,7 @@ import {
   ALI_VERSION_DATA,
   ALI_WEB_DATA,
   ALI_WEB_DATA_FIRST,
+  ALI_WEB_DATA_THIRD,
   GET_DATA_NEW_JUMP,
   NEW_VERSION_FILING_DATA,
   OLD_VERSION_FILING_DATA,
@@ -216,28 +217,31 @@ export const CreateAliModal = (dom: any, data: any) => {
   dom.appendChild(floatView);
   let NewTitle = createDom({ tag: 'div', cla: 'NewTitle', txt: '阿里备案' });
   floatView?.appendChild(NewTitle);
-  for (let i = 0; i < data.web_site.length; i++) {
-    let WebStepModal = createDom({ tag: 'div', cla: 'FinalModal', txt: '网站' + (i + 1) });
-    floatView?.appendChild(WebStepModal);
-    WebStepModal.addEventListener('click', () => {
-      updateStepData(ALI_VERSION_DATA, ALI_WEB_DATA_FIRST, i);
-    });
+  if (data?.web_site?.length > 0) {
+    for (let i = 0; i < data.web_site.length; i++) {
+      let WebStepModal = createDom({ tag: 'div', cla: 'FinalModal', txt: '域名' + (i + 1) });
+      floatView?.appendChild(WebStepModal);
+      WebStepModal.addEventListener('click', () => {
+        updateStepData(ALI_VERSION_DATA, ALI_WEB_DATA_FIRST, i);
+      });
+    }
   }
   let FirstStepModal: any = queryEle('.floatView>.FirstStepModal');
   FirstStepModal?.remove();
-  FirstStepModal = createDom({ tag: 'div', cla: 'FirstStepModal', txt: '主办数据' });
+  FirstStepModal = createDom({ tag: 'div', cla: 'FirstStepModal', txt: '主办信息' });
   floatView?.appendChild(FirstStepModal);
   FirstStepModal.addEventListener('click', () => {
     updateStepData(ALI_VERSION_DATA, ALI_MAIN_DATA);
   });
-  // let FirstStepModal: any = queryEle('.floatView>.FirstStepModal');
-  // FirstStepModal?.remove();
-  // FirstStepModal = createDom({ tag: 'div', cla: 'FirstStepModal', txt: '主办信息' });
-  // floatView?.appendChild(FirstStepModal);
-  // FirstStepModal.addEventListener('click', () => {
-  //   updateStepData(ALI_VERSION_DATA, ALI_MAIN_DATA);
-  // });
-  //
+  if (data?.web_site?.length > 0) {
+    for (let i = 0; i < data.web_site.length; i++) {
+      let WebStepModal = createDom({ tag: 'div', cla: 'FinalModal', txt: '网站' + (i + 1) });
+      floatView?.appendChild(WebStepModal);
+      WebStepModal.addEventListener('click', () => {
+        updateStepData(ALI_VERSION_DATA, ALI_WEB_DATA_THIRD, i);
+      });
+    }
+  }
 };
 // 腾讯云备案数据填写
 export const CreateTXModal = (dom: any, data: any) => {
