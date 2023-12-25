@@ -73,3 +73,5 @@ export const TX_VERSION_DATA = 'tx_version_data';
 export const TX_MAIN_DATA = 'tx_main_data';
 // 腾讯备案网站信息
 export const TX_WEB_DATA = 'tx_web_data';
+// 腾讯备案网站信息
+export const TX_WEB_START_DATA = 'tx_web_start';

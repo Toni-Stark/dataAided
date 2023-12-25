@@ -21,6 +21,7 @@ import {
   SETTING_LISTENER_SCREEN,
   TX_MAIN_DATA,
   TX_WEB_DATA,
+  TX_WEB_START_DATA,
 } from '@/common/agreement';
 import { MessageEventType } from '@/pages/types';
 import {
@@ -46,7 +47,7 @@ import {
   setAliWebDataSecond,
   setAliWebDataThird,
 } from '@/pages/content/component/AliDataTool';
-import { setTxWebData } from '@/pages/content/component/TxDataTool';
+import { setTxWebData, setTxWebStartData } from '@/pages/content/component/TxDataTool';
 
 chrome.runtime.onMessage.addListener(
   (
@@ -138,6 +139,11 @@ chrome.runtime.onMessage.addListener(
       console.log(request, 'request');
       let data = getTxData(request.data, 1);
       setTxWebData(data, request.num);
+      return;
+    }
+    if (request?.msg === TX_WEB_START_DATA) {
+      let data = getTxData(request.data, 1);
+      setTxWebStartData(data, request.num);
       return;
     }
     sendResponse('received');

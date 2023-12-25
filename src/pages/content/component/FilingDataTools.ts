@@ -32,6 +32,7 @@ import {
   TX_MAIN_DATA,
   TX_VERSION_DATA,
   TX_WEB_DATA,
+  TX_WEB_START_DATA,
 } from '@/common/agreement';
 // 设置css;
 export const createContentStyle = (css: string) => {
@@ -252,6 +253,13 @@ export const CreateTXModal = (dom: any, data: any) => {
   dom.appendChild(floatView);
   let NewTitle = createDom({ tag: 'div', cla: 'NewTitle', txt: '腾讯备案' });
   floatView?.appendChild(NewTitle);
+  for (let i = 0; i < data.web_site.length; i++) {
+    let WebStepModal = createDom({ tag: 'div', cla: 'FinalModal', txt: '备案' + (i + 1) });
+    floatView?.appendChild(WebStepModal);
+    WebStepModal.addEventListener('click', () => {
+      updateStepData(TX_VERSION_DATA, TX_WEB_START_DATA, i);
+    });
+  }
   for (let i = 0; i < data.web_site.length; i++) {
     let WebStepModal = createDom({ tag: 'div', cla: 'FinalModal', txt: '网站' + (i + 1) });
     floatView?.appendChild(WebStepModal);

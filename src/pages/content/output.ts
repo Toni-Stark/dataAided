@@ -144,8 +144,8 @@ export const OLD_THIRD_UPLOAD_STEP: any = {
     '#ext-comp-1136>.x-panel-bwrap>.x-panel-body>.x-column-inner>.x-panel>.x-panel-bwrap>.x-panel-body>.x-column-inner',
 };
 
-export const DispatchEvent = (dom: any, event: string) => {
-  let e = new Event(event);
+export const DispatchEvent = (dom: any, event: string, option?: any) => {
+  let e = new Event(event, option);
   dom?.dispatchEvent(e);
 };
 export const DispatchMouseEvent = (dom: any, event: string) => {

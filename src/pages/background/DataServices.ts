@@ -25,6 +25,7 @@ import {
   ALI_WEB_DATA_FIRST,
   ALI_WEB_DATA_THIRD,
   POLICE_INFO_MAIN_DATA,
+  TX_WEB_START_DATA,
 } from '@/common/agreement';
 import { sendMessageQueryCurrent } from '@/pages/background/SettingStore';
 import { GetAPI, PostAPI, UploadFiles } from '@/pages/background/FetchStore';
@@ -118,6 +119,13 @@ export const listenerDataInfoMessage = () => {
           num: response?.num,
         });
       }
+      if (response?.step === TX_WEB_START_DATA) {
+        sendMessageQueryCurrent(tab.id, {
+          msg: TX_WEB_START_DATA,
+          data: oldFinalData,
+          num: response?.num,
+        });
+      }
     }
     if (response?.type === OLD_VERSION_FILING_DATA) {
       const { tab } = sender;
@@ -168,7 +176,6 @@ export const listenerDataInfoMessage = () => {
         });
       }
       if (response?.step === POLICE_INFO_MAIN_DATA) {
-        console.log('1111111111222222222');
         sendMessageQueryCurrent(tab.id, {
           msg: POLICE_INFO_MAIN_DATA,
           data: oldFinalData,

@@ -17,19 +17,18 @@ import {
 import { BookMap, StudyMap } from '@/common/element';
 
 export const Tx_INFO_FIRST: any = {
-  domainAndInput: '.app-beian-input',
+  domainAndTxInput: '.app-beian-input',
 };
 export const Tx_INFO_MAIN: any = {
   unit_property_showAndSelectAddressAnd0: '.app-beian-text-weak',
   unit_cert_type_showAndSelectAddressAnd1: '.app-beian-text-weak',
-  // type_fileAndUploadTypeFile: '.app-beian-form-upload-drag',
-  org_nameAndPatchInput: '.org-name',
-  org_numberAndPatchInput: '.org-certificate-number',
-  org_legalAndPatchInput: '.legalPerson',
-  org_cer_numberAndPatchInput: '.legalPersonCerNumber',
+  org_nameAndTxInput: '.org-name',
+  org_numberAndTxInput: '.org-certificate-number',
+  org_legalAndTxInput: '.legalPerson',
+  org_cer_numberAndTxInput: '.legalPersonCerNumber',
 };
 export const Tx_INFO_WEB: any = {
-  domainAndPatchInput: '.domain',
+  domainAndTxInput: '.domain',
 };
 
 const getKeysList = (data: any) => {
@@ -49,10 +48,16 @@ const getKeysList = (data: any) => {
   return list;
 };
 
+export const setTxWebStartData = (data: any, num: any) => {
+  const { first_info } = data;
+  let list = first_info.arr[num];
+  let rootNode = queryEle('#container');
+  let elements1 = getKeysList(Tx_INFO_FIRST);
+  currentEnterData(rootNode, elements1, list, () => {});
+};
 export const setTxWebData = (data: any, num: any) => {
   const { first_info } = data;
   let elements1 = getKeysList(Tx_INFO_MAIN);
-  let beiItem = first_info.arr[num];
   let rootNode = queryEle('#container');
   currentSelectPlaceL(first_info.tcc, () => {
     console.log(first_info);
@@ -77,6 +82,11 @@ const currentEnterData = (root: any, element: any, data: any, callback: any) => 
       return;
     }
     let obj = ele[num];
+    if (obj.type === 'TxInput') {
+      setTxInput(root, obj, info[obj.key], () => {
+        currentListRun(ele, info, num + 1);
+      });
+    }
     if (obj.type === 'UploadTypeFile') {
       setUploadFileBox(root, obj, info[obj.key], () => {
         currentListRun(ele, info, num + 1);
@@ -145,6 +155,15 @@ const currentEnterData = (root: any, element: any, data: any, callback: any) => 
     }
   };
   currentListRun(element, data, 0);
+};
+
+const setTxInput = (root: any, tag: any, val: any, callback: any) => {
+  let element: any = queryFirstIframeEle(root, tag.element);
+  setTxInputValue(element, val, () => {
+    TimeoutFunEvent(() => {
+      callback();
+    }, 2000);
+  });
 };
 
 const setUploadFileBox = (root: any, tag: any, val: any, callback: any) => {
@@ -404,6 +423,18 @@ const setCheckUploadValue = (root: any, tag: any, val: any, callback: any) => {
     };
     checkBtnList(val, 0);
   }, val.length * 500 + 500);
+};
+const setTxInputValue = (element: any, val: any, callback: any) => {
+  if (val?.length < 0) {
+    callback();
+    return;
+  }
+  var d: any = Object?.getOwnPropertyDescriptor(window?.HTMLInputElement.prototype, 'value')?.set;
+  d.call(element, val);
+  DispatchEvent(element, 'input', { bubbles: true });
+  TimeoutFunEvent(() => {
+    callback();
+  }, 300);
 };
 const setCheckUploadRun = (root: any, tag: any, val: any, callback: any) => {
   if (val?.length < 0) {
