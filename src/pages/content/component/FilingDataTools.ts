@@ -15,6 +15,7 @@ import {
   GET_DATA_NEW_JUMP,
   NEW_VERSION_FILING_DATA,
   OLD_VERSION_FILING_DATA,
+  POLICE_INFO_MAIN_DATA,
   POLICE_MAIN_DATA,
   POLICE_VERSION_DATA,
   POLICE_WEB_DATA,
@@ -288,6 +289,13 @@ export const CreatePoliceModal = (dom: any, data: any) => {
     floatView?.appendChild(WebStepModal);
     WebStepModal.addEventListener('click', () => {
       updateStepData(POLICE_VERSION_DATA, POLICE_WEB_DATA, i);
+    });
+  }
+  for (let i = 0; i < data.web_site.length; i++) {
+    let WebStepModal = createDom({ tag: 'div', cla: 'FinalModal', txt: '资源' + (i + 1) });
+    floatView?.appendChild(WebStepModal);
+    WebStepModal.addEventListener('click', () => {
+      updateStepData(POLICE_VERSION_DATA, POLICE_INFO_MAIN_DATA, i);
     });
   }
 };

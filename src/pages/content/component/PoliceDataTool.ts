@@ -9,6 +9,7 @@ import {
   base64ToFileTypeImage,
   getFileBase64,
   getFileName,
+  getNumbers,
   queryEle,
   queryEleAll,
   TimeoutFunEvent,
@@ -42,19 +43,29 @@ export const POLICE_INFO_PERSON: any = {
   form_item_idecardbackidAndUpload: '.ant-row #form_item_idecardbackid',
   form_item_idecardgroupidAndUpload: '.ant-row #form_item_idecardgroupid',
 };
+export const POLICE_INFO_MAIN_PERSON: any = {
+  form_item_webSecurityAndCheckBoxTrue: '#form_item_webSecurity',
+  form_item_wzyjllrAndCheckBoxTrue: '#form_item_wzyjllr',
+  form_item_idecardfrontidAndUpload: '#form_item_safeidecardfrontid',
+  form_item_idecardbackidAndUpload: '#form_item_safeidecardbackid',
+  form_item_idecardgroupidAndUpload: '#form_item_safeidecardgroupid',
+  form_item_emergenidecardfrontidAndUpload: '#form_item_emergenidecardfrontid',
+  form_item_emergenidecardbackidAndUpload: '#form_item_emergenidecardbackid',
+  form_item_emergenidecardgroupidAndUpload: '#form_item_emergenidecardgroupid',
+};
 
 export const POLICE_WEB_INFO_FIRST: any = {
   form_item_webnmAndInput: '.ant-row #form_item_webnm',
   form_item_moinumAndInput: '.ant-row #form_item_moinum',
-  form_item_webopentimeAndInput: '.ant-row #form_item_webopentime',
+  form_item_webopentimeAndDatePicker: '.ant-row #form_item_webopentime',
   form_item_maindmnAndInput: '.ant-row #form_item_maindmn',
   form_item_ymzsidAndUpload: '#form_item_ymzsid',
   form_item_ymzsvalidAndDateFull: '#form_item_ymzsvalid',
   form_item_ip0AndList: '#form_item_ip0',
 };
 export const POLICE_WEB_INFO_SECOND: any = {
-  form_item_aspnameAndSelectSSS: '.ant-row #form_item_aspname',
-  form_item_acctypeAndSelectSSS: '.ant-row #form_item_acctype',
+  form_item_aspnameAndSelectSSS: '#form_item_aspname',
+  form_item_acctypeAndSelectSSS: '#form_item_acctype',
 };
 export const POLICE_WEB_INFO_THIRD: any = {
   form_item_dspnameAndSelectSSS: '#form_item_dspname',
@@ -109,7 +120,6 @@ export const setPoliceWebData = (data: any, num: number) => {
 
 export const setPoliceMainData = (data: any) => {
   console.log(data, 2);
-
   const { main_info, company_info, person_info } = data;
   let rootNode = document.querySelector('.bcyr-layout-content .bcyr-page-wrapper-content');
   let elements = getKeysList(POLICE_INFO_MAIN);
@@ -136,6 +146,13 @@ export const setPoliceMainData = (data: any) => {
     }
   });
 };
+export const setPoliceInfoMainData = (data: any, num: any) => {
+  let rootNode = document.querySelector('#app');
+  let elements = getKeysList(POLICE_INFO_MAIN_PERSON);
+  currentEnterData(rootNode, elements, data[num], () => {
+    console.log(data, '结果');
+  });
+};
 const currentEnterData = (root: any, element: any, data: any, callback: any) => {
   const currentListRun = (ele: any, info: any, num: number) => {
     if (num >= ele.length) {
@@ -143,6 +160,11 @@ const currentEnterData = (root: any, element: any, data: any, callback: any) => 
       return;
     }
     let obj = ele[num];
+    if (obj.type === 'CheckBoxTrue') {
+      setCheckBox(root, obj, info[obj.key], () => {
+        currentListRun(ele, info, num + 1);
+      });
+    }
     if (obj.type === 'Select') {
       setSelectValue(
         root,
@@ -154,6 +176,16 @@ const currentEnterData = (root: any, element: any, data: any, callback: any) => 
         0,
         false
       );
+    }
+    if (obj.type === 'DatePicker') {
+      setDatePickerValue(root, obj, info[obj.key], () => {
+        currentListRun(ele, info, num + 1);
+      });
+    }
+    if (obj.type === 'DateFull') {
+      setFullDateValue(root, obj, info[obj.key], () => {
+        currentListRun(ele, info, num + 1);
+      });
     }
     if (obj.type === 'SelectString') {
       setSelectValue(
@@ -205,11 +237,6 @@ const currentEnterData = (root: any, element: any, data: any, callback: any) => 
         currentListRun(ele, info, num + 1);
       });
     }
-    if (obj.type === 'DateFull') {
-      setFullDateValue(root, obj, info[obj.key], () => {
-        currentListRun(ele, info, num + 1);
-      });
-    }
     if (obj.type === 'List') {
       setListAddValue(root, obj, info[obj.key], () => {
         currentListRun(ele, info, num + 1);
@@ -232,6 +259,70 @@ const currentEnterData = (root: any, element: any, data: any, callback: any) => 
     }
   };
   currentListRun(element, data, 0);
+};
+const setDatePickerValue = (root: any, tag: any, val: any, callback: any) => {
+  let clickDom = queryFirstIframeEle(root, tag.element);
+  DispatchMouseEvent(clickDom, 'mousedown');
+  TimeoutFunEvent(() => {
+    let rv: any = queryEleAll('.ant-picker-panel-container');
+    let rov: any = rv[0];
+
+    let ryv = new Date(val).getFullYear();
+    let rmv = new Date(val).getMonth() + 1;
+    let rdv = new Date(val).getDate();
+    TimeoutFunEvent(() => {
+      let rmb: any = queryFirstIframeEle(rov, '.ant-picker-header-next-btn');
+      let lmb: any = queryFirstIframeEle(rov, '.ant-picker-header-prev-btn');
+      let mText: any = queryFirstIframeEle(rov, '.ant-picker-month-btn');
+      let mv: any = getNumbers(mText?.textContent);
+      if (rmv > mv) {
+        clickDomView(rmb, rmv - mv);
+      } else if (rmv < mv) {
+        clickDomView(lmb, mv - rmv);
+      }
+    }, 800);
+    TimeoutFunEvent(() => {
+      let ryb: any = queryFirstIframeEle(rov, '.ant-picker-header-super-next-btn');
+      let lyb: any = queryFirstIframeEle(rov, '.ant-picker-header-super-prev-btn');
+      let yText: any = queryFirstIframeEle(rov, '.ant-picker-year-btn');
+      let yv: any = getNumbers(yText?.textContent);
+      if (ryv > yv) {
+        clickDomView(ryb, ryv - yv);
+      } else if (ryv < yv) {
+        clickDomView(lyb, yv - ryv);
+      }
+    }, 1400);
+    TimeoutFunEvent(() => {
+      let list: any = queryFirstIframeEleAll(
+        rov,
+        'tr .ant-picker-cell-in-view .ant-picker-cell-inner'
+      );
+      for (let i = 0; i < list.length; i++) {
+        if (list[i].textContent == rdv) {
+          list[i].click();
+        }
+      }
+      callback();
+    }, 1900);
+  }, 500);
+};
+
+const clickDomView = (ele: any, num: any) => {
+  let val = 0;
+  function clickView(e: any, n: any) {
+    val += 1;
+    if (val > num) {
+      return;
+    }
+    ele.click();
+    clickView(e, n + 1);
+  }
+  clickView(ele, 0);
+};
+const setCheckBox = (root: any, tag: any, val: any, callback: any) => {
+  let clickDom: any = queryFirstIframeEle(root, tag.element);
+  clickDom.click();
+  callback();
 };
 const setSelectValue = (
   root: any,
@@ -322,18 +413,49 @@ const setSelectSSS = (root: any, tag: any, val: any, callback: any) => {
         index = i;
       }
     }
-
     if (index !== null) {
       let parentE = btn.parentElement.parentElement.parentElement;
       let ele = parentE.querySelector(
         '.rc-virtual-list-holder-inner>.ant-select-item-option:nth-child(' + (index + 1) + ')'
       );
       DispatchMouseEvent(ele, 'click');
+      TimeoutFunEvent(() => {
+        callback();
+      }, 500);
+    } else if (arrList[0]) {
+      let parentE = btn.parentElement.parentElement.parentElement;
+      let ele = parentE.querySelector(
+        '.rc-virtual-list-holder-inner>.ant-select-item-option:nth-child(' + (index + 1) + ')'
+      );
+      DispatchMouseEvent(ele, 'click');
+      TimeoutFunEvent(() => {
+        let textViewText: any = arrList[0].textContent;
+        DispatchMouseEvent(arrList[0], 'click');
+        if (textViewText == '其他') {
+          currentInputVal(tag.element, val, () => {
+            callback();
+          });
+        } else {
+          callback();
+        }
+      }, 400);
+    } else {
+      callback();
+    }
+  }, 500);
+};
+const currentInputVal = (ele: any, val: any, callback: any) => {
+  TimeoutFunEvent(() => {
+    let inputDom: any = queryEle(ele + 1);
+    console.log(ele, val, '最後結果');
+    if (inputDom?.value) {
+      inputDom.value = val;
+      DispatchEvent(inputDom, 'change');
     }
     TimeoutFunEvent(() => {
       callback();
     }, 500);
-  }, 500);
+  }, 800);
 };
 const setUploadValue = (root: any, tag: any, val: any, callback: any, bool = false) => {
   if (!val) {
@@ -358,19 +480,97 @@ const setCheckValue = (root: any, tag: any, val: any, callback: any) => {
   callback();
 };
 const setFullDateValue = (root: any, tag: any, val: any, callback: any) => {
+  let clickDom = queryFirstIframeEle(root, tag.element);
+  DispatchMouseEvent(clickDom, 'mousedown');
   TimeoutFunEvent(() => {
-    let checkDom: any = queryEle(tag.element);
-    if (val.length >= 1) {
-      checkDom.value = val[0];
-      DispatchEvent(checkDom, 'change');
-    }
-    if (val.length >= 2) {
-      let bro = checkDom.parentNode.nextSibling.nextSibling.childNodes[0];
-      bro.value = val[1];
-      DispatchEvent(bro, 'change');
-    }
-    callback();
+    let rv: any = queryEleAll('.ant-picker-panel-container');
+    let rov: any = rv[1];
+    let lyv = new Date(val[0]).getFullYear();
+    let lmv = new Date(val[0]).getMonth();
+    let ldv = new Date(val[0]).getDate();
+    let ryv = new Date(val[1]).getFullYear();
+    let rmv = new Date(val[1]).getMonth();
+    let rdv = new Date(val[1]).getDate();
+    clickDateTimeBtn(rov, lyv, lmv, ldv, () => {
+      TimeoutFunEvent(() => {
+        clickDateTimeBtn(rov, ryv, rmv, rdv, () => {
+          callback();
+        });
+      }, 500);
+    });
   }, 500);
+};
+const clickFullView = (rov: any, vv: any, v: any) => {
+  let val = 0;
+  let mb: any;
+  if (vv > v) {
+    val = vv - v;
+    mb = true;
+  } else if (vv < v) {
+    val = v - vv;
+    mb = false;
+  }
+  function clickView(e: any, vl: any, n: any) {
+    let rmb: any = queryFirstIframeEle(rov, '.ant-picker-header-next-btn');
+    let lmb: any = queryFirstIframeEle(rov, '.ant-picker-header-prev-btn');
+    if (n >= vl) {
+      return;
+    }
+    (e ? rmb : lmb).click();
+    TimeoutFunEvent(() => {
+      clickView(e, vl, n + 1);
+    }, 100);
+  }
+  clickView(mb, val, 0);
+};
+const clickFullViewYear = (rov: any, vv: any, v: any) => {
+  let val = 0;
+  let nv = 0;
+  let mb: any;
+  if (vv > v) {
+    val = vv - v;
+    mb = true;
+  } else if (vv < v) {
+    val = v - vv;
+    mb = false;
+  }
+  function clickView(e: any, n: any) {
+    let ryb: any = queryFirstIframeEle(rov, '.ant-picker-header-super-next-btn');
+    let lyb: any = queryFirstIframeEle(rov, '.ant-picker-header-super-prev-btn');
+    nv += 1;
+    if (nv > val) {
+      return;
+    }
+    (mb ? ryb : lyb).click();
+    TimeoutFunEvent(() => {
+      clickView(e, n + 1);
+    }, 100);
+  }
+  clickView(mb, 0);
+};
+const clickDateTimeBtn = (rov: any, vyv: any, vmv: any, vdv: any, callback?: any) => {
+  let mText: any = queryFirstIframeEle(rov, '.ant-picker-month-btn');
+  let mv: any = getNumbers(mText?.textContent);
+  clickFullView(rov, vmv, mv);
+  TimeoutFunEvent(() => {
+    let yText: any = queryFirstIframeEle(rov, '.ant-picker-year-btn');
+    let yv: any = getNumbers(yText?.textContent);
+    clickFullViewYear(rov, vyv, yv);
+  }, 2000);
+  TimeoutFunEvent(() => {
+    let list: any = queryFirstIframeEleAll(
+      rov,
+      'tr .ant-picker-cell-in-view .ant-picker-cell-inner'
+    );
+    for (let i = 0; i < list.length; i++) {
+      if (list[i].textContent == vdv) {
+        list[i].click();
+      }
+    }
+    if (callback) {
+      callback();
+    }
+  }, 3600);
 };
 const setListAddValue = (root: any, tag: any, val: any, callback: any) => {
   TimeoutFunEvent(() => {

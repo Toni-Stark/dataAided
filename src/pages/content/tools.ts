@@ -136,3 +136,8 @@ export const getCookie = (name: any) => {
   }
   return null;
 };
+export const getNumbers = (text?: string) => {
+  let pattern = /\d+/g; // 匹配一个或多个数字的全局模式
+  let numbers = text?.match(pattern);
+  return numbers?.[0];
+};

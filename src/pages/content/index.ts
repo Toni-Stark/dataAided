@@ -7,6 +7,7 @@ import {
   GET_DATA_NEW_JUMP,
   GET_DATA_OLD_JUMP,
   OPEN_MOUSE_LISTENER,
+  POLICE_INFO_MAIN_DATA,
   POLICE_MAIN_DATA,
   POLICE_WEB_DATA,
   SET_FINAL_OLD_DATA,
@@ -34,7 +35,11 @@ import {
 import { getMapValue, getPowerToTwo, queryEleAll } from '@/pages/content/tools';
 import { createDataForServices } from '@/pages/content/messageStore';
 import { RegGsxtConfig } from '@/pages/content/component/ListSortingTool';
-import { setPoliceMainData, setPoliceWebData } from '@/pages/content/component/PoliceDataTool';
+import {
+  setPoliceInfoMainData,
+  setPoliceMainData,
+  setPoliceWebData,
+} from '@/pages/content/component/PoliceDataTool';
 import { CertMap, ProMap, UserMap } from '@/common/element';
 import {
   setAliWebDataFirst,
@@ -101,6 +106,11 @@ chrome.runtime.onMessage.addListener(
     if (request?.msg === POLICE_WEB_DATA) {
       let data = getPoliceData(request.data, 2);
       setPoliceWebData(data, request.num);
+      return;
+    }
+    if (request?.msg === POLICE_INFO_MAIN_DATA) {
+      let data = getPoliceData(request.data, 3);
+      setPoliceInfoMainData(data, request.num);
       return;
     }
     if (request?.msg === ALI_MAIN_DATA) {
@@ -290,6 +300,11 @@ const getPoliceData = (res: any, num: number) => {
       let obj: any = {};
       let webInfo = web_site[i];
       console.log(webInfo, res, '11111');
+      let arr1 = webInfo.ip_address.split(';');
+      let list1 = [];
+      for (let i = 0; i < arr1.length; i++) {
+        list1.push(arr1[i].split('-')[0]);
+      }
       obj['info_first'] = {
         form_item_webnm: webInfo.name,
         form_item_moinum: webInfo.record_num,
@@ -300,20 +315,16 @@ const getPoliceData = (res: any, num: number) => {
           webInfo.principal_data.cert_validity_start,
           webInfo.principal_data.cert_validity_end,
         ],
-        form_item_ip0: webInfo.ip_address.split(';'),
+        form_item_ip0: list1,
       };
       let ycc = [];
       if (webInfo?.asp_data.asp_info.province_show)
         ycc.push(webInfo?.asp_data.asp_info.province_show);
       if (webInfo?.asp_data.asp_info.city_show) ycc.push(webInfo?.asp_data.asp_info.city_show);
       if (webInfo?.asp_data.asp_info.county_show) ycc.push(webInfo?.asp_data.asp_info.county_show);
-      // ycc.push('重庆市');
-      // ycc.push('市辖区');
-      // ycc.push('万州区');
       obj['info_second'] = {
-        form_item_aspname:
-          webInfo.asp_data.asp_info?.company_name || '重庆长城宽带网络服务有限公司',
-        form_item_acctype: webInfo.asp_data?.asp_name || '自建机房',
+        form_item_aspname: webInfo.asp_data.asp_info?.company_name,
+        form_item_acctype: webInfo?.connect_mode_show,
         ycc,
       };
       // 接口没有
@@ -321,11 +332,8 @@ const getPoliceData = (res: any, num: number) => {
       if (webInfo?.dsp_province_show) zcc.push(webInfo?.dsp_province_show);
       if (webInfo?.dsp_city_show) zcc.push(webInfo?.dsp_city_show);
       if (webInfo?.dsp_county_show) zcc.push(webInfo?.dsp_county_show);
-      // zcc.push('重庆市');
-      // zcc.push('市辖区');
-      // zcc.push('万州区');
       obj['info_third'] = {
-        form_item_dspname: '重庆智佳信息科技有限公司',
+        form_item_dspname: webInfo.dsp_name,
         form_item_interactive: webInfo.interactive_arr,
         zcc,
         permit_listFile: webInfo.permit_list,
@@ -333,6 +341,21 @@ const getPoliceData = (res: any, num: number) => {
       };
       obj['info_four'] = {
         approval_list: webInfo.approval_list,
+      };
+      data.push(obj);
+    }
+    return data;
+  }
+  if (num === 3) {
+    let data: any = [];
+    for (let i = 0; i < web_site.length; i++) {
+      let obj: any = {
+        form_item_idecardfrontid: principal_data.img_cert_profile.show_src,
+        form_item_idecardbackid: principal_data.img_cert_emblem.show_src,
+        form_item_idecardgroupid: principal_data.img_cert_holder.show_src,
+        form_item_emergenidecardfrontid: web_site[i].principal_data.img_cert_profile.show_src,
+        form_item_emergenidecardbackid: web_site[i].principal_data.img_cert_emblem.show_src,
+        form_item_emergenidecardgroupid: web_site[i].principal_data.img_cert_holder.show_src,
       };
       data.push(obj);
     }
