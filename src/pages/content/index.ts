@@ -17,8 +17,11 @@ import {
   SET_FINAL_STEP_DATA,
   SET_FIRST_STEP_DATA,
   SET_SECOND_STEP_DATA,
+  SETTING_ALI_SCREEN,
   SETTING_LIST_DATA,
   SETTING_LISTENER_SCREEN,
+  SETTING_POLICE_SCREEN,
+  SETTING_TX_SCREEN,
   TX_MAIN_DATA,
   TX_WEB_DATA,
   TX_WEB_START_DATA,
@@ -506,11 +509,12 @@ const addEventClickList = (element: any, type: string, msg: string) => {
     let id = getAttributeData(item, 'data-batools_id');
     let type = getAttributeData(item, 'data-batools_type');
     let baseUrl = getAttributeData(item, 'data-url');
-    if (type == '1') {
-      item.addEventListener('click', () => {
-        createDataForServices(msg, baseUrl, id);
-      });
-    }
+    // if (type == '1') {
+    item.addEventListener('click', () => {
+      console.log(234234234, id, baseUrl, type, msg);
+      createDataForServices(msg, baseUrl, id);
+    });
+    // }
   }
 };
 
@@ -522,6 +526,18 @@ const settingListenerScreen = () => {
   const element_site2: any = queryEleAll('.jump_site_2');
   if (element_site2.length <= 0) return;
   addEventClickList(element_site2, '2', GET_DATA_OLD_JUMP);
+
+  const element_site110: any = queryEleAll('.jump_site_110');
+  if (element_site110.length <= 0) return;
+  addEventClickList(element_site110, '110', SETTING_POLICE_SCREEN);
+
+  const element_site3: any = queryEleAll('.jump_site_3');
+  if (element_site3.length <= 0) return;
+  addEventClickList(element_site3, '3', SETTING_ALI_SCREEN);
+
+  const element_site4: any = queryEleAll('.jump_site_4');
+  if (element_site4.length <= 0) return;
+  addEventClickList(element_site4, '4', SETTING_TX_SCREEN);
 };
 chrome.runtime.sendMessage({ type: EXECUTE_SCRIPT }).then((res) => {
   console.log('info-res------------------>');

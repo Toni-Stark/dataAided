@@ -26,6 +26,8 @@ import {
   ALI_WEB_DATA_THIRD,
   POLICE_INFO_MAIN_DATA,
   TX_WEB_START_DATA,
+  SETTING_ALI_SCREEN,
+  SETTING_TX_SCREEN,
 } from '@/common/agreement';
 import { sendMessageQueryCurrent } from '@/pages/background/SettingStore';
 import { GetAPI, PostAPI, UploadFiles } from '@/pages/background/FetchStore';
@@ -216,8 +218,48 @@ export const listenerDataInfoMessage = () => {
       }
       if (response?.event === SETTING_POLICE_SCREEN) {
         getCurrentPoliceData(id, (result: any) => {
-          console.log('公安数据更新', result);
           oldFinalData = { ...result, dateTimes: new Date().getTime() };
+        });
+        queryAllScreen('https://beian.mps.gov.cn/web/business/budUnit/add', (res: any) => {
+          if (res?.id) {
+            chrome.tabs.update(res?.id, { active: true });
+            chrome.tabs.reload(res?.id);
+          } else {
+            chrome.tabs.create({
+              url: 'https://beian.mps.gov.cn/web/business/budUnit/add',
+            });
+          }
+        });
+      }
+      if (response?.event === SETTING_ALI_SCREEN) {
+        console.log(response, '执行一次');
+        getCurrentData(id, (result: any) => {
+          oldFinalData = { ...result, dateTimes: new Date().getTime() };
+        });
+        queryAllScreen('https://beian.aliyun.com/', (res: any) => {
+          if (res?.id) {
+            chrome.tabs.update(res?.id, { active: true });
+            chrome.tabs.reload(res?.id);
+          } else {
+            chrome.tabs.create({
+              url: 'https://beian.aliyun.com/',
+            });
+          }
+        });
+      }
+      if (response?.event === SETTING_TX_SCREEN) {
+        getCurrentData(id, (result: any) => {
+          oldFinalData = { ...result, dateTimes: new Date().getTime() };
+        });
+        queryAllScreen('https://console.cloud.tencent.com/beian/manage/welcome', (res: any) => {
+          if (res?.id) {
+            chrome.tabs.update(res?.id, { active: true });
+            chrome.tabs.reload(res?.id);
+          } else {
+            chrome.tabs.create({
+              url: 'https://console.cloud.tencent.com/beian/manage/welcome',
+            });
+          }
         });
       }
     }

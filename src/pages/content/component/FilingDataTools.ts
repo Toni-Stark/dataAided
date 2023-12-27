@@ -26,10 +26,6 @@ import {
   SET_FINAL_STEP_DATA,
   SET_FIRST_STEP_DATA,
   SET_SECOND_STEP_DATA,
-  SETTING_ALI_SCREEN,
-  SETTING_POLICE_SCREEN,
-  SETTING_TX_SCREEN,
-  TX_MAIN_DATA,
   TX_VERSION_DATA,
   TX_WEB_DATA,
   TX_WEB_START_DATA,
@@ -80,23 +76,12 @@ export const createContentView = (data: any) => {
     CreateOldDataList(data);
   }
   if (idx === 2) {
-    createDataForServices(
-      SETTING_POLICE_SCREEN,
-      'https://beian.mps.gov.cn/web/business/budUnit/add',
-      31
-    );
     CreatePoliceModal(dom, data);
   }
   if (idx === 3) {
-    createDataForServices(SETTING_ALI_SCREEN, 'https://beian.aliyun.com/pcContainer/formpage', 31);
     CreateAliModal(dom, data);
   }
   if (idx === 4) {
-    createDataForServices(
-      SETTING_TX_SCREEN,
-      'https://console.cloud.tencent.com/beian/manage/welcome',
-      31
-    );
     CreateTXModal(dom, data);
   }
 };
