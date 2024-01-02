@@ -1,21 +1,18 @@
 // 云网备案工具
 import { stylesContextTwo } from '@/pages/content/component/styleSheet';
-import {
-  createDataForServices,
-  updateStepData,
-  updateStepDataIndex,
-} from '@/pages/content/messageStore';
+import { updateStepData, updateStepDataIndex } from '@/pages/content/messageStore';
 import { createDom, queryEle } from '@/pages/content/tools';
 import {
   ALI_MAIN_DATA,
   ALI_VERSION_DATA,
-  ALI_WEB_DATA,
   ALI_WEB_DATA_FIRST,
   ALI_WEB_DATA_THIRD,
-  GET_DATA_NEW_JUMP,
+  CLOUD_DATA_CONTROL,
+  CLOUD_MAIN_DATA,
   NEW_VERSION_FILING_DATA,
   OLD_VERSION_FILING_DATA,
   POLICE_INFO_MAIN_DATA,
+  POLICE_INFO_MINI_DATA,
   POLICE_MAIN_DATA,
   POLICE_VERSION_DATA,
   POLICE_WEB_DATA,
@@ -30,6 +27,11 @@ import {
   TX_WEB_DATA,
   TX_WEB_START_DATA,
 } from '@/common/agreement';
+import {
+  recordedFileData,
+  recordedMainData,
+  recordedWebData,
+} from '@/pages/content/component/RecyclingDataTool';
 // 设置css;
 export const createContentStyle = (css: string) => {
   let style: any = document.createElement('style');
@@ -68,6 +70,8 @@ export const createContentView = (data: any) => {
     CreateDataModal(dom);
     CreateStepTwoDataStep(data.web_site);
     CreateStepThreeDataStep(data.web_site);
+    // 收集数据;
+    CreateAddDataIdx(dom);
   }
   if (idx === 1) {
     CreateOldModal(dom);
@@ -106,12 +110,14 @@ export const CreateStepTwoDataStep = (data: any) => {
   let AddModal: any = queryEle('.floatView>.AddModal');
   AddModal?.remove();
   AddModal = createDom({ tag: 'div', cla: 'AddModal' });
-  for (let i = 0; i <= data.length - 1; i++) {
-    let Modal: any = createDom({ tag: 'div', cla: 'OldViewModal', txt: '网站' + (i + 1) });
-    Modal.addEventListener('click', () => {
-      updateStepDataIndex(NEW_VERSION_FILING_DATA, SET_SECOND_STEP_DATA, i);
-    });
-    AddModal.appendChild(Modal);
+  if (data?.length) {
+    for (let i = 0; i <= data.length - 1; i++) {
+      let Modal: any = createDom({ tag: 'div', cla: 'OldViewModal', txt: '网站' + (i + 1) });
+      Modal.addEventListener('click', () => {
+        updateStepDataIndex(NEW_VERSION_FILING_DATA, SET_SECOND_STEP_DATA, i);
+      });
+      AddModal.appendChild(Modal);
+    }
   }
   stepTwoView?.appendChild(AddModal);
 };
@@ -120,12 +126,14 @@ export const CreateStepThreeDataStep = (data: any) => {
   let FiModal: any = queryEle('.floatView>.FiModal');
   FiModal?.remove();
   FiModal = createDom({ tag: 'div', cla: 'FiModal' });
-  for (let i = 0; i <= data.length - 1; i++) {
-    let FinalModal = createDom({ tag: 'div', cla: 'FinalModal', txt: '核验单' + (i + 1) });
-    FinalModal.addEventListener('click', () => {
-      updateStepData(NEW_VERSION_FILING_DATA, SET_FINAL_STEP_DATA, i);
-    });
-    FiModal?.appendChild(FinalModal);
+  if (data?.length) {
+    for (let i = 0; i <= data.length - 1; i++) {
+      let FinalModal = createDom({ tag: 'div', cla: 'FinalModal', txt: '核验单' + (i + 1) });
+      FinalModal.addEventListener('click', () => {
+        updateStepData(NEW_VERSION_FILING_DATA, SET_FINAL_STEP_DATA, i);
+      });
+      FiModal?.appendChild(FinalModal);
+    }
   }
   stepTwoView?.appendChild(FiModal);
 };
@@ -196,6 +204,24 @@ export const CreateDataModal = (dom: any) => {
     updateStepData(NEW_VERSION_FILING_DATA, SET_FIRST_STEP_DATA);
   });
 };
+
+export const CreateAddDataIdx = (dom: any) => {
+  let modalView = queryEle('.modalView');
+  if (modalView) modalView.remove();
+  modalView = createDom({ tag: 'div', cla: 'modalView leftModal' });
+  dom.appendChild(modalView);
+  let NewTitle = createDom({ tag: 'div', cla: 'NewTitle', txt: '云网' });
+  modalView?.appendChild(NewTitle);
+
+  let FirstStepModal: any = queryEle('.modalView>.FirstStepModal');
+  FirstStepModal?.remove();
+  FirstStepModal = createDom({ tag: 'div', cla: 'FirstStepModal', txt: '收集' });
+  modalView?.appendChild(FirstStepModal);
+  FirstStepModal.addEventListener('click', () => {
+    // updateStepData(CLOUD_DATA_CONTROL, CLOUD_MAIN_DATA);
+    recordedFileData();
+  });
+};
 // 阿里云备案数据填写
 export const CreateAliModal = (dom: any, data: any) => {
   let floatView = queryEle('.floatView');
@@ -252,13 +278,6 @@ export const CreateTXModal = (dom: any, data: any) => {
       updateStepData(TX_VERSION_DATA, TX_WEB_DATA, i);
     });
   }
-  // let FirstStepModal: any = queryEle('.floatView>.FirstStepModal');
-  // FirstStepModal?.remove();
-  // FirstStepModal = createDom({ tag: 'div', cla: 'FirstStepModal', txt: '主办信息' });
-  // floatView?.appendChild(FirstStepModal);
-  // FirstStepModal.addEventListener('click', () => {
-  //   updateStepData(TX_VERSION_DATA, TX_MAIN_DATA);
-  // });
 };
 // 公安版本数据填写
 export const CreatePoliceModal = (dom: any, data: any) => {
@@ -289,6 +308,13 @@ export const CreatePoliceModal = (dom: any, data: any) => {
     floatView?.appendChild(WebStepModal);
     WebStepModal.addEventListener('click', () => {
       updateStepData(POLICE_VERSION_DATA, POLICE_INFO_MAIN_DATA, i);
+    });
+  }
+  for (let i = 0; i < data.web_site.length; i++) {
+    let WebStepModal = createDom({ tag: 'div', cla: 'FinalModal', txt: '小程序' + (i + 1) });
+    floatView?.appendChild(WebStepModal);
+    WebStepModal.addEventListener('click', () => {
+      updateStepData(POLICE_VERSION_DATA, POLICE_INFO_MINI_DATA, i);
     });
   }
 };

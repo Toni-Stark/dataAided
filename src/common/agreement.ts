@@ -54,7 +54,8 @@ export const POLICE_MAIN_DATA = 'police_main_data';
 export const POLICE_WEB_DATA = 'police_web_data';
 // 公安备案第三步主体数据
 export const POLICE_INFO_MAIN_DATA = 'police_info_main_data';
-
+// 公安备案小程序数据
+export const POLICE_INFO_MINI_DATA = 'police_info_mini_data';
 // 阿里备案数据
 export const ALI_VERSION_DATA = 'ali_version_data';
 // 阿里备案主办者信息
@@ -75,3 +76,12 @@ export const TX_MAIN_DATA = 'tx_main_data';
 export const TX_WEB_DATA = 'tx_web_data';
 // 腾讯备案网站信息
 export const TX_WEB_START_DATA = 'tx_web_start';
+
+// 云网收集数据
+export const CLOUD_DATA_CONTROL = 'could_data_control';
+// 主体数据
+export const CLOUD_MAIN_DATA = 'cloud_main_data';
+// 网站数据
+export const CLOUD_WEB_DATA = 'cloud_web_data';
+// 材料数据
+export const CLOUD_FILE_DATA = 'cloud_file_data';

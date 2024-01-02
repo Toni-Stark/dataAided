@@ -14,7 +14,7 @@ import {
   queryEleAll,
   TimeoutFunEvent,
 } from '@/pages/content/tools';
-import { BookMap, StudyMap } from '@/common/element';
+import { BookMap, MiniStudyMap, StudyMap } from '@/common/element';
 
 export const POLICE_INFO_MAIN: any = {
   unitptyAndSelectStringAnd2: '.ant-row #form_item_unitpty',
@@ -52,6 +52,13 @@ export const POLICE_INFO_MAIN_PERSON: any = {
   form_item_emergenidecardfrontidAndUpload: '#form_item_emergenidecardfrontid',
   form_item_emergenidecardbackidAndUpload: '#form_item_emergenidecardbackid',
   form_item_emergenidecardgroupidAndUpload: '#form_item_emergenidecardgroupid',
+};
+export const POLICE_INFO_MINI_PERSON: any = {
+  form_item_appnameAndInput: '#form_item_appname',
+  form_item_typeAndTree2: '.ant-tree-list-holder-inner',
+  form_item_serverinfoAndInput: '#form_item_serverinfo',
+  approval_listAndCheckUploadVal: '#approval_list',
+  form_item_filesAndUploadList: '#form_item_files',
 };
 
 export const POLICE_WEB_INFO_FIRST: any = {
@@ -153,6 +160,14 @@ export const setPoliceInfoMainData = (data: any, num: any) => {
     console.log(data, '结果');
   });
 };
+export const setPoliceInfoMiniData = (data: any, num: any) => {
+  console.log(data[num], 'log-------------');
+  let rootNode = document.querySelector('#app');
+  let elements = getKeysList(POLICE_INFO_MINI_PERSON);
+  currentEnterData(rootNode, elements, data[num], () => {
+    console.log(data, '结果');
+  });
+};
 const currentEnterData = (root: any, element: any, data: any, callback: any) => {
   const currentListRun = (ele: any, info: any, num: number) => {
     if (num >= ele.length) {
@@ -164,6 +179,23 @@ const currentEnterData = (root: any, element: any, data: any, callback: any) => 
       setCheckBox(root, obj, info[obj.key], () => {
         currentListRun(ele, info, num + 1);
       });
+    }
+
+    if (obj.type === 'Tree2') {
+      setTree2Value(root, obj, info[obj.key], () => {
+        currentListRun(ele, info, num + 1);
+      });
+    }
+    if (obj.type === 'UploadList') {
+      setUploadListValue(
+        root,
+        obj,
+        info[obj.key],
+        () => {
+          currentListRun(ele, info, num + 1);
+        },
+        true
+      );
     }
     if (obj.type === 'Select') {
       setSelectValue(
@@ -254,6 +286,11 @@ const currentEnterData = (root: any, element: any, data: any, callback: any) => 
     }
     if (obj.type === 'CheckUploadRun') {
       setCheckUploadRun(root, obj, info[obj.key], () => {
+        currentListRun(ele, info, num + 1);
+      });
+    }
+    if (obj.type === 'CheckUploadVal') {
+      setCheckUploadRunInfo(root, obj, info[obj.key], () => {
         currentListRun(ele, info, num + 1);
       });
     }
@@ -447,7 +484,6 @@ const setSelectSSS = (root: any, tag: any, val: any, callback: any) => {
 const currentInputVal = (ele: any, val: any, callback: any) => {
   TimeoutFunEvent(() => {
     let inputDom: any = queryEle(ele + 1);
-    console.log(ele, val, '最後結果');
     if (inputDom?.value) {
       inputDom.value = val;
       DispatchEvent(inputDom, 'change');
@@ -456,6 +492,21 @@ const currentInputVal = (ele: any, val: any, callback: any) => {
       callback();
     }, 500);
   }, 800);
+};
+const setUploadListValue = (root: any, tag: any, val: any, callback: any, bool = false) => {
+  if (!val) {
+    return callback();
+  }
+  let uploadDom: any = queryEle(tag.element);
+  for (let i = 0; i < val.length; i++) {
+    TimeoutFunEvent(() => {
+      let file: any = val[i].show_src;
+      UploadImageNoBaseAndAddElement(file, uploadDom);
+    }, i + 1200);
+  }
+  TimeoutFunEvent(() => {
+    callback();
+  }, val.length * 2000);
 };
 const setUploadValue = (root: any, tag: any, val: any, callback: any, bool = false) => {
   if (!val) {
@@ -590,6 +641,37 @@ const setListAddValue = (root: any, tag: any, val: any, callback: any) => {
     }, 500);
   }, 1000);
 };
+const setTree2Value = (root: any, tag: any, val: any, callback: any) => {
+  if (val?.length > 0) {
+    let swiCs: any = queryEleAll(
+      '.ant-tree-list-holder-inner .ant-tree-treenode .ant-tree-switcher'
+    );
+    for (let i = 0; i < swiCs.length; i++) {
+      TimeoutFunEvent(() => {
+        DispatchEvent(swiCs[i], 'click');
+      }, i * 200);
+    }
+    TimeoutFunEvent(() => {
+      let texts: any = queryEleAll(
+        '.ant-tree-list-holder-inner .ant-tree-treenode .ant-tree-node-content-wrapper-normal .ant-tree-title span:first-child'
+      );
+      let checks: any = queryEleAll(
+        '.ant-tree-list-holder-inner .ant-tree-treenode .ant-tree-checkbox .ant-tree-checkbox-inner'
+      );
+      for (let j = 0; j < texts.length; j++) {
+        for (let k = 0; k < val.length; k++) {
+          if (texts[j].textContent.indexOf(val[k].type) >= 0) {
+            console.log(texts[j], val);
+            TimeoutFunEvent(() => {
+              checks[j].click();
+            }, 50 * j);
+          }
+        }
+      }
+    }, swiCs.length * 500 + 500);
+  }
+  callback();
+};
 const setTree1Value = (root: any, tag: any, val: any, callback: any) => {
   let raVs: any = queryEleAll('#form_item_interactive .ant-radio-wrapper');
   if (val?.length > 0) {
@@ -646,6 +728,41 @@ const setCheckUploadValue = (root: any, tag: any, val: any, callback: any) => {
         root,
         { element: BookMap[list[num].img_type] },
         list[num].show_src,
+        () => {
+          checkBtnList(list, num + 1);
+        },
+        true
+      );
+    };
+    checkBtnList(val, 0);
+  }, val.length * 500 + 500);
+};
+const setCheckUploadRunInfo = (root: any, tag: any, val: any, callback: any) => {
+  if (val?.length < 0) {
+    callback();
+    return;
+  }
+  let checkText: any = queryEleAll('#form_item_proaudFile .ant-checkbox-wrapper>span:last-child');
+  let checkBtn: any = queryEleAll('#form_item_proaudFile .ant-checkbox-wrapper');
+  for (let j = 0; j < checkText.length; j++) {
+    for (let k = 0; k < val.length; k++) {
+      if (val[k].approval_type_show.indexOf(checkText[j].textContent) >= 0) {
+        TimeoutFunEvent(() => {
+          checkBtn[j].click();
+        }, j * 500);
+      }
+    }
+  }
+  TimeoutFunEvent(() => {
+    const checkBtnList = (list: any, num: any) => {
+      if (list.length <= num) {
+        callback();
+        return;
+      }
+      setUploadValue(
+        root,
+        { element: MiniStudyMap[list[num].approval_type] },
+        list[num].img_data.show_src,
         () => {
           checkBtnList(list, num + 1);
         },

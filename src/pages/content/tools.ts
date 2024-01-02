@@ -141,3 +141,11 @@ export const getNumbers = (text?: string) => {
   let numbers = text?.match(pattern);
   return numbers?.[0];
 };
+export const getNumView = (num: any) => {
+  if (num == 1) {
+    return '0';
+  }
+  if (num == 2) {
+    return '1';
+  }
+};

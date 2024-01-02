@@ -41,3 +41,12 @@ export const createRequestFileServices = (url: string, params: any) => {
     console.log('info-res------------------>');
   });
 };
+
+// 上传数据获取base64
+export const updateDataBase64 = (type: string, step: string, src?: any) => {
+  chrome.runtime.sendMessage({ type, step, src }).then((res) => {
+    console.log('info-res------------------>');
+    console.log(res);
+    console.log('info-res------------------>');
+  });
+};

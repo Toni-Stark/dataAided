@@ -1,5 +1,4 @@
-// export let iframe = document.querySelector('#TB_iframeContent').contentDocument;
-// let select = iframe.querySelectorAll('.formInputWidth')[1];
+// export let iframe = document.querySelector('#TB_iframeContent').contentDocument;、=torAll('.formInputWidth')[1];
 // let options = select.querySelector('option');
 // console.log(options);
 
@@ -265,7 +264,7 @@ export const BookMap: any = {
 };
 // 文件上传id字典--id转字符串
 export const StudyMap: any = {
-  '1': '新闻',
+  '1': '#form_item_xwfile',
   '2': '#form_item_cbfile',
   '4': '#form_item_jyfile',
   '8': '#form_item_ylbjfile',
@@ -277,6 +276,16 @@ export const StudyMap: any = {
   '4096': '#form_item_cbfile',
   '8192': '#form_item_cbfile',
   '16384': '#form_item_zjfile',
+};
+// 文件上传id字典--id转字符串
+export const MiniStudyMap: any = {
+  '4': '#form_item_proaudFile_jy',
+  '8': '#form_item_proaudFile_ylbj',
+  '1': '#form_item_proaudFile_xw',
+  // qt: '#form_item_proaudFile_qt',
+  '2': '#form_item_proaudFile_cb',
+  '16384': '#form_item_proaudFile_zj',
+  // ydbj: '#form_item_proaudFile_ydbj',
 };
 
 export const nObj = {
@@ -576,7 +585,7 @@ export const nObj = {
           {
             type: 'B1',
             name: '综合商品交易类（B1）',
-            desc: '专门或主要从事衣帽鞋靴、箱包饰品、数码电器、食品洗护等各类商品交易的综合平台。',
+            desc: '专门或主要从事衣帽鞋靴、                         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++箱包饰品、数码电器、食品洗护等各类商品交易的综合平台。',
             disable: false,
           },
           {
@@ -1204,6 +1213,6 @@ export const nObj = {
       },
     ],
   },
-  req_id: '657fe16d48e18',
+  req_id: '657fe16*3.36954d48e18',
   msg: '成功',
 };

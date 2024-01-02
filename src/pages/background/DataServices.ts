@@ -28,6 +28,10 @@ import {
   TX_WEB_START_DATA,
   SETTING_ALI_SCREEN,
   SETTING_TX_SCREEN,
+  POLICE_INFO_MINI_DATA,
+  CLOUD_DATA_CONTROL,
+  CLOUD_MAIN_DATA,
+  CLOUD_FILE_DATA,
 } from '@/common/agreement';
 import { sendMessageQueryCurrent } from '@/pages/background/SettingStore';
 import { GetAPI, PostAPI, UploadFiles } from '@/pages/background/FetchStore';
@@ -184,6 +188,13 @@ export const listenerDataInfoMessage = () => {
           num: response.num,
         });
       }
+      if (response?.step === POLICE_INFO_MINI_DATA) {
+        sendMessageQueryCurrent(tab.id, {
+          msg: POLICE_INFO_MINI_DATA,
+          data: oldFinalData,
+          num: response.num,
+        });
+      }
     }
     if (response?.type === SETTING_LISTENER_SCREEN) {
       const { position, id } = response;
@@ -218,9 +229,10 @@ export const listenerDataInfoMessage = () => {
       }
       if (response?.event === SETTING_POLICE_SCREEN) {
         getCurrentPoliceData(id, (result: any) => {
+          console.log(result);
           oldFinalData = { ...result, dateTimes: new Date().getTime() };
         });
-        queryAllScreen('https://beian.mps.gov.cn/web/business/budUnit/add', (res: any) => {
+        queryAllScreen('beian.mps.gov.cn', (res: any) => {
           if (res?.id) {
             chrome.tabs.update(res?.id, { active: true });
             chrome.tabs.reload(res?.id);
@@ -236,7 +248,7 @@ export const listenerDataInfoMessage = () => {
         getCurrentData(id, (result: any) => {
           oldFinalData = { ...result, dateTimes: new Date().getTime() };
         });
-        queryAllScreen('https://beian.aliyun.com/', (res: any) => {
+        queryAllScreen('beian.aliyun.com', (res: any) => {
           if (res?.id) {
             chrome.tabs.update(res?.id, { active: true });
             chrome.tabs.reload(res?.id);
@@ -251,7 +263,7 @@ export const listenerDataInfoMessage = () => {
         getCurrentData(id, (result: any) => {
           oldFinalData = { ...result, dateTimes: new Date().getTime() };
         });
-        queryAllScreen('https://console.cloud.tencent.com/beian/manage/welcome', (res: any) => {
+        queryAllScreen('console.cloud.tencent.com/beian', (res: any) => {
           if (res?.id) {
             chrome.tabs.update(res?.id, { active: true });
             chrome.tabs.reload(res?.id);
@@ -261,6 +273,12 @@ export const listenerDataInfoMessage = () => {
             });
           }
         });
+      }
+    }
+    if (response?.type === CLOUD_DATA_CONTROL) {
+      const { tab } = sender;
+      if (!tab?.id) return true;
+      if (response?.step === CLOUD_FILE_DATA) {
       }
     }
     return true;
@@ -312,6 +330,24 @@ const getCurrentData = (id: any, callback: any) => {
             });
           });
         });
+      });
+    });
+  });
+};
+const getAllImgApplet = (list: any, index: any, callback: any) => {
+  if (index >= list.length) {
+    callback(list);
+    return;
+  }
+  let item = list[index];
+  loadImageFiles(item?.img_applet_screenshot, 0, (res: any[]) => {
+    item.img_applet_screenshot = res;
+    getAllApprovalFile(item.approval_list, 0, (aList: any) => {
+      item.approval_list = aList;
+      getAllPrincipalFile(item.principal_data, (pList: any) => {
+        item.principal_data = pList;
+        list[index] = { ...item };
+        getAllImgFile(list, index + 1, callback);
       });
     });
   });
@@ -416,7 +452,7 @@ const getCurrentPoliceData = (id: any, callback: any) => {
   PostAPI({
     url: BaseUrl + '/api/batools/enter/info?id=' + id + '&merchant_sn=7J6zvmx81&ver=1',
   }).then((res: any) => {
-    const { basic, principal_data, web_site } = res.data;
+    const { basic, principal_data, web_site, applet } = res.data;
     loadImageFiles([basic.img_cert], 0, (res: any[]) => {
       basic.img_cert = res[0];
       loadImageFiles(basic.img_supp, 0, (res: any[]) => {
@@ -432,13 +468,16 @@ const getCurrentPoliceData = (id: any, callback: any) => {
                 loadImageFiles([principal_data.img_cert_holder], 0, (res: any[]) => {
                   principal_data.img_cert_holder = res[0];
                   // 处理网站文件的格式
-                  getAllImgFile(web_site, 0, (list: any) => {
-                    const data = {
-                      basic,
-                      principal_data,
-                      web_site: list,
-                    };
-                    callback(data);
+                  getAllImgApplet(applet, 0, (a_list: any) => {
+                    getAllImgFile(web_site, 0, (list: any) => {
+                      const data = {
+                        basic,
+                        principal_data,
+                        web_site: list,
+                        applet: a_list,
+                      };
+                      callback(data);
+                    });
                   });
                 });
               });

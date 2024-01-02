@@ -8,6 +8,7 @@ import {
   GET_DATA_OLD_JUMP,
   OPEN_MOUSE_LISTENER,
   POLICE_INFO_MAIN_DATA,
+  POLICE_INFO_MINI_DATA,
   POLICE_MAIN_DATA,
   POLICE_WEB_DATA,
   SET_FINAL_OLD_DATA,
@@ -41,6 +42,7 @@ import { createDataForServices } from '@/pages/content/messageStore';
 import { RegGsxtConfig } from '@/pages/content/component/ListSortingTool';
 import {
   setPoliceInfoMainData,
+  setPoliceInfoMiniData,
   setPoliceMainData,
   setPoliceWebData,
 } from '@/pages/content/component/PoliceDataTool';
@@ -115,6 +117,11 @@ chrome.runtime.onMessage.addListener(
     if (request?.msg === POLICE_INFO_MAIN_DATA) {
       let data = getPoliceData(request.data, 3);
       setPoliceInfoMainData(data, request.num);
+      return;
+    }
+    if (request?.msg === POLICE_INFO_MINI_DATA) {
+      let data = getPoliceData(request.data, 4);
+      setPoliceInfoMiniData(data, request.num);
       return;
     }
     if (request?.msg === ALI_MAIN_DATA) {
@@ -252,7 +259,7 @@ const getAliData = (res: any, num: number, key?: boolean) => {
   }
 };
 const getPoliceData = (res: any, num: number) => {
-  const { basic, principal_data, web_site } = res;
+  const { basic, principal_data, web_site, applet } = res;
   // 备案主体
   if (num === 1) {
     let data: any = {};
@@ -367,6 +374,20 @@ const getPoliceData = (res: any, num: number) => {
         form_item_emergenidecardgroupid: web_site[i].principal_data.img_cert_holder.show_src,
       };
       data.push(obj);
+    }
+    return data;
+  }
+  if (num === 4) {
+    let data: any = [];
+    for (let i = 0; i < applet.length; i++) {
+      let appInfo = applet[i];
+      data.push({
+        form_item_appname: appInfo.name,
+        form_item_type: appInfo.interactive_arr,
+        form_item_serverinfo: appInfo.server_info,
+        approval_list: appInfo.approval_list,
+        form_item_files: appInfo.img_applet_screenshot,
+      });
     }
     return data;
   }
