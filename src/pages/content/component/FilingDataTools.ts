@@ -27,11 +27,7 @@ import {
   TX_WEB_DATA,
   TX_WEB_START_DATA,
 } from '@/common/agreement';
-import {
-  recordedFileData,
-  recordedMainData,
-  recordedWebData,
-} from '@/pages/content/component/RecyclingDataTool';
+import { recordedAllData } from '@/pages/content/component/RecyclingDataTool';
 // 设置css;
 export const createContentStyle = (css: string) => {
   let style: any = document.createElement('style');
@@ -219,7 +215,7 @@ export const CreateAddDataIdx = (dom: any) => {
   modalView?.appendChild(FirstStepModal);
   FirstStepModal.addEventListener('click', () => {
     // updateStepData(CLOUD_DATA_CONTROL, CLOUD_MAIN_DATA);
-    recordedFileData();
+    recordedAllData();
   });
 };
 // 阿里云备案数据填写

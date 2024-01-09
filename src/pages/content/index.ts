@@ -560,9 +560,5 @@ const settingListenerScreen = () => {
   if (element_site4.length <= 0) return;
   addEventClickList(element_site4, '4', SETTING_TX_SCREEN);
 };
-chrome.runtime.sendMessage({ type: EXECUTE_SCRIPT }).then((res) => {
-  console.log('info-res------------------>');
-  console.log(res);
-  console.log('info-res------------------>');
-});
+chrome.runtime.sendMessage({ type: EXECUTE_SCRIPT });
 export {};
