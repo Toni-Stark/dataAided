@@ -137,3 +137,8 @@ export const MiniStudyMap: any = {
   '16384': '#form_item_proaudFile_zj',
   // ydbj: '#form_item_proaudFile_ydbj',
 };
+
+export const TypeMap = {
+  '1': '网站备案信息',
+  '6': 'APP备案信息',
+};
